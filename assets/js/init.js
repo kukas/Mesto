@@ -18,7 +18,8 @@ $(document).ready( function(){
 	document.body.appendChild( stats.domElement );
 
 	game = new Game();
-
+	
+	game.eventhandler = new Eventhandler();
+	
 	game.init();
-
 } );
