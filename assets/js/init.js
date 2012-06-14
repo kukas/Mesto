@@ -7,6 +7,10 @@ $(document).ready( function(){
 	}
 	// Zavedení objektu game
 	game = new Game();
-
+	
+	game.eventhandler = new Eventhandler();
+	
 	game.init();
+	
+	
 } );
