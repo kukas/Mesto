@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'VT220';
+    src: url('../fonts/glass_tty_vt220-webfont.eot');
+    src: url('../fonts/glass_tty_vt220-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/glass_tty_vt220-webfont.woff') format('woff'),
+         url('../fonts/glass_tty_vt220-webfont.ttf') format('truetype'),
+         url('../fonts/glass_tty_vt220-webfont.svg#GlassTTYVT220Medium') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
