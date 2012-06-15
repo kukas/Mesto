@@ -1,0 +1,26 @@
+HIERARCHIE OBJEKTŮ V MĚSTĚ
+
+GAME
+ - textures
+ - models
+ - jukebox
+ 
+ - eventhandler
+	- controls{}
+	- mouseControls{}
+	- mouse
+		- x
+		- y
+	- keyboardhandler()
+	- mousehandler()
+	- loop()
+ - gui
+ - level
+ - progress
+ - statistics
+ - quests
+ - dialogs
+ 
+ - scene
+ - camera
+ - renderer
