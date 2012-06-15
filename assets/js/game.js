@@ -3,13 +3,13 @@ function Game(){
 }
 Game.prototype.init = function() {
 	// připraví jednotlivé canvasy
-	this.webgl = document.createElement("canvas");
+	this.webgl = new THREE.WebGLRenderer();
 	this.canvas = document.createElement("canvas");
 	// zařídí, aby canvas byl nad WebGL
-	this.webgl.style.zIndex = "1";
+	this.webgl.domElement.style.zIndex = "1";
 	this.canvas.style.zIndex = "2";
 	// přidá je do stránky
-	document.body.appendChild( this.webgl );
+	document.body.appendChild( this.webgl.domElement );
 	document.body.appendChild( this.canvas );
 
 
