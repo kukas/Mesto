@@ -53,8 +53,8 @@ Eventhandler.prototype.keyboardhandler = function(e) {
 Eventhandler.prototype.mousehandler = function(e) {
 	var which = e.which,
 		type = e.type;
-	this.mouse.x = e.pageX - this.dom.offsetLeft;
-	this.mouse.y = e.pageY - this.dom.offsetTop;
+	this.mouse.x = e.clientX;
+	this.mouse.y = e.clientY;
 
 	if( this.mouseControls[ which ] ){
 		if( type == "mousedown" || (this.mouseControls[ which ].down && type == "mousemove") ){
