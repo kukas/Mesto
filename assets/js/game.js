@@ -40,17 +40,18 @@ function Game(){
 	this.resizeCanvas();
 }
 Game.prototype.load = function(levelName) {
+	var _this = this;
 	var levelScript = document.createElement("script");
 	levelScript.src = this.levelsPath + levelName;
 	levelScript.addEventListener( "load", function(){
-		console.log(level);
+		_this.levelLoad();
 	}, true )
 	document.body.appendChild(levelScript)
 };
 
 Game.prototype.levelLoad = function() {
 	for(var i in level.objects){
-		this.scene.add(objects[i]);
+		this.scene.add(level.objects[i]);
 	}
 };
 
