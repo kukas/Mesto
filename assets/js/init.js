@@ -19,7 +19,5 @@ $(document).ready( function(){
 
 	game = new Game();
 	
-	game.eventhandler = new Eventhandler();
-	
 	game.init();
 } );

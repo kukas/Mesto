@@ -1,8 +1,12 @@
 function Game(){
 	var _this = this;
+	this.levelsPath = "./assets/levels/";
 
 	// zavede některé důležité objekty
-	this.eventhandler = new Eventhandler( this.webgl );
+	this.eventhandler = new Eventhandler();
+	this.eventhandler.addKeyboardControl(32, false, function(){
+		_this.load("test.js");
+	} )
 	// TODO: až budou, tak odkomentovat :)
 	// this.textures = new Textures();
 	// this.jukebox = new Jukebox();
@@ -35,6 +39,21 @@ function Game(){
 	// změní velikost canvasů
 	this.resizeCanvas();
 }
+Game.prototype.load = function(levelName) {
+	var levelScript = document.createElement("script");
+	levelScript.src = this.levelsPath + levelName;
+	levelScript.addEventListener( "load", function(){
+		console.log(level);
+	}, true )
+	document.body.appendChild(levelScript)
+};
+
+Game.prototype.levelLoad = function() {
+	for(var i in level.objects){
+		this.scene.add(objects[i]);
+	}
+};
+
 Game.prototype.init = function() {
 	// zařídí, aby canvas byl nad WebGL
 	this.webgl.domElement.style.zIndex = "1";
@@ -42,18 +61,20 @@ Game.prototype.init = function() {
 	// přidá je do stránky
 	document.body.appendChild( this.webgl.domElement );
 	document.body.appendChild( this.canvas );
-
+	// spustí render smyčku
 	this.render();
 };
 
 Game.prototype.render = function() {
-	var _this = this
+	stats.begin();
+	var _this = this;
 	requestAnimationFrame( function(){
 		_this.render();
 	} );
 
 	this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
 	this.webgl.render( this.scene, this.camera );
+	stats.end();
 };
 
 // funkce volaná při změně velikosti okna
