@@ -5,7 +5,7 @@ function Game(){
 	// zavede některé důležité objekty
 	this.eventhandler = new Eventhandler( this );
 	this.eventhandler.addKeyboardControl(32, false, function(){
-		_this.load("test.js");
+		_this.load("test");
 	} )
 	this.eventhandler.addMouseControl(1,function(){
 		console.log([_this.eventhandler.mouse.projected.x, _this.eventhandler.mouse.projected.y, _this.eventhandler.mouse.projected.z])
@@ -26,11 +26,11 @@ function Game(){
 	this.scene = new THREE.Scene();
 	// Jediná kamera ve hře (I HOPE SO)
 	this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
-    this.camera.position.z = 1000;
-    this.scene.add( this.camera );
+	this.camera.position.z = 1000;
+	this.scene.add( this.camera );
 
 	// připraví jednotlivé canvasy
-    this.webgl = new THREE.WebGLRenderer();
+	this.webgl = new THREE.WebGLRenderer();
 	this.canvas = document.createElement("canvas");
 	this.ctx = this.canvas.getContext("2d");
 
@@ -45,7 +45,7 @@ function Game(){
 Game.prototype.load = function(levelName) {
 	var _this = this;
 	var levelScript = document.createElement("script");
-	levelScript.src = this.LEVELSPATH + levelName;
+	levelScript.src = this.levelsPath + levelName + ".js";
 	levelScript.addEventListener( "load", function(){
 		_this.levelLoad();
 	}, true )
