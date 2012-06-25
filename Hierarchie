@@ -6,11 +6,14 @@ GAME
  - jukebox
  
  - eventhandler
-	- controls{}
-	- mouseControls{}
-	- mouse
+	- keyboardControls{} <= addKeyboardControl()
+	- mouseControls{} <= addMouseControl()
+	- mouse <= updateMouseXY()
 		- x
 		- y
+		- projected
+			- x
+			- y
 	- keyboardhandler()
 	- mousehandler()
 	- loop()

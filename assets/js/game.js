@@ -1,12 +1,15 @@
 function Game(){
 	var _this = this;
-	this.levelsPath = "./assets/levels/";
+	this.LEVELSPATH = "./assets/levels/";
 
 	// zavede některé důležité objekty
-	this.eventhandler = new Eventhandler();
+	this.eventhandler = new Eventhandler( this );
 	this.eventhandler.addKeyboardControl(32, false, function(){
 		_this.load("test.js");
 	} )
+	this.eventhandler.addMouseControl(1,function(){
+		console.log([_this.eventhandler.mouse.projected.x, _this.eventhandler.mouse.projected.y, _this.eventhandler.mouse.projected.z])
+	})
 	// TODO: až budou, tak odkomentovat :)
 	// this.textures = new Textures();
 	// this.jukebox = new Jukebox();
@@ -22,7 +25,7 @@ function Game(){
 	// Scéna s objekty
 	this.scene = new THREE.Scene();
 	// Jediná kamera ve hře (I HOPE SO)
-	this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+	this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
     this.camera.position.z = 1000;
     this.scene.add( this.camera );
 
@@ -42,7 +45,7 @@ function Game(){
 Game.prototype.load = function(levelName) {
 	var _this = this;
 	var levelScript = document.createElement("script");
-	levelScript.src = this.levelsPath + levelName;
+	levelScript.src = this.LEVELSPATH + levelName;
 	levelScript.addEventListener( "load", function(){
 		_this.levelLoad();
 	}, true )
@@ -50,6 +53,10 @@ Game.prototype.load = function(levelName) {
 };
 
 Game.prototype.levelLoad = function() {
+	this.scene = new THREE.Scene();
+	this.scene.add( this.camera );
+
+	this.objects = level.objects;
 	for(var i in level.objects){
 		this.scene.add(level.objects[i]);
 	}
@@ -72,7 +79,8 @@ Game.prototype.render = function() {
 	requestAnimationFrame( function(){
 		_this.render();
 	} );
-
+	if(this.objects)
+	this.objects[0].position.set(this.eventhandler.mouse.projected.x, this.eventhandler.mouse.projected.y, 0)
 	this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
 	this.webgl.render( this.scene, this.camera );
 	stats.end();
