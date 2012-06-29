@@ -13,7 +13,7 @@ function Game(){
 	// TODO: až budou, tak odkomentovat :)
 	// this.textures = new Textures();
 	// this.jukebox = new Jukebox();
-	// this.models = new Models();
+	 this.models = new Models();
 	// this.gui = new GUI();
 	// this.progress = new Progress();
 	// this.statistics = new Statistics();
@@ -21,13 +21,11 @@ function Game(){
 	// WUT objekty, které nevím jestli loadnu tady nebo jinde
 	// this.quests = new Quests();
 	// this.dialogs = new Dialogs();
-
-	// Scéna s objekty
-	this.scene = new THREE.Scene();
-	// Jediná kamera ve hře (I HOPE SO)
+	
 	this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
 	this.camera.position.z = 1000;
-	this.scene.add( this.camera );
+	this.scene = new THREE.Scene();
+	this.scene.add(this.camera);
 
 	// připraví jednotlivé canvasy
 	this.webgl = new THREE.WebGLRenderer();
@@ -45,21 +43,19 @@ function Game(){
 Game.prototype.load = function(levelName) {
 	var _this = this;
 	var levelScript = document.createElement("script");
-	levelScript.src = this.levelsPath + levelName + ".js";
+	levelScript.src = this.LEVELSPATH + levelName + ".js";
 	levelScript.addEventListener( "load", function(){
-		_this.levelLoad();
+		_this.levelLoad(level);
 	}, true )
 	document.body.appendChild(levelScript)
 };
 
-Game.prototype.levelLoad = function() {
+Game.prototype.levelLoad = function(level) {
 	this.scene = new THREE.Scene();
+	this.camera = level.camera;
 	this.scene.add( this.camera );
-
-	this.objects = level.objects;
-	for(var i in level.objects){
-		this.scene.add(level.objects[i]);
-	}
+	
+	this.models.loadModels(level);
 };
 
 Game.prototype.init = function() {
@@ -96,6 +92,8 @@ Game.prototype.resizeCanvas = function() {
 	// WebGL canvas
 	this.webgl.setSize( w, h );
 	// Aby se nezkosil obraz
-	this.camera.aspect = w/h;
-	this.camera.updateProjectionMatrix();
+	if(this.camera){
+		this.camera.aspect = w/h;
+		this.camera.updateProjectionMatrix();
+	}
 };

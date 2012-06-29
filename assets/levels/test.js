@@ -1,26 +1,39 @@
 function Level(){
 	this.objects = [];
+	this.sum = 1;
 	this.loader = new THREE.JSONLoader();
 	_this=this;
-
-<<<<<<< HEAD
-	geometry = new THREE.CubeGeometry( 10, 10, 10 );
-	material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
-	mesh = new THREE.Mesh( geometry, material );
-=======
+	
+	this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
+	this.camera.position.z = 1000;
+	
 	_geometry = new THREE.CubeGeometry( 200, 200, 200 );
 	_material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
-	_mesh = new THREE.Mesh( _geometry, _material );
->>>>>>> 8647bfe422ded239a938fb7e336795bc95b9d5e0
+	kostka = new THREE.Mesh( _geometry, _material );
+	this.objects.push( kostka );
 	
-	this.loader.load("./assets/models/stul-rozb.js", function ( geometry ) {
-			material = new THREE.MeshFaceMaterial();
-			mesh = new THREE.Mesh(geometry,material);
-			mesh.position.set(0,0,0);
-			_this.objects.push(mesh);
-		}
-	);
+	this.addObject("./assets/models/stul-rozb.js");
+		
+	/*this.addObject("./assets/models/velky-model.js", {
+		scale:{x:100,y:100,z:100},
+		rotation:{x:0,y:Math.PI/4,z:0},
+		position:{x:50,y:50,z:0}
+	});*/
 	
-	this.objects.push( _mesh );
+	
 }
+Level.prototype.addObject = function (src, pole){
+	this.loader.load(src, function (geometry) {
+		var material = new THREE.MeshFaceMaterial();
+		var mesh = new THREE.Mesh(geometry,material);
+		if(pole !== undefined){
+			pole.scale !== undefined ? mesh.scale.set(pole.scale.x,pole.scale.y,pole.scale.z) : mesh.scale.set(1,1,1);
+			pole.rotation !== undefined ? mesh.rotation.set(pole.rotation.x,pole.rotation.y,pole.rotation.z) : mesh.rotation.set(0,0,0);
+			pole.position !== undefined ? mesh.position.set(pole.position.x,pole.position.y,pole.position.z) : mesh.position.set(0,0,0);
+		}
+		_this.objects.push(mesh);
+	}
+	);
+	this.sum++;
+};
 var level = new Level();

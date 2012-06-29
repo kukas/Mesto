@@ -10,7 +10,7 @@ function Environment(width, height, image, stretch){
 	if( !stretch ){
 		texture.wrapS = THREE.RepeatWrapping;
 		texture.wrapT = THREE.RepeatWrapping;
-		texture.repeat.x = 5000/;
+		texture.repeat.x = 5000/image.width;
 		texture.repeat.y = 20;
 	}
 		
