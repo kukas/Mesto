@@ -1,0 +1,1 @@
+chromium --disable-web-security --allow-file-access-from-files index.html

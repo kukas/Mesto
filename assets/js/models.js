@@ -1,30 +1,24 @@
 function Models(){
-	this.textures = [];
-	_this=this;
+	this.texturepath = "assets/textures";
+
+	this.modelsSrc = {};
+	this.models = {};
+	this.loader = new THREE.JSONLoader();
 };
-Models.prototype.count = function (){
-	var v =0;
-	for(i in this.objects){
-		v++;
-	};
-	return v;
-};
-Models.prototype.loadModels = function (level){
-	if(level.sum == level.objects.length){
-		for(i in level.objects){
-			game.scene.add(level.objects[i]);
-		};
-	}
-	else{
-		loadloop = window.setInterval( function () {
-			if(level.sum == level.objects.length){
-				for(i in level.objects){
-					game.scene.add(level.objects[i]);
-				};
-				window.clearInterval(loadloop);
-			}
-			console.log("int");
-			}, 10
-		);
+
+Models.prototype.loadModels = function(modelsSrc, callback) {
+	var _this = this;
+	this.modelsSrc = modelsSrc;
+
+	this.modelsToLoad = Object.keys(this.modelsSrc).length;
+	for(var i in this.modelsSrc){
+		(function(name, callback){
+			_this.loader.load(_this.modelsSrc[i], function(geometry){
+				_this.models[name] = geometry;
+				if( --_this.modelsToLoad <= 0 ){
+					callback();
+				}
+			}, _this.texturepath);
+		})(i, callback)
 	}
 };

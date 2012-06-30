@@ -1,19 +1,20 @@
 function Game(){
 	var _this = this;
-	this.LEVELSPATH = "./assets/levels/";
+	this.levelspath = "./assets/levels/";
 
 	// zavede některé důležité objekty
 	this.eventhandler = new Eventhandler( this );
 	this.eventhandler.addKeyboardControl(32, false, function(){
 		_this.load("test");
-	} )
-	this.eventhandler.addMouseControl(1,function(){
-		console.log([_this.eventhandler.mouse.projected.x, _this.eventhandler.mouse.projected.y, _this.eventhandler.mouse.projected.z])
-	})
+	} );
+	this.eventhandler.addMouseControl(0,function(){
+		_this.camera.position.x = _this.eventhandler.mouse.projected.x/10;
+		_this.camera.position.y = _this.eventhandler.mouse.projected.y/10;
+	});
 	// TODO: až budou, tak odkomentovat :)
-	// this.textures = new Textures();
+	this.textures = new Textures();
 	// this.jukebox = new Jukebox();
-	 this.models = new Models();
+	this.models = new Models();
 	// this.gui = new GUI();
 	// this.progress = new Progress();
 	// this.statistics = new Statistics();
@@ -42,8 +43,9 @@ function Game(){
 }
 Game.prototype.load = function(levelName) {
 	var _this = this;
+
 	var levelScript = document.createElement("script");
-	levelScript.src = this.LEVELSPATH + levelName + ".js";
+	levelScript.src = this.levelspath + levelName + ".js";
 	levelScript.addEventListener( "load", function(){
 		_this.levelLoad(level);
 	}, true )
@@ -51,11 +53,28 @@ Game.prototype.load = function(levelName) {
 };
 
 Game.prototype.levelLoad = function(level) {
+	var _this = this;
+
+	this.level = level;
 	this.scene = new THREE.Scene();
 	this.camera = level.camera;
 	this.scene.add( this.camera );
 	
-	this.models.loadModels(level);
+	this.models.loadModels( level.models, function(){
+		_this.level.models = _this.models.models;
+		_this.textures.loadTextures( level.textures, function(){
+			_this.level.textures = _this.textures.textures;
+			_this.level.afterLoad();
+			_this.objectsAdd();
+		} )
+	} );
+};
+
+Game.prototype.objectsAdd = function() {
+	this.objects = this.level.objects;
+	for(var i in this.objects){
+		this.scene.add(this.objects[i].mesh);
+	}
 };
 
 Game.prototype.init = function() {
@@ -65,6 +84,8 @@ Game.prototype.init = function() {
 	// přidá je do stránky
 	document.body.appendChild( this.webgl.domElement );
 	document.body.appendChild( this.canvas );
+	// abychom pořád neklikali mezerník :)
+	this.load("test");
 	// spustí render smyčku
 	this.render();
 };
@@ -76,7 +97,6 @@ Game.prototype.render = function() {
 		_this.render();
 	} );
 	if(this.objects)
-	this.objects[0].position.set(this.eventhandler.mouse.projected.x, this.eventhandler.mouse.projected.y, 0)
 	this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
 	this.webgl.render( this.scene, this.camera );
 	stats.end();

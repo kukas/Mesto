@@ -1,21 +1,18 @@
-function Environment(width, height, image, stretch){
-	this.geometry = new THREE.PlaneGeometry( 200, 200 );
-    this.material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
+function Environment(texture, x, y, z, width, height, stretch){
+	this.geometry = new THREE.PlaneGeometry( width, height, 3, 3 );
 
-    this.mesh = new THREE.Mesh( geometry, material );
-
-    // pozadi
-		geometry = new THREE.PlaneGeometry( 5000, 5000 );
-		texture = THREE.ImageUtils.loadTexture( image )
 	if( !stretch ){
 		texture.wrapS = THREE.RepeatWrapping;
 		texture.wrapT = THREE.RepeatWrapping;
-		texture.repeat.x = 5000/image.width;
-		texture.repeat.y = 20;
+		// TODO
+		texture.repeat.x = width/texture.image.width;
+		texture.repeat.y = height/texture.image.height;
 	}
-		
-		material = new THREE.MeshBasicMaterial( { map:pozadiTexture } );
 
-		pozadi = new THREE.Mesh( geometry, material );
-		pozadi.position.z = -100
+	this.material = new THREE.MeshBasicMaterial( { map: texture } );
+
+    this.mesh = new THREE.Mesh( this.geometry, this.material );
+    this.mesh.position.set(x, y, z);
+    this.mesh.rotation.x = Math.PI/2;
+    console.log(this.mesh);
 }

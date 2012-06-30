@@ -76,7 +76,7 @@ Eventhandler.prototype.mousehandler = function(e) {
 			this.mouseControls[ which ][ type ]( type )
 		}
 		else if( (which == 0 && this.mouseControls[ which ]) || (this.mouseControls[ which ].down == false && type == "mousemove") ){
-			this.mouseControls[ 0 ]();
+			this.mouseControls[ 0 ].mousedown();
 		}
 	}
 	// else{
