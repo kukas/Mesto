@@ -1,8 +1,29 @@
 HIERARCHIE OBJEKTŮ V MĚSTĚ
 
+Herní objekty:
+ - SolidObject
+ 	# jakýkoli objekt, který koliduje s hráčem
+ 	- mesh
+ 	- geometry
+ 	- material
+ - Environment
+	# jakýkoli 2D objekt, který nekoliduje s hráčem (takže podlaha, atmosferické trubky, "cubemap" pod podlahou, atd...)
+ 	- mesh
+ 	- geometry
+ 	- material
+
+
 GAME
  - textures
+ 	- textures
+ 		- název textury: THREE.Texture
+ 	- loadTextures
+ 		# loadne textury
  - models
+ 	- models
+ 		- název modelu: THREE.Geometry
+ 	- loadModels
+ 		# loadne modely
  - jukebox
  
  - eventhandler
