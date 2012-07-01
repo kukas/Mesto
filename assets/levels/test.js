@@ -11,6 +11,7 @@ function Level(){
 
 	this.models = {
 		lamp: this.modelpath+"lamp/untitled.js",
+		kostka: this.modelpath+"anim.js",
 	};
 	// důležité: pro některé funkce musí mít textury rozměry power of two, tedy 2,4,8,16,32,64, ...
 	this.textures = {
@@ -21,6 +22,7 @@ Level.prototype = new Loader();
 
 Level.prototype.afterLoad = function (){
 	this.objects.push( new SolidObject(this.models.lamp, 0, 0) );
+	this.objects.push( new SolidObject(this.models.kostka, 100, 100, 25) );
 	this.objects.push( new Environment(this.textures.steel, 0, 0, 0, 2400, 1200, false) );
 };
 

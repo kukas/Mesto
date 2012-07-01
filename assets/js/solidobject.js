@@ -1,5 +1,5 @@
-function SolidObject(model, x, y){
-	this.geometry = model;
+function SolidObject(model, x, y, interpolace){
+    this.geometry = model;
     this.material = new THREE.MeshFaceMaterial();
 
     // bounding box pro debugging
@@ -19,4 +19,23 @@ function SolidObject(model, x, y){
 
     // takhle se dají přidávat child objekty v three.js
     this.mesh.add( bounding_mesh );
+    
+    if( interpolace !== undefined ){
+	this.animated = true;
+	this.geometry.materials[0].morphTargets = true;
+	// přídání času vytvoření, vhodné pro animace, dále také začáteční a konečný frame, součný keyframe
+	// a celková délka animace
+	this.creationTime = new Date().getTime();
+	this.borderFrames = [1,40];
+	this.keyframe = 0;
+	this.animLength = interpolace*(this.borderFrames[1]-this.borderFrames[0]+1);
+	this.interpolation = interpolace;
+    }
+    this.getPoradi = function (){
+	    for(i in game.scene.__objects){
+		if(this.mesh.id == game.scene.__objects[i].id){
+			return i;
+		}    
+	    }
+};
 }
