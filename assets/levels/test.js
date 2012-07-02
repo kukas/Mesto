@@ -29,10 +29,11 @@ Level.prototype.afterLoad = function (){
 		var monster = new SolidObject(this.models.monster, 1000*Math.random()-500, 1000*Math.random()-500, {
 			scale: new THREE.Vector3(0.1,0.1,0.1),
 			interpolace: 50,
+			startingAnim: "walking",
 			modelAnimations: {
 		        // štěpán chce animovat i stání, good luck
 		        standing: [1,1],
-		        rotace: [1,23]
+		        walking: [1,23]
 		    }
 		})
 		this.objects.push( monster );
