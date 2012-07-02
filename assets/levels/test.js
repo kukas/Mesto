@@ -39,6 +39,16 @@ Level.prototype.afterLoad = function (){
 		this.objects.push( monster );
 
 	}
+	
+	this.objects.push( new SolidObject(this.models.kostka, 100,100, {
+		scale: new THREE.Vector3(100,100,100),
+		interpolace:50,
+		startingAnim:"rotace",
+		modelAnimations:{
+			rotace:[1,20],
+			translace:[20,50],
+			}
+		}));
 	this.objects.push( new Environment(this.textures.steel, 0, 0, 0, 2400, 1200, false) );
 
 	// todo: udělat to obecný a hezký -> světlo = lampa
