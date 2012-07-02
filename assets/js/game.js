@@ -7,6 +7,12 @@ function Game(){
 	this.eventhandler.addKeyboardControl(32, false, function(){
 		_this.load("test");
 	} );
+	this.eventhandler.addKeyboardControl(82, false, false, function(){
+		_this.camera.position.z += 10;
+	} );
+	this.eventhandler.addKeyboardControl(70, false, false, function(){
+		_this.camera.position.z -= 10;
+	} );
 	this.eventhandler.addMouseControl(0,function(){
 		_this.camera.position.x = _this.eventhandler.mouse.projected.x/10;
 		_this.camera.position.y = _this.eventhandler.mouse.projected.y/10;
@@ -25,11 +31,16 @@ function Game(){
 	
 	this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
 	this.camera.position.z = 1000;
+
+	var light = new THREE.PointLight(0xFFFFFF, 100);
+	light.position.z = 10;
+
 	this.scene = new THREE.Scene();
 	this.scene.add(this.camera);
+	this.scene.add(light);
 
 	// připraví jednotlivé canvasy
-	this.webgl = new THREE.WebGLRenderer();
+	this.webgl = new THREE.WebGLRenderer( { clearColor:0x111111, clearAlpha:1 } );
 	this.canvas = document.createElement("canvas");
 	this.ctx = this.canvas.getContext("2d");
 
@@ -96,18 +107,22 @@ Game.prototype.render = function() {
 	requestAnimationFrame( function(){
 		_this.render();
 	} );
-	if(this.objects)
+	this.tick();
 	this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
-	this.animate();
 	this.webgl.render( this.scene, this.camera );
 	stats.end();
+};
+
+Game.prototype.tick = function() {
+	this.animate();
+	this.eventhandler.loop();
 };
 
 Game.prototype.animate = function (){
 	var time = new Date().getTime();
 	if(this.objects !== undefined){
 		for(var i in this.objects){
-			if(this.objects[i].animated === true ){
+			if(this.objects[i].animated){
 				var faze = (time-this.objects[i].creationTime) % this.objects[i].animLength;
 				var frame = Math.floor(faze/this.objects[i].interpolation);
 				if(frame != this.objects[i].keyframe){

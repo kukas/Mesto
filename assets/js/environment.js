@@ -1,5 +1,5 @@
 function Environment(texture, x, y, z, width, height, stretch){
-	this.geometry = new THREE.PlaneGeometry( width, height, 3, 3 );
+	this.geometry = new THREE.PlaneGeometry( width, height, 1, 1 );
 
 	if( !stretch ){
 		texture.wrapS = THREE.RepeatWrapping;
@@ -9,7 +9,7 @@ function Environment(texture, x, y, z, width, height, stretch){
 		texture.repeat.y = height/texture.image.height;
 	}
 
-	this.material = new THREE.MeshBasicMaterial( { map: texture } );
+	this.material = new THREE.MeshPhongMaterial( { map: texture } );
 
     this.mesh = new THREE.Mesh( this.geometry, this.material );
     this.mesh.position.set(x, y, z);

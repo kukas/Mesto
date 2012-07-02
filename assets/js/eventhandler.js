@@ -95,12 +95,12 @@ Eventhandler.prototype.updateMouseXY = function(x,y) {
 	this.mouse.projected.z = vector.z;
 };
 Eventhandler.prototype.loop = function() {
-	for(k in this.keyboardControls){
+	for(var k in this.keyboardControls){
 		if( this.keyboardControls[ k ].down && this.keyboardControls[ k ].continuous ){
 			this.keyboardControls[ k ].continuous();
 		}
 	}
-	for(m in this.mouseControls){
+	for(var m in this.mouseControls){
 		if( this.mouseControls[ m ].down && this.mouseControls[ m ].continuous ){
 			this.mouseControls[ m ].continuous();
 		}
