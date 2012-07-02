@@ -22,9 +22,7 @@ function Level(){
 Level.prototype = new Loader();
 
 Level.prototype.afterLoad = function (){
-	this.objects.push( new SolidObject(this.models.lamp, 0, 0, {
-		scale: new THREE.Vector3(100,100,100),
-	}) );
+	
 	for(var i=2;i--;){
 		var monster = new SolidObject(this.models.monster, 1000*Math.random()-500, 1000*Math.random()-500, {
 			scale: new THREE.Vector3(0.1,0.1,0.1),
@@ -40,7 +38,7 @@ Level.prototype.afterLoad = function (){
 
 	}
 	
-	this.objects.push( new SolidObject(this.models.kostka, 100,100, {
+	/*this.objects.push( new SolidObject(this.models.kostka, 100,100, {
 		scale: new THREE.Vector3(100,100,100),
 		interpolace:50,
 		startingAnim:"rotace",
@@ -48,7 +46,7 @@ Level.prototype.afterLoad = function (){
 			rotace:[1,20],
 			translace:[20,50],
 			}
-		}));
+		}));*/
 	this.objects.push( new Environment(this.textures.steel, 0, 0, 0, 2400, 1200, false) );
 
 	// todo: udělat to obecný a hezký -> světlo = lampa
@@ -56,7 +54,17 @@ Level.prototype.afterLoad = function (){
 	light.position.z = 10
 	light.position.x = 100
 	
-	this.objects.push( {mesh: light});
+	this.objects.push({mesh: light});
+	/*this.objects.push( new Lamp(this.models.lamp, 0,0, {
+			scale: new THREE.Vector3(100,100,100),
+			light:{
+				on:true,
+				color:0xffffff,
+				position: new THREE.Vector3(10,0,10),
+				intensity:10,
+			}
+		}
+		));*/
 };
 
 var level = new Level();
