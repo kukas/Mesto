@@ -1,1 +1,1 @@
-C:\Users\Admin\AppData\Local\Google\Chrome\Application\chrome.exe --disable-web-security --allow-file-access-from-files C:\Users\Admin\Documents\GitHub\Mesto\index.html
+%APPDATA%\..\Local\Google\Chrome\Application\chrome.exe --disable-web-security --allow-file-access-from-files %CD%\index.html
