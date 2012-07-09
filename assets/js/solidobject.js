@@ -21,7 +21,15 @@ function SolidObject(model, x, y, options){
 
     // takhle se dají přidávat child objekty v three.js
     this.mesh.add( bounding_mesh );
-
+    
+    this.getEditMesh = function (){
+            for(i in game.scene.__objects){
+        	if(this.mesh.id == game.scene.__objects[i].id){
+        		return game.scene.__objects[i];
+        	}    
+        }
+        };
+	
     if( this.options.interpolace !== undefined ){
 
         this.modelAnimations = options.modelAnimations;
@@ -31,18 +39,20 @@ function SolidObject(model, x, y, options){
         this.geometry.materials[0].morphTargets = true;
         // přídání času vytvoření, vhodné pro animace, dále také začáteční a konečný frame, součný keyframe
         // a celková délka animace
-        this.creationTime = new Date().getTime();
-        // todo přesunout dso adsjflfjdsa
-        this.borderFrames = [1,22];
-        this.keyframe = 0;
-        this.animLength = this.options.interpolace*(this.borderFrames[1]-this.borderFrames[0]+1);
-        this.interpolation = this.options.interpolace;
+	this.interpolation = this.options.interpolace;
+	//metoda pro přepínání mezi animacemi
+	this.toogleAnim = function ( animID ){
+		if(this.modelAnimations[animID] !== undefined){
+			if(this.keyframe !== undefined) this.getEditMesh().morphTargetInfluences[this.keyframe] = 0; //Musí se zrušit ovlivňování stavů z minulích animací
+			this.creationTime = new Date().getTime(); //Aby animace začala od začátku
+			this.borderFrames = [options.modelAnimations[animID][0],options.modelAnimations[animID][1]];
+			this.keyframe = this.borderFrames[0]-1;
+			this.animLength = this.interpolation*(this.borderFrames[1]-this.borderFrames[0]+1);
+		}
+		else{
+			console.log("No animation with ID " + animID + " for this model");
+		}
+	};
+        this.toogleAnim(this.options.startingAnim); //startingAnim je nová vlastnost objektu options
         }
-        this.getPoradi = function (){
-            for(i in game.scene.__objects){
-        	if(this.mesh.id == game.scene.__objects[i].id){
-        		return i;
-        	}    
-        }
-        };
 }
