@@ -23,14 +23,6 @@ function SolidObject(model, x, y, options){
 
     // takhle se dají přidávat child objekty v three.js
     this.mesh.add( bounding_mesh );
-    
-    this.getEditMesh = function (){
-            for(i in game.scene.__objects){
-        	if(this.mesh.id == game.scene.__objects[i].id){
-        		return game.scene.__objects[i];
-        	}    
-        }
-        };
 	
     if( this.options.interpolace !== undefined ){
 
@@ -45,7 +37,7 @@ function SolidObject(model, x, y, options){
 	//metoda pro přepínání mezi animacemi
 	this.toogleAnim = function ( animID ){
 		if(this.modelAnimations[animID] !== undefined){
-			if(this.keyframe !== undefined) this.getEditMesh().morphTargetInfluences[this.keyframe] = 0; //Musí se zrušit ovlivňování stavů z minulích animací
+			if(this.keyframe !== undefined) this.mesh.morphTargetInfluences[this.keyframe] = 0; //Musí se zrušit ovlivňování stavů z minulích animací
 			this.creationTime = new Date().getTime(); //Aby animace začala od začátku
 			this.borderFrames = [options.modelAnimations[animID][0],options.modelAnimations[animID][1]];
 			this.keyframe = this.borderFrames[0]-1;
