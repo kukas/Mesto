@@ -32,12 +32,8 @@ function Game(){
 	this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
 	this.camera.position.z = 1000;
 
-	var light = new THREE.PointLight(0xFFFFFF, 100);
-	light.position.z = 10;
-
 	this.scene = new THREE.Scene();
 	this.scene.add(this.camera);
-	this.scene.add(light);
 
 	// připraví jednotlivé canvasy
 	this.webgl = new THREE.WebGLRenderer( { clearColor:0x111111, clearAlpha:1 } );
@@ -84,7 +80,8 @@ Game.prototype.levelLoad = function(level) {
 Game.prototype.objectsAdd = function() {
 	this.objects = this.level.objects;
 	for(var i in this.objects){
-		this.scene.add(this.objects[i].mesh);
+		this.objects[i].mesh !== undefined ? this.scene.add(this.objects[i].mesh) : false;
+		this.objects[i].light !== undefined ? this.scene.add(this.objects[i].light) : false;
 	}
 };
 

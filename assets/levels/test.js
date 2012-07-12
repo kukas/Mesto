@@ -48,23 +48,51 @@ Level.prototype.afterLoad = function (){
 			}
 		}));*/
 	this.objects.push( new Environment(this.textures.steel, 0, 0, 0, 2400, 1200, false) );
-
-	// todo: udělat to obecný a hezký -> světlo = lampa
-	var light = new THREE.PointLight("0xFFFFFF", 10);
-	light.position.z = 10
-	light.position.x = 100
 	
-	this.objects.push({mesh: light});
-	/*this.objects.push( new Lamp(this.models.lamp, 0,0, {
+	// todo: udělat to obecný a hezký -> světlo = lampa
+	this.objects.push( new Lamp(this.models.lamp, {
 			scale: new THREE.Vector3(100,100,100),
+			position: new THREE.Vector3(-90,0,-100),
 			light:{
-				on:true,
 				color:0xffffff,
-				position: new THREE.Vector3(10,0,10),
-				intensity:10,
+				position: new THREE.Vector3(0,0,100),
+				intensity:2,
 			}
 		}
-		));*/
+		));
+	
+	this.objects.push( new Lamp(this.models.lamp, {
+			scale: new THREE.Vector3(100,100,100),
+			position: new THREE.Vector3(-90,0,-100),
+			light:{
+				color:0xffffff,
+				position: new THREE.Vector3(1000,200,100),
+				intensity:2,
+			}
+		}
+		));
+	
+	this.objects.push( new Lamp(this.models.lamp, {
+			scale: new THREE.Vector3(100,100,100),
+			position: new THREE.Vector3(-90,0,-100),
+			light:{
+				color:0xffffff,
+				position: new THREE.Vector3(-1000,200,100),
+				intensity:2,
+			}
+		}
+		));
+	
+	this.objects.push( new Lamp(this.models.lamp, {
+			scale: new THREE.Vector3(100,100,100),
+			position: new THREE.Vector3(-90,0,-100),
+			light:{
+				color:0xffffff,
+				position: new THREE.Vector3(1000,-500,100),
+				intensity:2,
+			}
+		}
+		));	
 };
 
 var level = new Level();

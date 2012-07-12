@@ -18,6 +18,8 @@ function SolidObject(model, x, y, options){
     if( this.options.scale !== undefined )
         this.mesh.scale = this.options.scale;
     this.mesh.rotation.x = Math.PI/2;
+    if( this.options.position !== undefined )
+	this.mesh.position = this.options.position;
 
     // takhle se dají přidávat child objekty v three.js
     this.mesh.add( bounding_mesh );
