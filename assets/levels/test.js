@@ -18,20 +18,23 @@ function Level(){
 	this.textures = {
 		steel: this.texturepath+"Steel_Texture2.jpg",
 	};
+
+	this.sounds = {
+		solarFields: this.musicpath+"Circles_Of_Motion.mp3",
+	}
 }
 Level.prototype = new Loader();
 
 Level.prototype.afterLoad = function (){
-	
 	for(var i=2;i--;){
 		var monster = new SolidObject(this.models.monster, 1000*Math.random()-500, 1000*Math.random()-500, {
 			scale: new THREE.Vector3(0.1,0.1,0.1),
 			interpolace: 50,
 			startingAnim: "walking",
 			modelAnimations: {
-		        // štěpán chce animovat i stání, good luck
-		        standing: [1,1],
-		        walking: [1,23]
+				// štěpán chce animovat i stání, good luck
+				standing: [1,1],
+				walking: [1,23]
 		    }
 		})
 		this.objects.push( monster );
@@ -93,6 +96,9 @@ Level.prototype.afterLoad = function (){
 			}
 		}
 		));	
+
+	// spustí hudbu
+	this.sounds.solarFields.play();
 };
 
 var level = new Level();

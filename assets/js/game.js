@@ -19,7 +19,7 @@ function Game(){
 	});
 	// TODO: až budou, tak odkomentovat :)
 	this.textures = new Textures();
-	// this.jukebox = new Jukebox();
+	this.jukebox = new Jukebox();
 	this.models = new Models();
 	// this.gui = new GUI();
 	// this.progress = new Progress();
@@ -69,10 +69,16 @@ Game.prototype.levelLoad = function(level) {
 	
 	this.models.loadModels( level.models, function(){
 		_this.level.models = _this.models.models;
+
 		_this.textures.loadTextures( level.textures, function(){
 			_this.level.textures = _this.textures.textures;
-			_this.level.afterLoad();
-			_this.objectsAdd();
+
+			_this.jukebox.loadSounds( level.sounds, function(){
+				_this.level.sounds = _this.jukebox.sounds;
+
+				_this.level.afterLoad();
+				_this.objectsAdd();
+			} )
 		} )
 	} );
 };
