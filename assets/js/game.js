@@ -87,7 +87,6 @@ Game.prototype.objectsAdd = function() {
 	this.objects = this.level.objects;
 	for(var i in this.objects){
 		this.objects[i].mesh !== undefined ? this.scene.add(this.objects[i].mesh) : false;
-		this.objects[i].light !== undefined ? this.scene.add(this.objects[i].light) : false;
 	}
 };
 
@@ -117,27 +116,11 @@ Game.prototype.render = function() {
 };
 
 Game.prototype.tick = function() {
-	this.animate();
 	this.eventhandler.loop();
+	for(var i in this.objects){
+		this.objects[i].tick();
+	}
 };
-
-Game.prototype.animate = function (){
-	var time = new Date().getTime();
-	if(this.objects !== undefined){
-		for(var i in this.objects){
-			if(this.objects[i].animated){
-				var faze = (time-this.objects[i].creationTime) % this.objects[i].animLength;
-				var frame = Math.floor(faze/this.objects[i].interpolation) + this.objects[i].borderFrames[0]-1;
-				if(frame != this.objects[i].keyframe){
-					this.objects[i].mesh.morphTargetInfluences[this.objects[i].keyframe] = 0;
-					this.objects[i].mesh.morphTargetInfluences[frame] = 1;
-					this.objects[i].keyframe = frame;
-				}
-			}
-		};
-		}
-	};
-	
 
 // funkce volaná při změně velikosti okna
 Game.prototype.resizeCanvas = function() {
