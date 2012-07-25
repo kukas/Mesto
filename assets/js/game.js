@@ -21,7 +21,7 @@ function Game(){
 	this.textures = new Textures();
 	this.jukebox = new Jukebox();
 	this.models = new Models();
-	// this.gui = new GUI();
+	this.gui = new GUI();
 	// this.progress = new Progress();
 	// this.statistics = new Statistics();
 
@@ -40,6 +40,7 @@ function Game(){
 	this.canvas = document.createElement("canvas");
 	this.ctx = this.canvas.getContext("2d");
 
+	this.objects = [];
 
 	// pokud se změní velikost okna prohlížeče, změní velikost canvasů
 	window.addEventListener( "resize", function(){
@@ -98,7 +99,8 @@ Game.prototype.init = function() {
 	document.body.appendChild( this.webgl.domElement );
 	document.body.appendChild( this.canvas );
 	// abychom pořád neklikali mezerník :)
-	this.load("test");
+	//this.load("test");
+	this.gui.menu("mainM").load();
 	// spustí render smyčku
 	this.render();
 };
@@ -109,9 +111,10 @@ Game.prototype.render = function() {
 	requestAnimationFrame( function(){
 		_this.render();
 	} );
-	this.tick();
-	this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
+	this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
 	this.webgl.render( this.scene, this.camera );
+	this.tick();
+	
 	stats.end();
 };
 
