@@ -10,6 +10,6 @@ function Thing( model, options ){
 
 Thing.prototype = new SolidObject();
 
-SolidObject.prototype.tick = function() {
+Thing.prototype.tick = function() {
 	this.animate();
 };

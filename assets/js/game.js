@@ -13,9 +13,38 @@ function Game(){
 	this.eventhandler.addKeyboardControl(70, false, false, function(){
 		_this.camera.position.z -= 10;
 	} );
+	// ovládání monstera
+	this.eventhandler.addKeyboardControl(87, false, function(){
+		_this.objects.monster.toggleAnim("standing");
+	}, function(){ // W
+		_this.objects.monster.toggleAnim("walking");
+		_this.objects.monster.move(Math.PI/2);
+		_this.camera.follow(_this.objects.monster.mesh);
+	} );
+	this.eventhandler.addKeyboardControl(83, false, function(){
+		_this.objects.monster.toggleAnim("standing");
+	}, function(){ // S
+		_this.objects.monster.toggleAnim("walking");
+		_this.objects.monster.move(-Math.PI/2);
+		_this.camera.follow(_this.objects.monster.mesh);
+	} );
+	this.eventhandler.addKeyboardControl(65, false, function(){
+		_this.objects.monster.toggleAnim("standing");
+	}, function(){ // A
+		_this.objects.monster.toggleAnim("walking");
+		_this.objects.monster.rotate(0.05);
+	} );
+	this.eventhandler.addKeyboardControl(68, false, function(){
+		_this.objects.monster.toggleAnim("standing");
+	}, function(){ // D
+		_this.objects.monster.toggleAnim("walking");
+		_this.objects.monster.rotate(-0.05);
+	} );
+
+
 	this.eventhandler.addMouseControl(0,function(){
-		_this.camera.position.x = _this.eventhandler.mouse.projected.x/10;
-		_this.camera.position.y = _this.eventhandler.mouse.projected.y/10;
+		// _this.camera.position.x = _this.eventhandler.mouse.projected.x/10;
+		// _this.camera.position.y = _this.eventhandler.mouse.projected.y/10;
 	});
 	// TODO: až budou, tak odkomentovat :)
 	this.textures = new Textures();
@@ -30,7 +59,6 @@ function Game(){
 	// this.dialogs = new Dialogs();
 	
 	this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
-	this.camera.position.z = 1000;
 
 	this.scene = new THREE.Scene();
 	this.scene.add(this.camera);
@@ -67,15 +95,21 @@ Game.prototype.levelLoad = function(level) {
 	this.scene = new THREE.Scene();
 	this.camera = level.camera;
 	this.scene.add( this.camera );
+
+	// jen takový malý návrh:
+	// this.gui.activate("loader")
 	
 	this.models.loadModels( level.models, function(){
 		_this.level.models = _this.models.models;
+		// this.gui.loader.setProgress(33) // procenta
 
 		_this.textures.loadTextures( level.textures, function(){
 			_this.level.textures = _this.textures.textures;
+			// this.gui.loader.setProgress(66)
 
 			_this.jukebox.loadSounds( level.sounds, function(){
 				_this.level.sounds = _this.jukebox.sounds;
+				// this.gui.loader.setProgress(100)
 
 				_this.level.afterLoad();
 				_this.objectsAdd();
@@ -99,8 +133,8 @@ Game.prototype.init = function() {
 	document.body.appendChild( this.webgl.domElement );
 	document.body.appendChild( this.canvas );
 	// abychom pořád neklikali mezerník :)
-	//this.load("test");
-	this.gui.menu("mainM").load();
+	this.load("test");
+	// this.gui.menu("mainM").load();
 	// spustí render smyčku
 	this.render();
 };
@@ -139,4 +173,9 @@ Game.prototype.resizeCanvas = function() {
 		this.camera.aspect = w/h;
 		this.camera.updateProjectionMatrix();
 	}
+};
+
+THREE.Camera.prototype.follow = function(object) {
+	this.position.x = object.position.x;
+	this.position.y = object.position.y;
 };

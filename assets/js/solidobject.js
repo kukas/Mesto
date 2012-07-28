@@ -51,38 +51,38 @@ SolidObject.prototype.initAnimation = function() {
 	if( this.options.animation !== undefined ){
 		this.animation = this.options.animation;
 
-		this.modelAnimations = this.animation.modelAnimations;
 		// materiály se mění v závislosti na čase
 		this.geometry.materials[0].morphTargets = true;
-		// přídání času vytvoření, vhodné pro animace, dále také začáteční a konečný frame, součný keyframe
-		// a celková délka animace
-		this.interpolation = this.animation.interpolace;
 		
-		this.toggleAnim(this.animation.startingAnim);
+		this.toggleAnim(this.animation.startingAnimation);
 	}
 };
 
 SolidObject.prototype.animate = function (){
 	var time = new Date().getTime();
 	if(this.animation){
-		var faze = (time-this.creationTime) % this.animLength;
-		var frame = Math.floor(faze/this.interpolation) + this.borderFrames[0]-1;
-		if(frame != this.keyframe){
-			this.mesh.morphTargetInfluences[this.keyframe] = 0;
+		var faze = (time-this.animation.creationTime) % this.animation.animLength;
+		var frame = Math.floor(faze/this.animation.interpolation) + this.animation.borderFrames[0]-1;
+		if(frame != this.animation.keyframe){
+			this.mesh.morphTargetInfluences[this.animation.keyframe] = 0;
 			this.mesh.morphTargetInfluences[frame] = 1;
-			this.keyframe = frame;
+			this.animation.keyframe = frame;
 		}
 	}
 };
 
 //metoda pro přepínání mezi animacemi
 SolidObject.prototype.toggleAnim = function( animID ) {
-	if(this.modelAnimations[animID] !== undefined){
-		if(this.keyframe !== undefined) this.mesh.morphTargetInfluences[this.keyframe] = 0; //Musí se zrušit ovlivňování stavů z minulích animací
-		this.creationTime = new Date().getTime(); //Aby animace začala od začátku
-		this.borderFrames = [this.animation.modelAnimations[animID][0],this.animation.modelAnimations[animID][1]];
-		this.keyframe = this.borderFrames[0]-1;
-		this.animLength = this.interpolation*(this.borderFrames[1]-this.borderFrames[0]+1);
+	if(this.animation.modelAnimations[animID] !== undefined){
+		this.mesh.morphTargetInfluences[this.keyframe] = 0;
+		if(this.animation.currentAnimation != animID){
+			this.animation.currentAnimation = animID;
+			if(this.animation.keyframe !== undefined) this.mesh.morphTargetInfluences[this.keyframe] = 0; //Musí se zrušit ovlivňování stavů z minulích animací
+			this.animation.creationTime = new Date().getTime(); //Aby animace začala od začátku
+			this.animation.borderFrames = [this.animation.modelAnimations[animID][0],this.animation.modelAnimations[animID][1]];
+			this.animation.keyframe = this.animation.borderFrames[0]-1;
+			this.animation.animLength = this.animation.interpolation*(this.animation.borderFrames[1]-this.animation.borderFrames[0]+1);
+		}
 	}
 	else{
 		console.log("No animation with ID " + animID + " for this model");
