@@ -9,6 +9,7 @@ function Level(){
 		lamp: this.modelpath+"lamp/untitled.js",
 		kostka: this.modelpath+"anim.js",
 		monster: this.modelpath+"monster.js",
+		panacek:this.modelpath+"panacek.js",
 	};
 	// důležité: pro některé funkce musí mít textury rozměry power of two, tedy 2,4,8,16,32,64, ...
 	this.textures = {
@@ -46,17 +47,18 @@ Level.prototype.afterLoad = function (){
 	// 	this.add( monster );
 	// }
 
-	var monster = new Character(this.models.monster, {
-		position: new THREE.Vector3(180, 0, 0),
-		scale: new THREE.Vector3(0.1, 0.1, 0.1),
+	var monster = new Character(this.models.panacek, {
+		position:new THREE.Vector3(250,0,0),
+		scale:new THREE.Vector3(50,50,50),
 		speed: 3.5,
 		animation: {
-			interpolation: 50,
+			interpolation: 20,
 			startingAnimation: "standing",
 			modelAnimations: {
-				// štěpán chce animovat i stání, good luck
-				standing: [6,6],
-				walking: [1,23]
+				standing:[1,2],
+				walking:[5,75],
+				nodding:[80,110],
+				falling:[110,190],
 			},
 		}
 	})
@@ -64,6 +66,7 @@ Level.prototype.afterLoad = function (){
 	
 	this.add( new Environment(this.textures.steel, 0, 0, 0, 2400, 1200, false) );
 	
+	// todo: udělat to obecný a hezký -> světlo = lampa
 	this.add( new Lamp(this.models.lamp, {
 			scale: new THREE.Vector3(100,100,100),
 			position: new THREE.Vector3(0,0,0),
@@ -81,18 +84,6 @@ Level.prototype.afterLoad = function (){
 	this.add( new Lamp(this.models.lamp, {
 			scale: new THREE.Vector3(100,100,100),
 			position: new THREE.Vector3(400,400,0),
-			light:{
-				color: 0xffc560, // žárovka
-				position: new THREE.Vector3(0.65,2,0),
-				intensity: 2, // intenzita světla
-				distance: 0, // něco jako intenzita/10000, ale více to ovlivňuje odrazy na povrchu (prostě dafuq)
-				exponent: 7 // jak moc se světlo rozšiřuje
-			}
-		}
-		));
-	this.add( new Lamp(this.models.lamp, {
-			scale: new THREE.Vector3(100,100,100),
-			position: new THREE.Vector3(-300,400,0),
 			light:{
 				color: 0xffc560, // žárovka
 				position: new THREE.Vector3(0.65,2,0),

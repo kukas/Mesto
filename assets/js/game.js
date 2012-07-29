@@ -1,56 +1,19 @@
 function Game(){
 	var _this = this;
 	this.levelspath = "./assets/levels/";
+	this.mode = 0;
 
 	// zavede některé důležité objekty
 	this.eventhandler = new Eventhandler( this );
 	this.eventhandler.addKeyboardControl(32, false, function(){
 		_this.load("test");
 	} );
-	this.eventhandler.addKeyboardControl(82, false, false, function(){
-		_this.camera.position.z += 10;
-	} );
-	this.eventhandler.addKeyboardControl(70, false, false, function(){
-		_this.camera.position.z -= 10;
-	} );
-	// ovládání monstera
-	this.eventhandler.addKeyboardControl(87, false, function(){
-		_this.objects.monster.toggleAnim("standing");
-	}, function(){ // W
-		_this.objects.monster.toggleAnim("walking");
-		_this.objects.monster.move(Math.PI/2);
-		_this.camera.follow(_this.objects.monster.mesh);
-	} );
-	this.eventhandler.addKeyboardControl(83, false, function(){
-		_this.objects.monster.toggleAnim("standing");
-	}, function(){ // S
-		_this.objects.monster.toggleAnim("walking");
-		_this.objects.monster.move(-Math.PI/2);
-		_this.camera.follow(_this.objects.monster.mesh);
-	} );
-	this.eventhandler.addKeyboardControl(65, false, function(){
-		_this.objects.monster.toggleAnim("standing");
-	}, function(){ // A
-		_this.objects.monster.toggleAnim("walking");
-		_this.objects.monster.rotate(0.05);
-	} );
-	this.eventhandler.addKeyboardControl(68, false, function(){
-		_this.objects.monster.toggleAnim("standing");
-	}, function(){ // D
-		_this.objects.monster.toggleAnim("walking");
-		_this.objects.monster.rotate(-0.05);
-	} );
 
-
-	this.eventhandler.addMouseControl(0,function(){
-		// _this.camera.position.x = _this.eventhandler.mouse.projected.x/10;
-		// _this.camera.position.y = _this.eventhandler.mouse.projected.y/10;
-	});
 	// TODO: až budou, tak odkomentovat :)
 	this.textures = new Textures();
 	this.jukebox = new Jukebox();
 	this.models = new Models();
-	this.gui = new GUI();
+	this.gui = new GUI( document.createElement("canvas") );
 	// this.progress = new Progress();
 	// this.statistics = new Statistics();
 	this.settings = new Settings();
@@ -71,7 +34,6 @@ function Game(){
 	this.webgl.shadowMapSoft = this.settings.graphics.shadows.shadowMapSoft;
 
 	this.canvas = document.createElement("canvas");
-	this.ctx = this.canvas.getContext("2d");
 
 	this.objects = [];
 
@@ -96,11 +58,13 @@ Game.prototype.levelLoad = function(level) {
 
 	this.level = level;
 	this.scene = new THREE.Scene();
+	this.scene.fog = new THREE.FogExp2(0x0000ff,0);
 	this.camera = level.camera;
 	this.scene.add( this.camera );
 
-	// jen takový malý návrh:
-	// this.gui.activate("loader")
+ 	// jen takový malý návrh:
+ 	// this.gui.activate("loader")
+	this.gui.menu("inGame").load();
 	
 	this.models.loadModels( level.models, function(){
 		_this.level.models = _this.models.models;
@@ -139,13 +103,28 @@ Game.prototype.objectsAdd = function() {
 	}
 };
 
+Game.prototype.pause = function (){
+	if(this.mode == 1){
+		this.mode = 0;
+		this.pauseTime = new Date().getTime();
+	}
+	else if(this.mode == 0){
+		var cas = new Date().getTime();
+		for(i in this.objects){
+			if(this.objects[i].animation)
+				this.objects[i].creationTime += cas-this.pauseTime;
+		};
+		game.mode = 1;
+	}
+};
+
 Game.prototype.init = function() {
 	// zařídí, aby canvas byl nad WebGL
 	this.webgl.domElement.style.zIndex = "1";
-	this.canvas.style.zIndex = "2";
+	this.gui.canvas.style.zIndex = "2";
 	// přidá je do stránky
 	document.body.appendChild( this.webgl.domElement );
-	document.body.appendChild( this.canvas );
+	document.body.appendChild( this.gui.canvas );
 	// abychom pořád neklikali mezerník :)
 	this.load("test");
 	// this.gui.menu("mainM").load();
@@ -159,7 +138,7 @@ Game.prototype.render = function() {
 	requestAnimationFrame( function(){
 		_this.render();
 	} );
-	this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+	this.gui.render();
 	this.webgl.render( this.scene, this.camera );
 	this.tick();
 	
@@ -168,8 +147,11 @@ Game.prototype.render = function() {
 
 Game.prototype.tick = function() {
 	this.eventhandler.loop();
-	for(var i in this.objects){
-		this.objects[i].tick();
+	if(game.mode == 1){
+		this.gui.tick();
+		for(var i in this.objects){
+			this.objects[i].tick();
+		}
 	}
 };
 
@@ -186,8 +168,7 @@ Game.prototype.resizeCanvas = function() {
 		var h = window.innerHeight;
 
 	// Canvas s GUI
-	this.canvas.width = w;
-	this.canvas.height = h;
+	this.gui.resize( w, h );
 	// WebGL canvas
 	this.webgl.setSize( w, h );
 	// Aby se nezkosil obraz

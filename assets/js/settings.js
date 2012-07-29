@@ -11,7 +11,7 @@ function Settings(){
 		},
 		shadows: {
 			shadowMapEnabled: true,
-			shadowMapSoft: false,
+			shadowMapSoft: true,
 			shadowMapWidth: 512,
 			shadowMapHeight: 512,
 
