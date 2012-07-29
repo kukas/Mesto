@@ -125,6 +125,7 @@ Game.prototype.init = function() {
 	// přidá je do stránky
 	document.body.appendChild( this.webgl.domElement );
 	document.body.appendChild( this.gui.canvas );
+	this.resizeCanvas();
 	// abychom pořád neklikali mezerník :)
 	//this.load("test");
 	this.gui.menu("mainM").load();

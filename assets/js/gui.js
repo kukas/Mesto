@@ -45,7 +45,7 @@ function GUI( canvas ){
 				game.gui.ctx.drawImage(this.img,this.x+this.imgCoor.x,this.y+this.imgCoor.y,this.imgSize.x || game.gui.ctx.measureText(this.text).width,this.imgSize.y || parseInt(this.size));
 			}
 			if(this.poznamka && this.poznamka.display) this.poznamka.render(); 
-			game.gui.ctx.fillText(this.text,100,100);
+			game.gui.ctx.fillText(this.text,this.x,this.y);
 		};
 		
 		this.inButton = function (x,y){
