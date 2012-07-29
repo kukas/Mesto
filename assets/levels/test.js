@@ -77,6 +77,31 @@ Level.prototype.afterLoad = function (){
 			}
 		}
 		));
+
+	this.add( new Lamp(this.models.lamp, {
+			scale: new THREE.Vector3(100,100,100),
+			position: new THREE.Vector3(400,400,0),
+			light:{
+				color: 0xffc560, // žárovka
+				position: new THREE.Vector3(0.65,2,0),
+				intensity: 2, // intenzita světla
+				distance: 0, // něco jako intenzita/10000, ale více to ovlivňuje odrazy na povrchu (prostě dafuq)
+				exponent: 7 // jak moc se světlo rozšiřuje
+			}
+		}
+		));
+	this.add( new Lamp(this.models.lamp, {
+			scale: new THREE.Vector3(100,100,100),
+			position: new THREE.Vector3(-300,400,0),
+			light:{
+				color: 0xffc560, // žárovka
+				position: new THREE.Vector3(0.65,2,0),
+				intensity: 2, // intenzita světla
+				distance: 0, // něco jako intenzita/10000, ale více to ovlivňuje odrazy na povrchu (prostě dafuq)
+				exponent: 7 // jak moc se světlo rozšiřuje
+			}
+		}
+		));
 	
 	// spustí hudbu
 	// this.sounds.solarFields.play();

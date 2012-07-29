@@ -11,9 +11,12 @@ function Settings(){
 		},
 		shadows: {
 			shadowMapEnabled: true,
-			shadowMapSoft: true,
+			shadowMapSoft: false,
 			shadowMapWidth: 512,
 			shadowMapHeight: 512,
+
+			// neimplementováno:
+			castShadow: "all" // characters, player
 		}
 	}
 	this.audio = {

@@ -124,6 +124,10 @@ Game.prototype.levelLoad = function(level) {
 	} );
 };
 
+Game.prototype.findCollisions = function(obj) {
+	// for(var i in this.objects)
+};
+
 Game.prototype.checkCollision = function(obj1, obj2) {
 	return
 };

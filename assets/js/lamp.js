@@ -38,6 +38,5 @@ Lamp.prototype.initLight = function() {
 
 		// u mad, štěpán?
 		this.mesh.add(this.light);
-		// this.mesh.add(debug);
 	}
 };

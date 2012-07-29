@@ -13,6 +13,10 @@ function Character( model, options ){
 Character.prototype = new SolidObject();
 
 Character.prototype.move = function(direction) {
+	var collisions = game.findCollisions( this );
+	if( collisions ){
+		console.log( collisions )
+	}
 	this.mesh.position.x += Math.sin(direction-this.mesh.rotation.y)*this.speed;
 	this.mesh.position.y += Math.cos(direction-this.mesh.rotation.y)*this.speed;
 };
