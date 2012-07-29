@@ -14,6 +14,10 @@ function Environment(texture, x, y, z, width, height, stretch){
     this.mesh = new THREE.Mesh( this.geometry, this.material );
     this.mesh.position.set(x, y, z);
     this.mesh.rotation.x = Math.PI/2;
+
+	this.mesh.receiveShadow = true;
+
+	this.colliding = false;
 }
 
 Environment.prototype.tick = function() {

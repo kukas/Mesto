@@ -1,6 +1,11 @@
 HIERARCHIE OBJEKTŮ V MĚSTĚ
 
 Herní objekty:
+ - Character
+ 	# objekt, který bude mít AI/bude ovládán hráčem
+ 	- mesh
+ 	- geometry
+ 	- material
  - SolidObject
  	# jakýkoli objekt, který koliduje s hráčem
  	- mesh
@@ -17,14 +22,17 @@ GAME
  - textures
  	- textures
  		- název textury: THREE.Texture
- 	- loadTextures
+ 	- loadTextures()
  		# loadne textury
  - models
  	- models
  		- název modelu: THREE.Geometry
- 	- loadModels
+ 	- loadModels()
  		# loadne modely
  - jukebox
+ 	- sounds
+ 		- play, stop, pause, replay
+ 	- loadSounds()
  
  - eventhandler
 	- keyboardControls{} <= addKeyboardControl()
@@ -44,6 +52,7 @@ GAME
  - statistics
  - quests
  - dialogs
+ - settings
  
  - scene
  - camera

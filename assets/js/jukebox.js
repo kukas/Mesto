@@ -17,7 +17,7 @@ Jukebox.prototype.loadSounds = function(soundsSrc, callback) {
 				}
 			});
 			audio.src = _this.soundsSrc[name];
-			audio.volume = 1;
+			audio.volume = game.settings.audio.volume;
 
 			_this.sounds[name] = audio;
 		})(i, callback);
@@ -30,4 +30,7 @@ Audio.prototype.replay = function() {
 	this.play();
 };
 
-// J j
+Audio.prototype.stop = function() {
+	this.pause();
+	this.currentTime = 0;
+};

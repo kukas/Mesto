@@ -4,6 +4,8 @@ function SolidObject(){
 	this.material = new THREE.MeshFaceMaterial();
 	// this.mesh = new THREE.Mesh( this.geometry, this.material );
 
+	this.colliding = true;
+
 	// this.generateBoundingBox();
 	// this.initAnimation();
 }
@@ -14,6 +16,9 @@ SolidObject.prototype.tick = function() {
 
 SolidObject.prototype.initMesh = function() {
 	this.mesh = new THREE.Mesh( this.geometry, this.material );
+
+	this.mesh.castShadow = true;
+	this.mesh.receiveShadow = true;
 
 	this.mesh.rotation.x = Math.PI/2;
 	if( this.options.scale !== undefined )
@@ -43,7 +48,8 @@ SolidObject.prototype.generateBoundingBox = function() {
 	bounding_mesh.position.z = (this.geometry.boundingBox.max.z+this.geometry.boundingBox.min.z)/2
 
 	// takhle se dají přidávat child objekty v three.js
-	this.mesh.add( bounding_mesh );
+	if(game.settings.debug)
+		this.mesh.add( bounding_mesh );
 };
 
 // pokud má objekt nastavené animace, připraví je.
@@ -63,7 +69,7 @@ SolidObject.prototype.animate = function (){
 	if(this.animation){
 		var faze = (time-this.animation.creationTime) % this.animation.animLength;
 		var frame = Math.floor(faze/this.animation.interpolation) + this.animation.borderFrames[0]-1;
-		if(frame != this.animation.keyframe){
+		if(frame != this.animation.keyframe || this.animation.interpolation == this.animation.animLength){
 			this.mesh.morphTargetInfluences[this.animation.keyframe] = 0;
 			this.mesh.morphTargetInfluences[frame] = 1;
 			this.animation.keyframe = frame;
@@ -74,12 +80,12 @@ SolidObject.prototype.animate = function (){
 //metoda pro přepínání mezi animacemi
 SolidObject.prototype.toggleAnim = function( animID ) {
 	if(this.animation.modelAnimations[animID] !== undefined){
-		this.mesh.morphTargetInfluences[this.keyframe] = 0;
 		if(this.animation.currentAnimation != animID){
 			this.animation.currentAnimation = animID;
-			if(this.animation.keyframe !== undefined) this.mesh.morphTargetInfluences[this.keyframe] = 0; //Musí se zrušit ovlivňování stavů z minulích animací
-			this.animation.creationTime = new Date().getTime(); //Aby animace začala od začátku
-			this.animation.borderFrames = [this.animation.modelAnimations[animID][0],this.animation.modelAnimations[animID][1]];
+			if(this.animation.keyframe !== undefined)
+				this.mesh.morphTargetInfluences[this.animation.keyframe] = 0; // Musí se zrušit ovlivňování stavů z minulých animací
+			this.animation.creationTime = new Date().getTime(); // Aby animace začala od začátku
+			this.animation.borderFrames = this.animation.modelAnimations[animID];
 			this.animation.keyframe = this.animation.borderFrames[0]-1;
 			this.animation.animLength = this.animation.interpolation*(this.animation.borderFrames[1]-this.animation.borderFrames[0]+1);
 		}

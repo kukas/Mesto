@@ -53,6 +53,7 @@ function Game(){
 	this.gui = new GUI();
 	// this.progress = new Progress();
 	// this.statistics = new Statistics();
+	this.settings = new Settings();
 
 	// WUT objekty, které nevím jestli loadnu tady nebo jinde
 	// this.quests = new Quests();
@@ -64,7 +65,11 @@ function Game(){
 	this.scene.add(this.camera);
 
 	// připraví jednotlivé canvasy
-	this.webgl = new THREE.WebGLRenderer( { clearColor:0x111111, clearAlpha:1 } );
+	this.webgl = new THREE.WebGLRenderer( { clearColor: 0x111111, clearAlpha: 1, maxLights: 20 } );
+	// maxLights: 20 -> teď už o světla nouzi mít nebudeme
+	this.webgl.shadowMapEnabled = this.settings.graphics.shadows.shadowMapEnabled;
+	this.webgl.shadowMapSoft = this.settings.graphics.shadows.shadowMapSoft;
+
 	this.canvas = document.createElement("canvas");
 	this.ctx = this.canvas.getContext("2d");
 
@@ -74,8 +79,6 @@ function Game(){
 	window.addEventListener( "resize", function(){
 		_this.resizeCanvas();
 	}, true );
-	// změní velikost canvasů
-	this.resizeCanvas();
 }
 Game.prototype.load = function(levelName) {
 	var _this = this;
@@ -84,8 +87,8 @@ Game.prototype.load = function(levelName) {
 	levelScript.src = this.levelspath + levelName + ".js";
 	levelScript.addEventListener( "load", function(){
 		_this.levelLoad(level);
-	}, true )
-	document.body.appendChild(levelScript)
+	}, true );
+	document.body.appendChild(levelScript);
 };
 
 Game.prototype.levelLoad = function(level) {
@@ -113,9 +116,16 @@ Game.prototype.levelLoad = function(level) {
 
 				_this.level.afterLoad();
 				_this.objectsAdd();
+
+				// změní velikost canvasů
+				_this.resizeCanvas();
 			} )
 		} )
 	} );
+};
+
+Game.prototype.checkCollision = function(obj1, obj2) {
+	return
 };
 
 Game.prototype.objectsAdd = function() {
@@ -161,8 +171,16 @@ Game.prototype.tick = function() {
 
 // funkce volaná při změně velikosti okna
 Game.prototype.resizeCanvas = function() {
-	var w = window.innerWidth;
-	var h = window.innerHeight;
+	if(this.settings.graphics.resolution.width != "auto")
+		var w = this.settings.graphics.resolution.width;
+	else
+		var w = window.innerWidth;
+
+	if(this.settings.graphics.resolution.height != "auto")
+		var h = this.settings.graphics.resolution.height;
+	else
+		var h = window.innerHeight;
+
 	// Canvas s GUI
 	this.canvas.width = w;
 	this.canvas.height = h;

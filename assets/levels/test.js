@@ -13,10 +13,17 @@ function Level(){
 	// důležité: pro některé funkce musí mít textury rozměry power of two, tedy 2,4,8,16,32,64, ...
 	this.textures = {
 		steel: this.texturepath+"Steel_Texture2.jpg",
+
+		cs_test_bg: this.texturepath+"cutscenes/test/bg.jpg",
+		cs_test_fg: this.texturepath+"cutscenes/test/fg.png",
 	};
 
 	this.sounds = {
 		solarFields: this.musicpath+"Circles_Of_Motion.mp3",
+	};
+
+	this.cutscenes = {
+		test: this.cutscenepath+"test.js"
 	}
 }
 Level.prototype = new Loader();
@@ -40,8 +47,9 @@ Level.prototype.afterLoad = function (){
 	// }
 
 	var monster = new Character(this.models.monster, {
-		position: new THREE.Vector3(1, 1, 0),
+		position: new THREE.Vector3(180, 0, 0),
 		scale: new THREE.Vector3(0.1, 0.1, 0.1),
+		speed: 3.5,
 		animation: {
 			interpolation: 50,
 			startingAnimation: "standing",
@@ -60,9 +68,12 @@ Level.prototype.afterLoad = function (){
 			scale: new THREE.Vector3(100,100,100),
 			position: new THREE.Vector3(0,0,0),
 			light:{
-				color:0xffffff,
+				color: 0xd5def4, // zářivka
+				// color: 0xffc560, // žárovka
 				position: new THREE.Vector3(0.65,2,0),
-				intensity:1,
+				intensity: 1, // intenzita světla
+				distance: 0, // něco jako intenzita/10000, ale více to ovlivňuje odrazy na povrchu (prostě dafuq)
+				exponent: 0.5 // jak moc se světlo rozšiřuje
 			}
 		}
 		));
