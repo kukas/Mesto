@@ -199,7 +199,36 @@ function GUI( canvas ){
 								game.pause();
 								game.scene.fog.density = 0.0025;
 								game.gui.menu("pause").load();
-							},false,false );},
+							},false,false );
+							// ovládání panáèka
+							game.eventhandler.addKeyboardControl(87, false, function(){
+								game.objects.monster.toggleAnim("standing");
+							}, function(){ // W
+								game.objects.monster.toggleAnim("walking");
+								game.objects.monster.move(Math.PI/2);
+								game.camera.follow(game.objects.monster.mesh);
+							} );
+							game.eventhandler.addKeyboardControl(83, false, function(){
+								game.objects.monster.toggleAnim("standing");
+							}, function(){ // S
+								game.objects.monster.toggleAnim("walking");
+								game.objects.monster.move(-Math.PI/2);
+								game.camera.follow(game.objects.monster.mesh);
+							} );
+							game.eventhandler.addKeyboardControl(65, false, function(){
+								game.objects.monster.toggleAnim("standing");
+							}, function(){ // A
+								game.objects.monster.toggleAnim("walking");
+								game.objects.monster.rotate(0.05);
+							} );
+							game.eventhandler.addKeyboardControl(68, false, function(){
+								game.objects.monster.toggleAnim("standing");
+							}, function(){ // D
+								game.objects.monster.toggleAnim("walking");
+								game.objects.monster.rotate(-0.05);
+							} );
+
+							},
 		},
 		pause : {
 			buttons : [

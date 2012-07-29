@@ -5,9 +5,6 @@ function Game(){
 
 	// zavede některé důležité objekty
 	this.eventhandler = new Eventhandler( this );
-	this.eventhandler.addKeyboardControl(32, false, function(){
-		_this.load("test");
-	} );
 
 	// TODO: až budou, tak odkomentovat :)
 	this.textures = new Textures();
