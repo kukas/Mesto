@@ -1,15 +1,12 @@
 function Level(){
 
 	this.objects = {};
-
-	this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-	this.camera.position.set(0,0,600);
 	
 	this.models = {
 		lamp: this.modelpath+"lamp/untitled.js",
 		kostka: this.modelpath+"anim.js",
 		monster: this.modelpath+"monster.js",
-		panacek:this.modelpath+"panacek.js",
+		panacek: this.modelpath+"panacek.js",
 	};
 	// důležité: pro některé funkce musí mít textury rozměry power of two, tedy 2,4,8,16,32,64, ...
 	this.textures = {
@@ -30,41 +27,60 @@ function Level(){
 Level.prototype = new Loader();
 
 Level.prototype.afterLoad = function (){
-	// for(var i=2;i--;){
-	// 	var monster = new Thing(this.models.monster, {
-	// 		position: new THREE.Vector3(1000*Math.random()-500, 1000*Math.random()-500, 0),
-	// 		scale: new THREE.Vector3(0.1,0.1,0.1),
-	// 		animation: {
-	// 			interpolace: 50,
-	// 			startingAnim: "walking",
-	// 			modelAnimations: {
-	// 				// štěpán chce animovat i stání, good luck
-	// 				standing: [1,1],
-	// 				walking: [1,23]
-	// 			},
-	// 		}
-	// 	})
-	// 	this.add( monster );
-	// }
+	var monster = new Thing(this.models.monster, {
+		position: new THREE.Vector3(1000*Math.random()-500, 1000*Math.random()-500, 0),
+		scale: new THREE.Vector3(0.1,0.1,0.1),
+		animation: {
+			interpolation: 50,
+			startingAnimation: "walking",
+			modelAnimations: {
+				standing: [1,1],
+				walking: [1,23]
+			},
+		}
+	})
+	this.add( monster );
 
-	var monster = new Character(this.models.panacek, {
-		position:new THREE.Vector3(250,0,0),
-		scale:new THREE.Vector3(50,50,50),
-		speed: 3.5,
+
+	var player = new Character(this.models.panacek, {
+		position: new THREE.Vector3(250,0,0),
+		scale: new THREE.Vector3(50,50,50),
+		speed: 5,
 		animation: {
 			interpolation: 20,
 			startingAnimation: "standing",
 			modelAnimations: {
-				standing:[1,2],
-				walking:[5,75],
-				nodding:[80,110],
-				falling:[110,190],
+				standing: [1,2],
+				walking: [5,75],
+				nodding: [80,110],
+				falling: [110,190],
 			},
 		}
 	})
-	this.add( monster, "monster" );
+	this.add( player, "monster" );
+
+	// jen takové blbinky:
+	var third_person_camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+	player.mesh.add( third_person_camera );
+	third_person_camera.position.set(0,5,-4);
+	third_person_camera.rotation.y = Math.PI;
+
+	var first_person_camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
+	player.mesh.add( first_person_camera );
+	first_person_camera.position.set(0,2,0);
+	first_person_camera.rotation.y = Math.PI;
+
+	var topdown_camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+	player.mesh.add( topdown_camera );
+	topdown_camera.position.set(0,10,0);
+	topdown_camera.rotation.y = Math.PI;
+	topdown_camera.rotation.x = Math.PI/2;
+
+	this.camera = topdown_camera;
 	
 	this.add( new Environment(this.textures.steel, 0, 0, 0, 2400, 1200, false) );
+
+	this.add( new Environment(this.textures.cs_test_bg, 0, 0, -100, 5800, 3200, true) );
 	
 	// todo: udělat to obecný a hezký -> světlo = lampa
 	this.add( new Lamp(this.models.lamp, {

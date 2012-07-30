@@ -1,7 +1,7 @@
 function Game(){
 	var _this = this;
 	this.levelspath = "./assets/levels/";
-	this.mode = 0;
+	this.mode = 1;
 
 	// zavede některé důležité objekty
 	this.eventhandler = new Eventhandler( this );
@@ -33,8 +33,6 @@ function Game(){
 	this.webgl.shadowMapEnabled = this.settings.graphics.shadows.shadowMapEnabled;
 	this.webgl.shadowMapSoft = this.settings.graphics.shadows.shadowMapSoft;
 
-	this.canvas = document.createElement("canvas");
-
 	this.objects = [];
 
 	// pokud se změní velikost okna prohlížeče, změní velikost canvasů
@@ -58,10 +56,8 @@ Game.prototype.levelLoad = function(level) {
 
 	this.level = level;
 	this.scene = new THREE.Scene();
-	this.scene.fog = new THREE.FogExp2(0x0000ff,0);
-	this.camera = level.camera;
-	this.scene.add( this.camera );
-
+	this.scene.fog = new THREE.FogExp2(0x5D739C,0.085);
+	
  	// jen takový malý návrh:
  	// this.gui.activate("loader")
 	this.gui.menu("inGame").load();
@@ -79,7 +75,9 @@ Game.prototype.levelLoad = function(level) {
 				// this.gui.loader.setProgress(100)
 
 				_this.level.afterLoad();
+
 				_this.objectsAdd();
+				_this.camera = _this.level.camera;
 
 				// změní velikost canvasů
 				_this.resizeCanvas();

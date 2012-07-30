@@ -84,31 +84,44 @@ function GUI( canvas ){//game.pause();game.scene.fog.density == 0 ? game.scene.f
 				}),],
 			preload : function (){},
 			controls : function (){
-							game.eventhandler.addKeyboardControl(82, false, false, function(){
+							game.eventhandler.addKeyboardControl(82, false, false, function(){ // R
 								game.camera.position.z += 10;
 							} );
-							game.eventhandler.addKeyboardControl(70, false, false, function(){
+							game.eventhandler.addKeyboardControl(70, false, false, function(){ // F
 								game.camera.position.z -= 10;
 							} );
-							game.eventhandler.addKeyboardControl(27, function(){
+							game.eventhandler.addKeyboardControl(84, false, false, function(){ // T
+								game.scene.fog.density += 0.001
+								console.log(game.scene.fog.density)
+							} );
+							game.eventhandler.addKeyboardControl(71, false, false, function(){ // G
+								game.scene.fog.density -= game.scene.fog.density > 0 ? 0.001 : 0;
+								console.log(game.scene.fog.density)
+							} );
+							game.eventhandler.addKeyboardControl(76, false, false, function(){ // L
+								console.log(game.scene)
+							} );
+
+							game.eventhandler.addKeyboardControl(27, false, function(){ // escape
 								game.pause();
-								game.scene.fog.density == 0 ? game.scene.fog.density = 0.0025 : game.scene.fog.density = 0;
-							},false,false );
+							}, false );
+
+							game.eventhandler.addKeyboardControl(88, false, function(){ // X
+								game.objects.monster.generateBoundingBox();
+							}, false );
 							
 							// ovládání panáčka
 							game.eventhandler.addKeyboardControl(87, false, function(){
 								game.objects.monster.toggleAnim("standing");
 							}, function(){ // W
 								game.objects.monster.toggleAnim("walking");
-								game.objects.monster.move(Math.PI/2);
-								game.camera.follow(game.objects.monster.mesh);
+								game.objects.monster.move(Math.PI);
 							} );
 							game.eventhandler.addKeyboardControl(83, false, function(){
 								game.objects.monster.toggleAnim("standing");
 							}, function(){ // S
 								game.objects.monster.toggleAnim("walking");
-								game.objects.monster.move(-Math.PI/2);
-								game.camera.follow(game.objects.monster.mesh);
+								game.objects.monster.move(0);
 							} );
 							game.eventhandler.addKeyboardControl(65, false, function(){
 								game.objects.monster.toggleAnim("standing");

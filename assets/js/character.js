@@ -2,9 +2,10 @@ function Character( model, options ){
 	this.options = options === undefined ? {} : options;
 
 	this.geometry = model;
+	this.geometry.morphTargetsNeedUpdate = true
 
 	this.initMesh();
-	this.generateBoundingBox();
+	// this.generateBoundingBox();
 	this.initAnimation();
 
 	this.speed = options.speed || 5;
