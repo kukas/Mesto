@@ -218,12 +218,16 @@ function GUI( canvas ){
 							}, function(){ // W
 								game.objects.monster.toggleAnim("walking");
 								game.objects.monster.move(Math.PI);
+								if(game.settings.graphics.camera == "topdown")
+									game.camera.follow(game.objects.monster.mesh);
 							} );
 							game.eventhandler.addKeyboardControl(83, false, function(){
 								game.objects.monster.toggleAnim("standing");
 							}, function(){ // S
 								game.objects.monster.toggleAnim("walking");
 								game.objects.monster.move(0);
+								if(game.settings.graphics.camera == "topdown")
+									game.camera.follow(game.objects.monster.mesh);
 							} );
 							game.eventhandler.addKeyboardControl(65, false, function(){
 								game.objects.monster.toggleAnim("standing");

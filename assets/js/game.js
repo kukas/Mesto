@@ -53,7 +53,7 @@ Game.prototype.levelLoad = function(level) {
 
 	this.level = level;
 	this.scene = new THREE.Scene();
-	this.scene.fog = new THREE.FogExp2(0x5D739C,0.085);
+	this.scene.fog = new THREE.FogExp2(0x5D739C,0);
 	
  	// jen takový malý návrh:
  	// this.gui.activate("loader")

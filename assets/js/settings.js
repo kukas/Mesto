@@ -16,8 +16,9 @@ function Settings(){
 			shadowMapHeight: 512,
 
 			// neimplementováno:
-			castShadow: "all" // characters, player
-		}
+			castShadow: "all" // all, characters, player
+		},
+		camera: "topdown" // third_person, first_person, rotating_topdown, topdown
 	}
 	this.audio = {
 		volume: 1
