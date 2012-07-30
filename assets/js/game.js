@@ -5,9 +5,6 @@ function Game(){
 
 	// zavede některé důležité objekty
 	this.eventhandler = new Eventhandler( this );
-	this.eventhandler.addKeyboardControl(32, false, function(){
-		_this.load("test");
-	} );
 
 	// TODO: až budou, tak odkomentovat :)
 	this.textures = new Textures();
@@ -123,9 +120,10 @@ Game.prototype.init = function() {
 	// přidá je do stránky
 	document.body.appendChild( this.webgl.domElement );
 	document.body.appendChild( this.gui.canvas );
+	this.resizeCanvas();
 	// abychom pořád neklikali mezerník :)
-	this.load("test");
-	// this.gui.menu("mainM").load();
+	//this.load("test");
+	this.gui.menu("mainM").load();
 	// spustí render smyčku
 	this.render();
 };
@@ -145,8 +143,8 @@ Game.prototype.render = function() {
 
 Game.prototype.tick = function() {
 	this.eventhandler.loop();
+	this.gui.tick();
 	if(game.mode == 1){
-		this.gui.tick();
 		for(var i in this.objects){
 			this.objects[i].tick();
 		}
