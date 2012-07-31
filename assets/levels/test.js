@@ -11,6 +11,7 @@ function Level(){
 	// důležité: pro některé funkce musí mít textury rozměry power of two, tedy 2,4,8,16,32,64, ...
 	this.textures = {
 		steel: this.texturepath+"Steel_Texture2.jpg",
+		blue: this.texturepath+"blue.jpg",
 
 		cs_test_bg: this.texturepath+"cutscenes/test/bg.jpg",
 		cs_test_fg: this.texturepath+"cutscenes/test/fg.png",
@@ -28,11 +29,14 @@ Level.prototype = new Loader();
 
 Level.prototype.afterLoad = function (){
 	var monster = new Thing(this.models.monster, {
-		position: new THREE.Vector3(1000*Math.random()-500, 1000*Math.random()-500, 0),
+		position: new THREE.Vector3(0,0, 0),
+		// position: new THREE.Vector3(1000*Math.random()-500, 1000*Math.random()-500, 0),
 		scale: new THREE.Vector3(0.1,0.1,0.1),
 		animation: {
+			boundingFrame: 1,
+
 			interpolation: 50,
-			startingAnimation: "walking",
+			startingAnimation: "standing",
 			modelAnimations: {
 				standing: [1,1],
 				walking: [1,23]
@@ -41,16 +45,18 @@ Level.prototype.afterLoad = function (){
 	})
 	this.add( monster );
 
-
 	var player = new Character(this.models.panacek, {
-		position: new THREE.Vector3(250,0,0),
+		position: new THREE.Vector3(0, -100,0),
 		scale: new THREE.Vector3(50,50,50),
-		speed: 5,
+		rotation: new THREE.Vector3(0,0,0),
+		speed: 2,
 		animation: {
+			boundingFrame: 1,
+
 			interpolation: 20,
 			startingAnimation: "standing",
 			modelAnimations: {
-				standing: [1,2],
+				standing: [1,1],
 				walking: [5,75],
 				nodding: [80,110],
 				falling: [110,190],
@@ -79,7 +85,7 @@ Level.prototype.afterLoad = function (){
 
 	var topdown_camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
 	game.scene.add( topdown_camera );
-	topdown_camera.position.set(0,0,600);
+	topdown_camera.position.set(0,0,500);
 
 	var vyber = {
 		"third_person": third_person_camera,
@@ -88,16 +94,18 @@ Level.prototype.afterLoad = function (){
 		"topdown": topdown_camera
 	}
 	this.camera = vyber[ game.settings.graphics.camera ];
-	console.log(this.camera)
 	
 	this.add( new Environment(this.textures.steel, 0, 0, 0, 2400, 1200, false) );
+
+	// debug věc
+	// this.add( new Environment(this.textures.blue, 0, 0, 1, 5, 5, false), "test" );
 
 	this.add( new Environment(this.textures.cs_test_bg, 0, 0, -100, 5800, 3200, true) );
 	
 	// todo: udělat to obecný a hezký -> světlo = lampa
 	this.add( new Lamp(this.models.lamp, {
 			scale: new THREE.Vector3(100,100,100),
-			position: new THREE.Vector3(0,0,0),
+			position: new THREE.Vector3(-300,0,0),
 			light:{
 				color: 0xd5def4, // zářivka
 				// color: 0xffc560, // žárovka

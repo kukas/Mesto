@@ -14,15 +14,24 @@ function Character( model, options ){
 Character.prototype = new SolidObject();
 
 Character.prototype.move = function(direction) {
+	var posun_x = Math.sin(direction-this.mesh.rotation.y)*this.speed;
+	var posun_y = Math.cos(direction-this.mesh.rotation.y)*this.speed;
+	this.mesh.position.x += posun_x;
+	this.mesh.position.y += posun_y;
 	var collisions = game.findCollisions( this );
-	if( collisions ){
-		console.log( collisions )
+	if( collisions.length !== 0 ){
+		this.mesh.position.x -= posun_x;
+		this.mesh.position.y -= posun_y;
+
+		this.handleCollision(collisions, this);
 	}
-	this.mesh.position.x += Math.sin(direction-this.mesh.rotation.y)*this.speed;
-	this.mesh.position.y += Math.cos(direction-this.mesh.rotation.y)*this.speed;
 };
 Character.prototype.rotate = function(angle) {
 	this.mesh.rotation.y += angle;
+	var collisions = game.findCollisions( this );
+	if( collisions.length !== 0 ){
+		this.mesh.rotation.y -= angle;
+	}
 };
 
 Character.prototype.tick = function() {

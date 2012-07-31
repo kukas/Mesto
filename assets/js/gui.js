@@ -186,6 +186,8 @@ function GUI( canvas ){
 			controls : function (){
 							game.eventhandler.addMouseControl(0,function(){
 								game.gui.menuControls(false)[0]();
+								// game.camera.position.x = game.eventhandler.mouse.projected.x/10;
+								// game.camera.position.y = game.eventhandler.mouse.projected.y/10;
 							});
 							game.eventhandler.addMouseControl(1,game.gui.menuControls()[1],false,false);
 
@@ -203,10 +205,6 @@ function GUI( canvas ){
 								game.scene.fog.density -= game.scene.fog.density > 0 ? 0.001 : 0;
 								console.log(game.scene.fog.density)
 							} );
-							game.eventhandler.addKeyboardControl(76, false, false, function(){ // L
-								console.log(game.scene)
-							} );
-
 							game.eventhandler.addKeyboardControl(27, false, function(){ // escape
 								game.pause();
 								game.scene.fog.density = 0.0025;
@@ -233,13 +231,19 @@ function GUI( canvas ){
 								game.objects.monster.toggleAnim("standing");
 							}, function(){ // A
 								game.objects.monster.toggleAnim("walking");
-								game.objects.monster.rotate(0.05);
+								// game.objects.monster.move(Math.PI/2);
+								game.objects.monster.rotate(0.1);
+								if(game.settings.graphics.camera == "topdown")
+									game.camera.follow(game.objects.monster.mesh);
 							} );
 							game.eventhandler.addKeyboardControl(68, false, function(){
 								game.objects.monster.toggleAnim("standing");
 							}, function(){ // D
 								game.objects.monster.toggleAnim("walking");
-								game.objects.monster.rotate(-0.05);
+								// game.objects.monster.move(-Math.PI/2);
+								game.objects.monster.rotate(-0.1);
+								if(game.settings.graphics.camera == "topdown")
+									game.camera.follow(game.objects.monster.mesh);
 							} );
 
 							},

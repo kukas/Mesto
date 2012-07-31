@@ -84,11 +84,120 @@ Game.prototype.levelLoad = function(level) {
 };
 
 Game.prototype.findCollisions = function(obj) {
-	// for(var i in this.objects)
+	// projde všechny objekty a ty, co kolidují otestuje funkcí checkCollision()
+	// pokud kolidují, přidá je do arraye a vrátí.
+	var collisions = [];
+	for(var i in this.objects){
+		if( this.objects[i].colliding && this.objects[i] != obj ){
+			if( this.checkCollision( this.objects[i], obj ) ){
+				collisions.push(this.objects[i]);
+			}
+		}
+	}
+	return collisions;
 };
 
 Game.prototype.checkCollision = function(obj1, obj2) {
-	return
+	function rotatePoint(distance, center, angle){
+		return new THREE.Vector2( distance*Math.cos(angle)-center.x, distance*Math.sin(angle)-center.y );
+	}
+	function pointInRectangle(point, rectangle){
+		// Argumenty: point jako THREE.Vector2 a rectangle jako {stred: THREE.Vector2, rozmery: {width: 0, height: 0}, uhel: 0}
+		// funkce vrátí, zda bod leží v rotovaném obdélníku
+		// je geniální a napsal jsem jí na papír v letadle
+		// pracuje tak, že obdélník s testovaným bodem rotuje na jednodušší situaci -> bod a nerotovaný obdélník.
+		if(rectangle.uhel !== 0){
+			var dx = rectangle.stred.x - point.x; // vzdálenost bodu od středu v ose X
+			var dy = rectangle.stred.y - point.y; // vzdálenost bodu od středu v ose Y
+
+			var pdistance = Math.sqrt( dx*dx + dy*dy ); // vzdálenost test. bodu od středu obdélníku ve 2D
+
+			var alpha = Math.atan(dy/dx); // úhel natočení test. bodu od středu obdélníku
+			if(dx < 0)
+				alpha += Math.PI;
+			var delta = alpha - rectangle.uhel; // výsledný úhel test. bodu po natočení celého grafu
+			
+			// b = souřadice natočeného bodu
+			var b = rotatePoint(pdistance, rectangle.stred, delta);
+		}
+		else {
+			var b = point;
+		}
+
+		var min = new THREE.Vector2(rectangle.stred.x-rectangle.rozmery.width/2, rectangle.stred.y-rectangle.rozmery.height/2);
+		var max = new THREE.Vector2(rectangle.stred.x+rectangle.rozmery.width/2, rectangle.stred.y+rectangle.rozmery.height/2);
+		if( b.x >= min.x && b.x <= max.x && b.y >= min.y && b.y <= max.y ){
+			return true;
+		}
+
+		return false;
+	}
+	// konec geniálního kódu, následuje:
+	// HODNĚ pochybná funkce
+
+	// jejím úkolem je vzít 2 objekty, projet všech 8 rohů jejich boundingboxů a zjistit, zda neleží v tom druhém boundingboxu.
+
+	var objs = [obj1, obj2];
+	var rohy = [-1,1];
+
+	// tenhle for vezme nejdříve 1. a pak 2. testovaný objekt
+	for(var i=0; i < objs.length; i++){
+		// vypočítání středu boundingboxu v prostoru - tahle část je nejpochybnější, 
+		// protože i když se zdá, že by měla perfektně fungovat, tak funguje s chybou cca. 10%,
+		// prostě wut.
+		var stred_x = objs[1-i].mesh.position.x+(objs[1-i].geometry.boundingBox.max.x + objs[1-i].geometry.boundingBox.min.x)*objs[1-i].mesh.scale.x/2;
+		var stred_y = objs[1-i].mesh.position.y+(objs[1-i].geometry.boundingBox.max.z + objs[1-i].geometry.boundingBox.min.z)*objs[1-i].mesh.scale.y/2;
+		var stred = new THREE.Vector2(stred_x, stred_y);
+		// a přesto že minulý kód nefunguje, tenhle funguje krásně
+		// prostě wut.
+		var halfWidth = (objs[1-i].geometry.boundingBox.max.x-objs[1-i].geometry.boundingBox.min.x) * objs[1-i].mesh.scale.x /2;
+		var halfHeight = (objs[1-i].geometry.boundingBox.max.z-objs[1-i].geometry.boundingBox.min.z) * objs[1-i].mesh.scale.y/2;
+
+		// takže jestli to debugneš, tak jsi fakt dobrej, koukal jsem na to 3 hodiny, zkoušel jsem úplně všechno a nic nefunguje...
+
+		// spočítám si polovinu délky úhlopříčky
+		var distance = Math.sqrt(halfWidth*halfWidth+halfHeight*halfHeight); // vzdálenost test. bodu od středu obdélníku ve 2D
+		// a teď procházíme rohy:
+		for (var radek = 0; radek < rohy.length; radek++) {
+			for (var sloupec = 0; sloupec < rohy.length; sloupec++) {
+				// otočí testovaný roh podle otočení svého mateřského objektu				
+				var point = new THREE.Vector2( halfWidth*rohy[radek], halfHeight*rohy[sloupec] );
+				
+				var dx = point.x; // vzdálenost bodu od středu v ose X
+				var dy = point.y; // vzdálenost bodu od středu v ose Y
+
+				var alpha = Math.atan(dx/dy); // úhel natočení test. bodu od středu obdélníku
+				if(dy < 0)
+					alpha += Math.PI;
+				var delta = alpha - objs[1-i].mesh.rotation.y;
+
+				var rotated_point = new THREE.Vector2( distance*Math.sin(delta)+stred.x, distance*Math.cos(delta)+stred.y );
+				// debug věc:
+				// if(objs[1-i] instanceof Character){
+				// 	game.objects.test.mesh.position.x = rotated_point.x;
+				// 	game.objects.test.mesh.position.y = rotated_point.y;
+				// }
+				// použití geniální funkce:
+				if( pointInRectangle(
+					rotated_point,
+					{
+						stred: new THREE.Vector2( 
+							objs[i].mesh.position.x + (objs[i].geometry.boundingBox.max.x+objs[i].geometry.boundingBox.min.x)*objs[i].mesh.scale.x/2, 
+							objs[i].mesh.position.y + (objs[i].geometry.boundingBox.max.z+objs[i].geometry.boundingBox.min.z)*objs[i].mesh.scale.y/2 ),
+						rozmery: {
+							width: (objs[i].geometry.boundingBox.max.x-objs[i].geometry.boundingBox.min.x) * objs[i].mesh.scale.x,
+							height: (objs[i].geometry.boundingBox.max.z-objs[i].geometry.boundingBox.min.z) * objs[i].mesh.scale.y
+						}, 
+						uhel: objs[i].mesh.rotation.y
+					}
+					) ){
+					return true;
+				};
+			};
+		};
+	};
+
+	return false;
 };
 
 Game.prototype.objectsAdd = function() {
@@ -105,7 +214,7 @@ Game.prototype.pause = function (){
 	}
 	else if(this.mode == 0){
 		var cas = new Date().getTime();
-		for(i in this.objects){
+		for(var i in this.objects){
 			if(this.objects[i].animation)
 				this.objects[i].creationTime += cas-this.pauseTime;
 		};

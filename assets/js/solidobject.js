@@ -10,6 +10,16 @@ SolidObject.prototype.tick = function() {
 	
 };
 
+SolidObject.prototype.onCollide = function() {
+	// args: object (ten, co narazil)
+};
+
+SolidObject.prototype.handleCollision = function(collisions, object) {
+	for(var i in collisions){
+		collisions[i].onCollide(object);
+	}
+};
+
 SolidObject.prototype.initMesh = function() {
 	this.mesh = new THREE.Mesh( this.geometry, this.material );
 
@@ -22,7 +32,7 @@ SolidObject.prototype.initMesh = function() {
 	if( this.options.position !== undefined )
 		this.mesh.position = this.options.position;
 	if( this.options.rotation !== undefined )
-		this.mesh.rotation = this.options.rotation;
+		this.mesh.rotation.addSelf(this.options.rotation);
 };
 
 // ohraničí objekt krásným, modrým kvádrem
@@ -31,9 +41,16 @@ SolidObject.prototype.generateBoundingBox = function() {
 	// interní funkce Three.JS - vypočítá rozměry boundingboxu (minima a maxima ve 3 rozměrech)
 	this.geometry.computeBoundingBox();
 	if(this.animation){
-		var time = new Date().getTime();
 
-		var vertices = this.geometry.morphTargets[ this.animation.keyframe ].vertices;
+		if(this.animation.boundingFrame === undefined){
+			var keyframe = this.animation.keyframe;
+		}
+		else {
+			var keyframe = this.animation.boundingFrame;
+		}
+
+		var vertices = this.geometry.morphTargets[ keyframe ].vertices;
+
 		var boundingBox = { min: new THREE.Vector3(), max: new THREE.Vector3() };
 			
 		var position, firstPosition = vertices[ 0 ];
@@ -64,7 +81,6 @@ SolidObject.prototype.generateBoundingBox = function() {
 				max.z = position.z;
 			}
 		}
-		// console.log(this.animation.keyframe, min, max);
 		this.geometry.boundingBox = boundingBox;
 	}
 	// Udělám kostku o daných rozměrech
@@ -79,8 +95,8 @@ SolidObject.prototype.generateBoundingBox = function() {
 	this.bounding_mesh = new THREE.Mesh( bounding_geometry, bounding_material );
 
 	// A napozicuje kostku doprostřed minima a maxima v každém směru (krom Y, tam to chceme nad povrchem)
-	this.bounding_mesh.position.y = (this.geometry.boundingBox.max.y-this.geometry.boundingBox.min.y)/2
 	this.bounding_mesh.position.x = (this.geometry.boundingBox.max.x+this.geometry.boundingBox.min.x)/2
+	this.bounding_mesh.position.y = (this.geometry.boundingBox.max.y-this.geometry.boundingBox.min.y)/2
 	this.bounding_mesh.position.z = (this.geometry.boundingBox.max.z+this.geometry.boundingBox.min.z)/2
 
 	// takhle se dají přidávat child objekty v three.js
