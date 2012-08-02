@@ -85,8 +85,8 @@ Eventhandler.prototype.mousehandler = function(e) {
 	e.preventDefault();
 };
 Eventhandler.prototype.updateMouseXY = function(x,y) {
-	this.mouse.x = x;
-	this.mouse.y = y;
+	this.mouse.x = x*this.game.settings.graphics.resolution.width/window.innerWidth;
+	this.mouse.y = y*this.game.settings.graphics.resolution.height/window.innerHeight;
 
 	var vector = this.projector.unprojectVector(new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.998199832195 ),this.game.camera);
 

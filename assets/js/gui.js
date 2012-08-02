@@ -365,8 +365,6 @@ GUI.prototype.render = function (){
 	for(var i in this.objects){
 		this.objects[i].render();
 	};
-	this.ctx.fillStyle = "#ffffff";
-	this.ctx.fillRect(game.eventhandler.mouse.x,game.eventhandler.mouse.y,10,10);
 };
 
 GUI.prototype.resize = function ( w, h ){
