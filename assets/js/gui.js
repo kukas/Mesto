@@ -381,6 +381,18 @@ GUI.prototype.resize = function ( w, h ){
 			obj.y *= this.canvas.height/1000;
 			obj.relative = false;
 		}
+		if(Math.abs(w - this.canvas.width) > Math.abs(h - this.canvas.height) && obj.size !== undefined){
+			var cislo = parseInt(obj.size);
+			var pripona = obj.size.split(parseInt(obj.size).toString())[1];
+			cislo = Math.round(cislo*X);
+			obj.size = cislo+pripona;
+		}
+		else if(obj.size !== undefined){
+			var cislo = parseInt(obj.size);
+			var pripona = obj.size.split(parseInt(obj.size).toString())[1];
+			cislo = Math.round(cislo*Y);
+			obj.size = cislo+pripona;
+		}
 	};
 	this.canvas.width = w;
 	this.canvas.height = h;
