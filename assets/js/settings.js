@@ -6,8 +6,8 @@ function Settings(){
 			width: "auto",
 			height: "auto",
 			// // po odkomentování: RETRO!!
-			// width: window.innerWidth/8,
-			// height: window.innerHeight/8
+			// width: window.innerWidth/2,
+			// height: window.innerHeight/2,
 		},
 		shadows: {
 			shadowMapEnabled: true,

@@ -1,4 +1,5 @@
 function GUI( canvas ){
+	var _this = this;
 	
 	this.canvas = canvas;
 	this.ctx = this.canvas.getContext("2d");
@@ -8,7 +9,7 @@ function GUI( canvas ){
 	function Note(text,object){
 		this.display = false;
 		this.render = function (){
-			var ctx = game.gui.ctx;
+			var ctx = _this.ctx;
 			ctx.save();
 			ctx.translate(object.x,object.y);
 			ctx.fillStyle = "#ffffff"
@@ -21,6 +22,8 @@ function GUI( canvas ){
 	function Button(x,y,options){
 		this.x = x;
 		this.y = y;
+		this.relative = options.relative === undefined ? true : options.relative;
+		
 		this.text = options.text.value;
 		if(options.img !== undefined){
 			this.img = new Image();
@@ -39,19 +42,19 @@ function GUI( canvas ){
 		this.poznamka = options.poznamka !== undefined ? new Note(options.poznamka, this) : false; 
 		
 		this.render = function (){
-			game.gui.ctx.font = this.size + " " + this.font;
-			game.gui.ctx.fillStyle = this.textColor;
+			_this.ctx.font = this.size + " " + this.font;this.inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y);
+			_this.ctx.fillStyle = this.textColor;
 			if(this.img !== undefined){
-				game.gui.ctx.drawImage(this.img,this.x+this.imgCoor.x,this.y+this.imgCoor.y,this.imgSize.x || game.gui.ctx.measureText(this.text).width,this.imgSize.y || parseInt(this.size));
+				_this.ctx.drawImage(this.img,this.x+this.imgCoor.x,this.y+this.imgCoor.y,this.imgSize.x || game.gui.ctx.measureText(this.text).width,this.imgSize.y || parseInt(this.size));
 			}
-			if(this.poznamka && this.poznamka.display) this.poznamka.render(); 
-			game.gui.ctx.fillText(this.text,this.x,this.y);
+			if(this.poznamka && this.poznamka.display) this.poznamka.render();
+			_this.ctx.fillText(this.text,this.x,this.y);
 		};
 		
 		this.inButton = function (x,y){
 			if(this.y > y && this.y-parseInt(this.size) <= y){
-				game.gui.ctx.font = this.size + " " + this.font;
-				if(this.x < x && this.x+game.gui.ctx.measureText(this.text).width > x){
+				_this.ctx.font = this.size + " " + this.font;
+				if(this.x < x && this.x+_this.ctx.measureText(this.text).width > x){
 					return true;
 				}
 				else{return false;}
@@ -67,7 +70,7 @@ function GUI( canvas ){
 			
 		};
 		this.render = function (){
-			game.gui.ctx.drawImage(this.img,0,0,game.gui.canvas.width,game.gui.canvas.height);
+			_this.ctx.drawImage(this.img,0,0,game.gui.canvas.width,game.gui.canvas.height);
 		};
 	};
 	
@@ -75,14 +78,15 @@ function GUI( canvas ){
 		this.buttons = options.buttons;
 		this.bg = options.bg !== undefined ? options.bg : false;
 		this.load = function (){
-			game.gui.objects = [];
+			_this.objects = [];
 			options.preload();
 			this.controls = options.controls;
 			this.controls();
-			this.bg ? game.gui.objects.push(this.bg) : false;
+			this.bg ? _this.objects.push(this.bg) : false;
 			for(var i in this.buttons){
-				game.gui.objects.push(this.buttons[i]);
+				_this.objects.push(this.buttons[i]);
 			};
+			_this.resize(_this.canvas.width,_this.canvas.height);
 			return this;
 		};
 	};
@@ -90,7 +94,7 @@ function GUI( canvas ){
 	this.guis = {
 		mainM : {
 			buttons : [
-				new Button(500,100,{
+				new Button(450,100,{
 					text:{
 						value:"Play",
 						color:"#aaaaff",
@@ -109,7 +113,7 @@ function GUI( canvas ){
 					},
 				}),
 				
-				new Button(500,130,{
+				new Button(450,145,{
 					text:{
 						value:"Load",
 						color:"#aaaaff",
@@ -127,7 +131,7 @@ function GUI( canvas ){
 					},
 				}),
 				
-				new Button(500,160,{
+				new Button(450,190,{
 					text:{
 						value:"Options",
 						color:"#aaaaff",
@@ -145,7 +149,7 @@ function GUI( canvas ){
 					},
 				}),
 				
-				new Button(500,190,{
+				new Button(450,235,{
 					text:{
 						value:"Website",
 						color:"#aaaaff",
@@ -165,11 +169,11 @@ function GUI( canvas ){
 			],
 			bg : new Background ("bg.png"),
 			preload : function (){game.scene = new THREE.Scene();},
-			controls : function (){game.gui.menuControls(true);},
+			controls : function (){_this.menuControls(true);},
 		},
 		inGame : {
 			buttons : [
-				new Button(10,window.innerHeight-10,{
+				new Button(10,100,{
 					text:{
 						value:"100",
 						color:"#ffb400",
@@ -185,11 +189,11 @@ function GUI( canvas ){
 			preload : function (){},
 			controls : function (){
 							game.eventhandler.addMouseControl(0,function(){
-								game.gui.menuControls(false)[0]();
+								_this.menuControls(false)[0]();
 								// game.camera.position.x = game.eventhandler.mouse.projected.x/10;
 								// game.camera.position.y = game.eventhandler.mouse.projected.y/10;
 							});
-							game.eventhandler.addMouseControl(1,game.gui.menuControls()[1],false,false);
+							game.eventhandler.addMouseControl(1,_this.menuControls()[1],false,false);
 
 							game.eventhandler.addKeyboardControl(82, false, false, function(){ // R
 								game.camera.position.z += 10;
@@ -208,7 +212,7 @@ function GUI( canvas ){
 							game.eventhandler.addKeyboardControl(27, false, function(){ // escape
 								game.pause();
 								game.scene.fog.density = 0.0025;
-								game.gui.menu("pause").load();
+								_this.menu("pause").load();
 							},false,false );
 							// ovládání panáčka
 							game.eventhandler.addKeyboardControl(87, false, function(){
@@ -265,7 +269,7 @@ function GUI( canvas ){
 					onclick : function (){
 						game.pause();
 						game.scene.fog.density = 0;
-						game.gui.menu("inGame").load();
+						_this.menu("inGame").load();
 					},
 				}),
 				new Button(500,170,{
@@ -329,16 +333,16 @@ function GUI( canvas ){
 						this.textColor = "#aaaaff";
 					},
 					onclick : function (){
-						game.gui.menu("mainM").load();
+						_this.menu("mainM").load();
 					},
 				}),
 			],
 			preload : function (){},
-			controls : function (){game.gui.menuControls(true);
+			controls : function (){_this.menuControls(true);
 				game.eventhandler.addKeyboardControl(27, function(){
 								game.pause();
 								game.scene.fog.density = 0;
-								game.gui.menu("inGame").load();
+								_this.menu("inGame").load();
 							},false,false );
 				},
 		},
@@ -361,59 +365,70 @@ GUI.prototype.render = function (){
 	for(var i in this.objects){
 		this.objects[i].render();
 	};
+	this.ctx.fillStyle = "#ffffff";
+	this.ctx.fillRect(game.eventhandler.mouse.x,game.eventhandler.mouse.y,10,10);
 };
 
 GUI.prototype.resize = function ( w, h ){
 	var X = w/(this.canvas.width);
 	var Y = h/(this.canvas.height);
 	for(var i in this.objects){
-		this.objects[i].x *= X;
-		this.objects[i].y *= Y;
+		var obj = this.objects[i];
+		if(!obj.relative){
+			obj.x *= X;
+			obj.y *= Y;
+		}
+		else{
+			obj.x *= this.canvas.width/1000;
+			obj.y *= this.canvas.height/1000;
+			obj.relative = false;
+		}
 	};
 	this.canvas.width = w;
 	this.canvas.height = h;
 };
 
 GUI.prototype.menuControls = function ( Initiate ){
+	var _this = this;
 	if(Initiate){
 		game.eventhandler.keyboardControls = [];
 		game.eventhandler.mouseControls = [];
 		game.eventhandler.addMouseControl(0,function (){
-			for(var i in game.gui.objects){
-				if(game.gui.objects[i].onmouseover !== undefined){
-					if(game.gui.objects[i].inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y)){
-						game.gui.objects[i].onmouseover();
+			for(var i in _this.objects){
+				if(_this.objects[i].onmouseover !== undefined){
+					if(_this.objects[i].inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y)){
+						_this.objects[i].onmouseover();
 					}
 					else{
-						game.gui.objects[i].onmouseout !== undefined ? game.gui.objects[i].onmouseout() : false;
+						_this.objects[i].onmouseout !== undefined ? _this.objects[i].onmouseout() : false;
 					}
 				}
 			} },false,false);
 	game.eventhandler.addMouseControl(1,function (){
-		for(var i in game.gui.objects){
-			if(game.gui.objects[i].onclick !== undefined && game.gui.objects[i].inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y)){
-				game.gui.objects[i].onclick();
+		for(var i in _this.objects){
+			if(_this.objects[i].onclick !== undefined && _this.objects[i].inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y)){
+				_this.objects[i].onclick();
 			}
 		} },false,false);
 	}
 	else{
 		var pole = new Array();
 		pole[0] = function (){
-			for(var i in game.gui.objects){
-				if(game.gui.objects[i].onmouseover !== undefined){
-					if(game.gui.objects[i].inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y)){
-						game.gui.objects[i].onmouseover();
+			for(var i in _this.objects){
+				if(_this.objects[i].onmouseover !== undefined){
+					if(_this.objects[i].inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y)){
+						_this.objects[i].onmouseover();
 					}
 					else{
-						game.gui.objects[i].onmouseout !== undefined ? game.gui.objects[i].onmouseout() : false;
+						_this.objects[i].onmouseout !== undefined ? _this.objects[i].onmouseout() : false;
 					}
 				}
 			}
 		};
 		pole[1] = function (){
-			for(var i in game.gui.objects){
-				if(game.gui.objects[i].onclick !== undefined && game.gui.objects[i].inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y)){
-					game.gui.objects[i].onclick();
+			for(var i in _this.objects){
+				if(_this.objects[i].onclick !== undefined && _this.objects[i].inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y)){
+					_this.objects[i].onclick();
 				}
 			}
 		};
