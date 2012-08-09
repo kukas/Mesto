@@ -20,7 +20,7 @@ function GUI( canvas ){
 			var pole = new Array();
 			var ctx = _this.ctx;
 			ctx.font = noteObj.size + " " + noteObj.font;
-			var radkovani = noteObj.size/4;
+			var radkovani = parseInt(noteObj.size)/4;
 			pole[0] = noteObj.text;
 			while(ctx.measureText(pole[pole.length-1]).width >= noteObj.width){
 				var poleSlov = pole[pole.length-1].split(" ");
@@ -36,7 +36,8 @@ function GUI( canvas ){
 					}
 					if(ctx.measureText(radek).width >= noteObj.width){
 						var novy = radek.split(" ");
-						novy.splice(radek.length-1,1);
+						novy.splice(novy.length-1,1);
+						if(novy[0] == "") novy.splice(0,1);
 						radek = novy.join(" ");
 						break;
 					}
@@ -49,7 +50,6 @@ function GUI( canvas ){
 			var h = pole.length*(parseInt(noteObj.size)+radkovani);
 			return h;
 		}();
-		console.log(this.text);
 		this.bgColor = bg.bgColor !== undefined ? bg.bgColor : false;
 		this.bgImg = bg.bgImg !== undefined ? bg.bgImg : false;
 		
@@ -65,16 +65,15 @@ function GUI( canvas ){
 				ctx.translate(this.parent.x,this.parent.y);
 				ctx.fillStyle = this.bgColor;
 				ctx.font = this.parent.size + " " + this.parent.font;
-				ctx.fillRect(this.parent.width-10,this.parent.height,100,100);
-				
-				ctx.beginPath();
+				ctx.fillRect(this.parent.width,this.parent.height,this.width,this.height);
+				/*ctx.beginPath();
 				ctx.translate(this.parent.width-20,game.eventhandler.mouse.y-this.parent.y);
 				ctx.moveTo(0,0);
 				ctx.lineTo(11,-5);
 				ctx.lineTo(11,5);
 				ctx.lineTo(0,0);
 				ctx.fill();
-				ctx.closePath();
+				ctx.closePath();*/
 			}
 			ctx.restore();
 			if(this.bgImg){
@@ -84,12 +83,9 @@ function GUI( canvas ){
 			
 			ctx.fillStyle = this.color;
 			ctx.font = this.size + " " + this.font;
-			ctx.translate(this.parent.x+this.parent.width-10,this.parent.y-this.height/2);
-			for(i in this.text){
-				ctx.fillText(this.text[i],0,0);
-				ctx.translate(0,parseInt(this.size)*5/4);
+			for(var i = 0;i<this.text.length;i++){
+				ctx.fillText(this.text[i],this.parent.x+this.parent.width,this.parent.y+i*5/4*(parseInt(this.size)));
 			};
-			ctx.restore();
 		};
 	};
 	
@@ -129,12 +125,12 @@ function GUI( canvas ){
 		};
 		
 		this.render = function (){
-			_this.ctx.font = this.size + " " + this.font;
-			_this.ctx.fillStyle = this.textColor;
 			if(this.img !== undefined){
 				_this.ctx.drawImage(this.img,this.x+this.imgCoor.x,this.y+this.imgCoor.y,this.width,this.height);
 			}
 			if(this.poznamka && this.poznamka.display) this.poznamka.render();
+			_this.ctx.font = this.size + " " + this.font;
+			_this.ctx.fillStyle = this.textColor;
 			_this.ctx.fillText(this.text,this.x,this.y);
 		};
 		
@@ -273,12 +269,12 @@ function GUI( canvas ){
 						this.poznamka.display = false;
 					},
 					poznamka : {
-						value : "This is your health. If it goes to zero, you die.",
+						value : "This is your health. If it goes to zero, you die. But be aware of losing it anyway. Several harms and wounds may cause permanent disabilities, unless you have an admirable medicae skill or a lot of luck.",
 						size : "10pt",
 						font : "sans-sarif",
 						color : "#0000ff",
 						bg : {
-							bgColor : "#000000",
+							bgColor : "#00ff00",
 						},
 					},
 				}),],
