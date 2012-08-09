@@ -1,21 +1,95 @@
 function GUI( canvas ){
 	var _this = this;
-	
+	var gui = this;
 	this.canvas = canvas;
 	this.ctx = this.canvas.getContext("2d");
 	
 	this.objects = [];
 	
-	function Note(text,object){
+	function Note(text,bg,object){
+		var noteObj = this;
+		this.parent = object;
 		this.display = false;
+		this.text = text.value;
+		
+		this.size = text.size !== undefined ? text.size : "10pt";
+		this.font = text.font !== undefined ? text.font : "VT220";
+		this.color = text.color !== undefined ? text.color : "#000000";
+		this.width = text.width !== undefined ? text.width : 100;
+		this.height = function (){
+			var pole = new Array();
+			var ctx = _this.ctx;
+			ctx.font = noteObj.size + " " + noteObj.font;
+			var radkovani = noteObj.size/4;
+			pole[0] = noteObj.text;
+			while(ctx.measureText(pole[pole.length-1]).width >= noteObj.width){
+				var poleSlov = pole[pole.length-1].split(" ");
+				var radek = "";
+				var i = 0;
+				while(ctx.measureText(radek).width < noteObj.width){
+					var lastIndex = radek.length;
+					if(i != 0) {
+						radek = [radek,poleSlov[i]].join(" ");
+					}
+					else{
+						radek = poleSlov[i];
+					}
+					if(ctx.measureText(radek).width >= noteObj.width){
+						var novy = radek.split(" ");
+						novy.splice(radek.length-1,1);
+						radek = novy.join(" ");
+						break;
+					}
+					i++;
+				};
+				pole[pole.length-1] = pole[pole.length-1].substring(radek.length,pole[pole.length-1].length);
+				pole.splice(pole.length-1,0,radek);
+			};
+			noteObj.text = pole;
+			var h = pole.length*(parseInt(noteObj.size)+radkovani);
+			return h;
+		}();
+		console.log(this.text);
+		this.bgColor = bg.bgColor !== undefined ? bg.bgColor : false;
+		this.bgImg = bg.bgImg !== undefined ? bg.bgImg : false;
+		
+		this.tick = function (){
+			
+		};
+		
 		this.render = function (){
 			var ctx = _this.ctx;
+			
 			ctx.save();
-			ctx.translate(object.x,object.y);
-			ctx.fillStyle = "#ffffff"
-			ctx.fillRect(0,0,100,100);
+			if(this.bgColor){
+				ctx.translate(this.parent.x,this.parent.y);
+				ctx.fillStyle = this.bgColor;
+				ctx.font = this.parent.size + " " + this.parent.font;
+				ctx.fillRect(this.parent.width-10,this.parent.height,100,100);
+				
+				ctx.beginPath();
+				ctx.translate(this.parent.width-20,game.eventhandler.mouse.y-this.parent.y);
+				ctx.moveTo(0,0);
+				ctx.lineTo(11,-5);
+				ctx.lineTo(11,5);
+				ctx.lineTo(0,0);
+				ctx.fill();
+				ctx.closePath();
+			}
 			ctx.restore();
-			console.log("vykreslování");
+			if(this.bgImg){
+				console.log("hura");
+			}
+			ctx.restore();
+			
+			ctx.fillStyle = this.color;
+			ctx.font = this.size + " " + this.font;
+			ctx.translate(this.parent.x+this.parent.width-10,this.parent.y-this.height/2);
+			for(i in this.text){
+				ctx.fillText(this.text[i],0,0);
+				ctx.translate(0,parseInt(this.size)*5/4);
+			};
+			ctx.restore();
 		};
 	};
 	
@@ -34,27 +108,40 @@ function GUI( canvas ){
 		this.textColor = options.text.color === undefined ? "#ffffff" : options.text.color;
 		this.size = options.text.size === undefined ? "20pt" : options.text.size;
 		this.font = options.text.font === undefined ? "VT220" : options.text.font;
+		if(this.text !== undefined){
+			_this.ctx.font = this.size + " " + this.font;
+			this.width = _this.ctx.measureText(this.text).width;
+			this.height = -parseInt(this.size);
+		}
 		
 		this.tick = options.tick !== undefined ? options.tick : function (){};
 		this.onmouseover = options.onmouseover !== undefined ? options.onmouseover : function (){};
 		this.onmouseout = options.onmouseout !== undefined ? options.onmouseout : function (){};
 		this.onclick = options.onclick !== undefined ? options.onclick : function (){};
-		this.poznamka = options.poznamka !== undefined ? new Note(options.poznamka, this) : false; 
+		if(options.poznamka !== undefined){
+			var poznamka = options.poznamka;
+			this.poznamka = new Note(poznamka,poznamka.bg, this);
+			
+			delete poznamka;
+		}
+		else{
+			this.poznamka = false;
+		};
 		
 		this.render = function (){
-			_this.ctx.font = this.size + " " + this.font;this.inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y);
+			_this.ctx.font = this.size + " " + this.font;
 			_this.ctx.fillStyle = this.textColor;
 			if(this.img !== undefined){
-				_this.ctx.drawImage(this.img,this.x+this.imgCoor.x,this.y+this.imgCoor.y,this.imgSize.x || game.gui.ctx.measureText(this.text).width,this.imgSize.y || parseInt(this.size));
+				_this.ctx.drawImage(this.img,this.x+this.imgCoor.x,this.y+this.imgCoor.y,this.width,this.height);
 			}
 			if(this.poznamka && this.poznamka.display) this.poznamka.render();
 			_this.ctx.fillText(this.text,this.x,this.y);
 		};
 		
 		this.inButton = function (x,y){
-			if(this.y > y && this.y-parseInt(this.size) <= y){
+			if(this.y > y && this.y+this.height <= y){
 				_this.ctx.font = this.size + " " + this.font;
-				if(this.x < x && this.x+_this.ctx.measureText(this.text).width > x){
+				if(this.x < x && this.x+this.width > x){
 					return true;
 				}
 				else{return false;}
@@ -173,7 +260,7 @@ function GUI( canvas ){
 		},
 		inGame : {
 			buttons : [
-				new Button(10,100,{
+				new Button(10,500,{
 					text:{
 						value:"100",
 						color:"#ffb400",
@@ -184,6 +271,15 @@ function GUI( canvas ){
 					},
 					onmouseout : function (){
 						this.poznamka.display = false;
+					},
+					poznamka : {
+						value : "This is your health. If it goes to zero, you die.",
+						size : "10pt",
+						font : "sans-sarif",
+						color : "#0000ff",
+						bg : {
+							bgColor : "#000000",
+						},
 					},
 				}),],
 			preload : function (){},
@@ -339,7 +435,7 @@ function GUI( canvas ){
 			],
 			preload : function (){},
 			controls : function (){_this.menuControls(true);
-				game.eventhandler.addKeyboardControl(27, function(){
+				game.eventhandler.addKeyboardControl(27, false, function(){
 								game.pause();
 								game.scene.fog.density = 0;
 								_this.menu("inGame").load();
