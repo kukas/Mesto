@@ -3,12 +3,14 @@ function GUI( canvas ){
 	var gui = this;
 	this.canvas = canvas;
 	this.ctx = this.canvas.getContext("2d");
+	this.width = this.canvas.width;
+	this.height = this.canvas.height;
 	
-	this.objects = [];
+	this.children = [];
 	
 	function Note(text,bg,object){
+		this.children = [];
 		var noteObj = this;
-		this.parent = object;
 		this.display = false;
 		this.text = text.value;
 		
@@ -53,18 +55,12 @@ function GUI( canvas ){
 		this.bgColor = bg.bgColor !== undefined ? bg.bgColor : false;
 		this.bgImg = bg.bgImg !== undefined ? bg.bgImg : false;
 		
-		this.tick = function (){
-			
-		};
-		
 		this.render = function (){
 			var ctx = _this.ctx;
 			
 			ctx.save();
 			if(this.bgColor){
-				ctx.translate(this.parent.x,this.parent.y);
 				ctx.fillStyle = this.bgColor;
-				ctx.font = this.parent.size + " " + this.parent.font;
 				ctx.fillRect(this.parent.width,this.parent.height,this.width,this.height);
 				/*ctx.beginPath();
 				ctx.translate(this.parent.width-20,game.eventhandler.mouse.y-this.parent.y);
@@ -76,20 +72,25 @@ function GUI( canvas ){
 				ctx.closePath();*/
 			}
 			ctx.restore();
+			ctx.save();
 			if(this.bgImg){
 				console.log("hura");
 			}
 			ctx.restore();
-			
+			ctx.save();
 			ctx.fillStyle = this.color;
 			ctx.font = this.size + " " + this.font;
 			for(var i = 0;i<this.text.length;i++){
 				ctx.fillText(this.text[i],this.parent.x+this.parent.width,this.parent.y+i*5/4*(parseInt(this.size)));
 			};
+			ctx.restore();
 		};
+		object.add(this);
 	};
+	Note.prototype = new GUIObject();
 	
 	function Button(x,y,options){
+		this.children = [];
 		this.x = x;
 		this.y = y;
 		this.relative = options.relative === undefined ? true : options.relative;
@@ -145,29 +146,29 @@ function GUI( canvas ){
 			else{return false;}
 		};
 	};
+	Button.prototype = new GUIObject();
 	
 	function Background( img ){
+		this.children = [];
 		this.img = new Image();
 		this.img.src = "assets/textures/" + img;
-		this.tick = function(){
-			
-		};
 		this.render = function (){
 			_this.ctx.drawImage(this.img,0,0,game.gui.canvas.width,game.gui.canvas.height);
 		};
 	};
+	Background.prototype = new GUIObject();
 	
 	function Menu( options ){
-		this.buttons = options.buttons;
+		this.objects = options.objects;
 		this.bg = options.bg !== undefined ? options.bg : false;
 		this.load = function (){
-			_this.objects = [];
+			_this.children = [];
 			options.preload();
 			this.controls = options.controls;
 			this.controls();
-			this.bg ? _this.objects.push(this.bg) : false;
-			for(var i in this.buttons){
-				_this.objects.push(this.buttons[i]);
+			this.bg ? _this.add(this.bg) : false;
+			for(var i in this.objects){
+				_this.add(this.objects[i]);
 			};
 			_this.resize(_this.canvas.width,_this.canvas.height);
 			return this;
@@ -176,7 +177,7 @@ function GUI( canvas ){
 	
 	this.guis = {
 		mainM : {
-			buttons : [
+			objects : [
 				new Button(450,100,{
 					text:{
 						value:"Play",
@@ -255,7 +256,7 @@ function GUI( canvas ){
 			controls : function (){_this.menuControls(true);},
 		},
 		inGame : {
-			buttons : [
+			objects : [
 				new Button(10,500,{
 					text:{
 						value:"100",
@@ -345,7 +346,7 @@ function GUI( canvas ){
 							},
 		},
 		pause : {
-			buttons : [
+			objects : [
 				new Button(500,100,{
 					text : {
 						value : "Resume",
@@ -446,24 +447,25 @@ function GUI( canvas ){
 	};
 };
 
+GUI.prototype = new GUIObject();
+
 GUI.prototype.tick = function (){
-	for(var i in this.objects){
-		this.objects[i].tick();
-	};
+	this.tickChildren();
 };
 
 GUI.prototype.render = function (){
-	this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
-	for(var i in this.objects){
-		this.objects[i].render();
-	};
+	this.ctx.clearRect(0,0,this.width,this.height);
+	
+	this.renderChildren();
+	this.ctx.fillStyle = "#ffffff";
+	this.ctx.fillRect(game.eventhandler.mouse.x,game.eventhandler.mouse.y,10,10);
 };
 
 GUI.prototype.resize = function ( w, h ){
 	var X = w/(this.canvas.width);
 	var Y = h/(this.canvas.height);
-	for(var i in this.objects){
-		var obj = this.objects[i];
+	for(var i in this.children){
+		var obj = this.children[i];
 		if(!obj.relative){
 			obj.x *= X;
 			obj.y *= Y;
@@ -485,9 +487,12 @@ GUI.prototype.resize = function ( w, h ){
 			cislo = Math.round(cislo*Y);
 			obj.size = cislo+pripona;
 		}
+		if(obj.children.length > 0) obj.resize(X,Y,true);
 	};
 	this.canvas.width = w;
 	this.canvas.height = h;
+	this.width = this.canvas.width;
+	this.height = this.canvas.height;
 };
 
 GUI.prototype.menuControls = function ( Initiate ){
@@ -496,43 +501,45 @@ GUI.prototype.menuControls = function ( Initiate ){
 		game.eventhandler.keyboardControls = [];
 		game.eventhandler.mouseControls = [];
 		game.eventhandler.addMouseControl(0,function (){
-			for(var i in _this.objects){
-				if(_this.objects[i].onmouseover !== undefined){
-					if(_this.objects[i].inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y)){
-						_this.objects[i].onmouseover();
+			for(var i in _this.children){
+				if(_this.children[i].onmouseover){
+					if(_this.children[i].inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y)){
+						_this.children[i].onmouseover();
 					}
 					else{
-						_this.objects[i].onmouseout !== undefined ? _this.objects[i].onmouseout() : false;
+						_this.children[i].onmouseout  ? _this.children[i].onmouseout() : false;
 					}
 				}
 			} },false,false);
 	game.eventhandler.addMouseControl(1,function (){
-		for(var i in _this.objects){
-			if(_this.objects[i].onclick !== undefined && _this.objects[i].inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y)){
-				_this.objects[i].onclick();
+		for(var i in _this.children){
+			if(_this.children[i].onclick && _this.children[i].inButton(_this.getMouse().x,_this.getMouse().y)){
+				_this.children[i].onclick();
 			}
 		} },false,false);
+		
+	game.eventhandler.addMouseControl(3,function (){console.log(_this.getMouse());})
 	}
 	else{
 		var pole = new Array();
 		pole[0] = function (){
-			for(var i in _this.objects){
-				if(_this.objects[i].onmouseover !== undefined){
-					if(_this.objects[i].inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y)){
-						_this.objects[i].onmouseover();
+			for(var i in _this.children){
+				if(_this.children[i].onmouseover !== undefined){
+					if(_this.children[i].inButton(_this.getMouse().x,_this.getMouse().y)){
+						_this.children[i].onmouseover();
 					}
 					else{
-						_this.objects[i].onmouseout !== undefined ? _this.objects[i].onmouseout() : false;
+						_this.children[i].onmouseout !== undefined ? _this.children[i].onmouseout() : false;
 					}
 				}
 			}
 		};
-		pole[1] = function (){
-			for(var i in _this.objects){
-				if(_this.objects[i].onclick !== undefined && _this.objects[i].inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y)){
-					_this.objects[i].onclick();
+		pole[1] =function (){
+			for(var i in _this.children){
+				if(_this.children[i].onclick !== undefined && _this.children[i].inButton(_this.getMouse().x,_this.getMouse().y)){
+					_this.children[i].onclick();
 				}
-			}
+			};
 		};
 		return pole;
 	};
