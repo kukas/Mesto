@@ -15,9 +15,7 @@ function GUIObject(){
 	
 	this.add = function ( obj ){
 		obj.parent = this;
-		obj.ctx = this.ctx;
 		this.children.push( obj );
-		console.log(obj);
 	};
 	
 	this.tickChildren = function (){
@@ -80,5 +78,11 @@ function GUIObject(){
 		mouse.x-=this.x;
 		mouse.y-=this.y;
 		return mouse;
+	};
+	
+	this.getContext = function (){
+		if(this.ctx !== undefined) return this.ctx;
+		else if(this.parent.ctx !== undefined) return this.parent.ctx;
+		else if(this.parent) this.parent.getContext();
 	};
 };

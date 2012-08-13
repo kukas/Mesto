@@ -9,6 +9,7 @@ function GUI( canvas ){
 	this.children = [];
 	
 	function Note(text,bg,object){
+		this.ctx = _this.ctx;
 		this.children = [];
 		var noteObj = this;
 		this.display = false;
@@ -52,44 +53,54 @@ function GUI( canvas ){
 			var h = pole.length*(parseInt(noteObj.size)+radkovani);
 			return h;
 		}();
-		this.bgColor = bg.bgColor !== undefined ? bg.bgColor : false;
-		this.bgImg = bg.bgImg !== undefined ? bg.bgImg : false;
+		
+		if(bg !== undefined){
+			this.bgColor = bg.bgColor !== undefined ? bg.bgColor : false;
+			this.bgImg = bg.bgImg !== undefined ? bg.bgImg : false;
+		}
+		else{
+			this.bgColor = false;
+			this.bgImg = false;
+		}
 		
 		this.render = function (){
 			var ctx = _this.ctx;
 			
-			ctx.save();
-			if(this.bgColor){
-				ctx.fillStyle = this.bgColor;
-				ctx.fillRect(this.parent.width,this.parent.height,this.width,this.height);
-				/*ctx.beginPath();
-				ctx.translate(this.parent.width-20,game.eventhandler.mouse.y-this.parent.y);
-				ctx.moveTo(0,0);
-				ctx.lineTo(11,-5);
-				ctx.lineTo(11,5);
-				ctx.lineTo(0,0);
-				ctx.fill();
-				ctx.closePath();*/
-			}
-			ctx.restore();
-			ctx.save();
-			if(this.bgImg){
-				console.log("hura");
-			}
-			ctx.restore();
-			ctx.save();
-			ctx.fillStyle = this.color;
-			ctx.font = this.size + " " + this.font;
-			for(var i = 0;i<this.text.length;i++){
-				ctx.fillText(this.text[i],this.parent.x+this.parent.width,this.parent.y+i*5/4*(parseInt(this.size)));
-			};
-			ctx.restore();
+			if(this.display){
+				ctx.save();
+				if(this.bgColor){
+					ctx.fillStyle = this.bgColor;
+					ctx.fillRect(this.parent.width,this.parent.height,this.width,this.height);
+					/*ctx.beginPath();
+					ctx.translate(this.parent.width-20,game.eventhandler.mouse.y-this.parent.y);
+					ctx.moveTo(0,0);
+					ctx.lineTo(11,-5);
+					ctx.lineTo(11,5);
+					ctx.lineTo(0,0);
+					ctx.fill();
+					ctx.closePath();*/
+				}
+				ctx.restore();
+				ctx.save();
+				if(this.bgImg){
+					console.log("hura");
+				}
+				ctx.restore();
+				ctx.save();
+				ctx.fillStyle = this.color;
+				ctx.font = this.size + " " + this.font;
+				for(var i = 0;i<this.text.length;i++){
+					ctx.fillText(this.text[i],this.parent.width,i*5/4*(parseInt(this.size)));
+				};
+				ctx.restore();
+			}	
 		};
 		object.add(this);
 	};
 	Note.prototype = new GUIObject();
 	
 	function Button(x,y,options){
+		this.ctx = _this.ctx;
 		this.children = [];
 		this.x = x;
 		this.y = y;
@@ -129,7 +140,6 @@ function GUI( canvas ){
 			if(this.img !== undefined){
 				_this.ctx.drawImage(this.img,this.x+this.imgCoor.x,this.y+this.imgCoor.y,this.width,this.height);
 			}
-			if(this.poznamka && this.poznamka.display) this.poznamka.render();
 			_this.ctx.font = this.size + " " + this.font;
 			_this.ctx.fillStyle = this.textColor;
 			_this.ctx.fillText(this.text,this.x,this.y);
@@ -149,11 +159,12 @@ function GUI( canvas ){
 	Button.prototype = new GUIObject();
 	
 	function Background( img ){
+		this.ctx = _this.ctx;
 		this.children = [];
 		this.img = new Image();
 		this.img.src = "assets/textures/" + img;
 		this.render = function (){
-			_this.ctx.drawImage(this.img,0,0,game.gui.canvas.width,game.gui.canvas.height);
+			this.ctx.drawImage(this.img,0,0,game.gui.canvas.width,game.gui.canvas.height);
 		};
 	};
 	Background.prototype = new GUIObject();
@@ -274,9 +285,6 @@ function GUI( canvas ){
 						size : "10pt",
 						font : "sans-sarif",
 						color : "#0000ff",
-						bg : {
-							bgColor : "#00ff00",
-						},
 					},
 				}),],
 			preload : function (){},
@@ -486,6 +494,11 @@ GUI.prototype.resize = function ( w, h ){
 			var pripona = obj.size.split(parseInt(obj.size).toString())[1];
 			cislo = Math.round(cislo*Y);
 			obj.size = cislo+pripona;
+		}
+		if(obj.text !== undefined){
+			obj.ctx.font = obj.size + " " + obj.font;
+			obj.width = obj.ctx.measureText(obj.text).width;
+			obj.height = -parseInt(obj.size);
 		}
 		if(obj.children.length > 0) obj.resize(X,Y,true);
 	};
