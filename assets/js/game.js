@@ -30,6 +30,11 @@ function Game(){
 	this.webgl.shadowMapEnabled = this.settings.graphics.shadows.shadowMapEnabled;
 	this.webgl.shadowMapSoft = this.settings.graphics.shadows.shadowMapSoft;
 
+	this.cursor = document.createElement("div");
+	this.cursor.style.backgroundImage = "url('assets/cursors/steampunk.png')";
+	this.cursor.id = "cursor";
+	$("body").append(this.cursor);
+
 	this.objects = [];
 
 	// pokud se změní velikost okna prohlížeče, změní velikost canvasů

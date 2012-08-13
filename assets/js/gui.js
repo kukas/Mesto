@@ -302,6 +302,8 @@ function GUI( canvas ){
 								_this.menuControls(false)[0]();
 								// game.camera.position.x = game.eventhandler.mouse.projected.x/10;
 								// game.camera.position.y = game.eventhandler.mouse.projected.y/10;
+								game.cursor.style.left = game.eventhandler.mouse.x + "px";
+								game.cursor.style.top = game.eventhandler.mouse.y + "px";
 							});
 							game.eventhandler.addMouseControl(1,_this.menuControls()[1],false,false);
 
@@ -474,8 +476,8 @@ GUI.prototype.render = function (){
 	this.ctx.clearRect(0,0,this.width,this.height);
 	
 	this.renderChildren();
-	this.ctx.fillStyle = "#ffffff";
-	this.ctx.fillRect(game.eventhandler.mouse.x,game.eventhandler.mouse.y,10,10);
+	// this.ctx.fillStyle = "#ffffff";
+	// this.ctx.fillRect(game.eventhandler.mouse.x,game.eventhandler.mouse.y,10,10);
 };
 
 GUI.prototype.resize = function ( w, h ){
@@ -523,6 +525,9 @@ GUI.prototype.menuControls = function ( Initiate ){
 		game.eventhandler.keyboardControls = [];
 		game.eventhandler.mouseControls = [];
 		game.eventhandler.addMouseControl(0,function (){
+			game.cursor.style.left = game.eventhandler.mouse.x + "px";
+			game.cursor.style.top = game.eventhandler.mouse.y + "px";
+			console.log(game.cursor)
 			for(var i in _this.children){
 				if(_this.children[i].onmouseover){
 					if(_this.children[i].inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y)){
@@ -548,7 +553,7 @@ GUI.prototype.menuControls = function ( Initiate ){
 			for(var i in _this.children){
 				if(_this.children[i].onmouseover !== undefined){
 					if(_this.children[i].inButton(_this.getMouse().x,_this.getMouse().y)){
-						_this.children[i].onmouseover();
+						_this.children[i].onmousmenueover();
 					}
 					else{
 						_this.children[i].onmouseout !== undefined ? _this.children[i].onmouseout() : false;
