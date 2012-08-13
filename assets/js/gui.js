@@ -1,6 +1,5 @@
 function GUI( canvas ){
 	var _this = this;
-	var gui = this;
 	this.canvas = canvas;
 	this.ctx = this.canvas.getContext("2d");
 	this.width = this.canvas.width;
@@ -15,13 +14,17 @@ function GUI( canvas ){
 		this.display = false;
 		this.text = text.value;
 		
+		this.x = text.x !== undefined ? text.x : 0;
+		this.y = text.y !== undefined ? text.y : 0;
+		
 		this.size = text.size !== undefined ? text.size : "10pt";
 		this.font = text.font !== undefined ? text.font : "VT220";
 		this.color = text.color !== undefined ? text.color : "#000000";
 		this.width = text.width !== undefined ? text.width : 100;
 		this.height = function (){
 			var pole = new Array();
-			var ctx = _this.ctx;
+			var ctx = noteObj.ctx;
+			ctx.save();
 			ctx.font = noteObj.size + " " + noteObj.font;
 			var radkovani = parseInt(noteObj.size)/4;
 			pole[0] = noteObj.text;
@@ -51,6 +54,7 @@ function GUI( canvas ){
 			};
 			noteObj.text = pole;
 			var h = pole.length*(parseInt(noteObj.size)+radkovani);
+			ctx.restore();
 			return h;
 		}();
 		
@@ -64,13 +68,13 @@ function GUI( canvas ){
 		}
 		
 		this.render = function (){
-			var ctx = _this.ctx;
+			var ctx = noteObj.ctx;
 			
 			if(this.display){
 				ctx.save();
 				if(this.bgColor){
 					ctx.fillStyle = this.bgColor;
-					ctx.fillRect(this.parent.width,this.parent.height,this.width,this.height);
+					ctx.fillRect(this.parent.width,this.parent.height-parseInt(this.size),this.width,this.height);
 					/*ctx.beginPath();
 					ctx.translate(this.parent.width-20,game.eventhandler.mouse.y-this.parent.y);
 					ctx.moveTo(0,0);
@@ -90,7 +94,7 @@ function GUI( canvas ){
 				ctx.fillStyle = this.color;
 				ctx.font = this.size + " " + this.font;
 				for(var i = 0;i<this.text.length;i++){
-					ctx.fillText(this.text[i],this.parent.width,i*5/4*(parseInt(this.size)));
+					ctx.fillText(this.text[i],this.parent.width+this.x,i*5/4*(parseInt(this.size))+this.y);
 				};
 				ctx.restore();
 			}	
@@ -268,7 +272,7 @@ function GUI( canvas ){
 		},
 		inGame : {
 			objects : [
-				new Button(10,500,{
+				new Button(10,970,{
 					text:{
 						value:"100",
 						color:"#ffb400",
@@ -285,6 +289,11 @@ function GUI( canvas ){
 						size : "10pt",
 						font : "sans-sarif",
 						color : "#0000ff",
+						y : -40,
+						width : 250,
+						bg : {
+							bgColor : "#ffffff",
+						},
 					},
 				}),],
 			preload : function (){},
