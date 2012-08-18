@@ -99,7 +99,7 @@ function GUI( canvas ){
 				ctx.restore();
 			}	
 		};
-		object.add(this);
+		return this;
 	};
 	Note.prototype = new GUIObject();
 	
@@ -131,14 +131,8 @@ function GUI( canvas ){
 		this.onmouseout = options.onmouseout !== undefined ? options.onmouseout : function (){};
 		this.onclick = options.onclick !== undefined ? options.onclick : function (){};
 		if(options.poznamka !== undefined){
-			var poznamka = options.poznamka;
-			this.poznamka = new Note(poznamka,poznamka.bg, this);
-			
-			delete poznamka;
+			this.add(new Note(options.poznamka,options.poznamka.bg));
 		}
-		else{
-			this.poznamka = false;
-		};
 		
 		this.render = function (){
 			if(this.img !== undefined){
@@ -279,10 +273,10 @@ function GUI( canvas ){
 						size:"40pt",
 					},
 					onmouseover : function (){
-						this.poznamka.display = true;
+						this.children[0].display = true;
 					},
 					onmouseout : function (){
-						this.poznamka.display = false;
+						this.children[0].display = false;
 					},
 					poznamka : {
 						value : "This is your health. If it goes to zero, you die. But be aware of losing it anyway. Several harms and wounds may cause permanent disabilities, unless you have an admirable medicae skill or a lot of luck.",
@@ -527,46 +521,23 @@ GUI.prototype.menuControls = function ( Initiate ){
 		game.eventhandler.addMouseControl(0,function (){
 			game.cursor.style.left = game.eventhandler.mouse.x + "px";
 			game.cursor.style.top = game.eventhandler.mouse.y + "px";
-			console.log(game.cursor)
-			for(var i in _this.children){
-				if(_this.children[i].onmouseover){
-					if(_this.children[i].inButton(game.eventhandler.mouse.x,game.eventhandler.mouse.y)){
-						_this.children[i].onmouseover();
-					}
-					else{
-						_this.children[i].onmouseout  ? _this.children[i].onmouseout() : false;
-					}
-				}
-			} },false,false);
+			_this.eventHand("onmouseover");
+			_this.eventHand("onmouseout");
+			},false,false);
 	game.eventhandler.addMouseControl(1,function (){
-		for(var i in _this.children){
-			if(_this.children[i].onclick && _this.children[i].inButton(_this.getMouse().x,_this.getMouse().y)){
-				_this.children[i].onclick();
-			}
-		} },false,false);
-		
-	game.eventhandler.addMouseControl(3,function (){console.log(_this.getMouse());})
+			_this.eventHand("onclick");
+		},false,false);
 	}
 	else{
 		var pole = new Array();
 		pole[0] = function (){
-			for(var i in _this.children){
-				if(_this.children[i].onmouseover !== undefined){
-					if(_this.children[i].inButton(_this.getMouse().x,_this.getMouse().y)){
-						_this.children[i].onmousmenueover();
-					}
-					else{
-						_this.children[i].onmouseout !== undefined ? _this.children[i].onmouseout() : false;
-					}
-				}
-			}
+			game.cursor.style.left = game.eventhandler.mouse.x + "px";
+			game.cursor.style.top = game.eventhandler.mouse.y + "px";
+			_this.eventHand("onmouseover");
+			_this.eventHand("onmouseout");
 		};
 		pole[1] =function (){
-			for(var i in _this.children){
-				if(_this.children[i].onclick !== undefined && _this.children[i].inButton(_this.getMouse().x,_this.getMouse().y)){
-					_this.children[i].onclick();
-				}
-			};
+			_this.eventHand("onclick");
 		};
 		return pole;
 	};
