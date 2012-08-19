@@ -521,11 +521,11 @@ GUI.prototype.menuControls = function ( Initiate ){
 		game.eventhandler.addMouseControl(0,function (){
 			game.cursor.style.left = game.eventhandler.mouse.x + "px";
 			game.cursor.style.top = game.eventhandler.mouse.y + "px";
-			_this.eventHand("onmouseover");
-			_this.eventHand("onmouseout");
+			_this.eventHand("onmouseover",0,0);
+			_this.eventHand("onmouseout",0,0);
 			},false,false);
 	game.eventhandler.addMouseControl(1,function (){
-			_this.eventHand("onclick");
+			_this.eventHand("onclick",0,0);
 		},false,false);
 	}
 	else{
@@ -533,11 +533,11 @@ GUI.prototype.menuControls = function ( Initiate ){
 		pole[0] = function (){
 			game.cursor.style.left = game.eventhandler.mouse.x + "px";
 			game.cursor.style.top = game.eventhandler.mouse.y + "px";
-			_this.eventHand("onmouseover");
-			_this.eventHand("onmouseout");
+			_this.eventHand("onmouseover",0,0);
+			_this.eventHand("onmouseout",0,0);
 		};
 		pole[1] =function (){
-			_this.eventHand("onclick");
+			_this.eventHand("onclick",0,0);
 		};
 		return pole;
 	};

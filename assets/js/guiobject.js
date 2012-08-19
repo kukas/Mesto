@@ -77,7 +77,6 @@ function GUIObject(){
 		var x = modX !== undefined ? this.x+modX : this.x;
 		var y = modY !== undefined ? this.y+modY : this.y;
 		if(y > my && y+this.height <= my){
-				this.ctx.font = this.size + " " + this.font;
 				if(x < mx && x+this.width > mx){
 					return true;
 				}
@@ -87,20 +86,18 @@ function GUIObject(){
 	};
 	
 	this.eventHand = function (definer,modX,modY){
-		modX === undefined ? modX = 0 : false;
-		modY === undefined ? modY = 0 : false;
 		if(definer !== "onmouseout"){
-			if(this.inThis(game.eventhandler.x,game.eventhandler.y,modX,modY)){
+			if(this.inThis(game.eventhandler.mouse.x,game.eventhandler.mouse.y,modX,modY)){
 				this[definer] !== undefined ? this[definer]() : false;
 			}
-			for(var i in this.children){
-				this.children[i].eventHand(definer,this.x+modX,this.y+modY)
-			};
 		}
 		else{
-			if(!this.inThis(game.eventhandler.x,game.eventhandler.y,modX,modY))
+			if(!this.inThis(game.eventhandler.mouse.x,game.eventhandler.mouse.y,modX,modY))
 			this[definer] !== undefined ? this[definer]() : false;
 		}
+		for(var i in this.children){
+			this.children[i].eventHand(definer,this.x+modX,this.y+modY)
+		};
 	};
 	
 	this.getContext = function (){
