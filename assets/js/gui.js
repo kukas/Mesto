@@ -341,8 +341,8 @@ function GUI( canvas ){
 								game.objects.monster.toggleAnim("standing");
 							}, function(){ // A
 								game.objects.monster.toggleAnim("walking");
-								// game.objects.monster.move(Math.PI/2);
-								game.objects.monster.rotate(0.1);
+								game.objects.monster.move(Math.PI/2);
+								// game.objects.monster.rotate(0.1);
 								if(game.settings.graphics.camera == "topdown")
 									game.camera.follow(game.objects.monster.mesh);
 							} );
@@ -350,8 +350,8 @@ function GUI( canvas ){
 								game.objects.monster.toggleAnim("standing");
 							}, function(){ // D
 								game.objects.monster.toggleAnim("walking");
-								// game.objects.monster.move(-Math.PI/2);
-								game.objects.monster.rotate(-0.1);
+								game.objects.monster.move(-Math.PI/2);
+								// game.objects.monster.rotate(-0.1);
 								if(game.settings.graphics.camera == "topdown")
 									game.camera.follow(game.objects.monster.mesh);
 							} );

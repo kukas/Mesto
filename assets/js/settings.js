@@ -10,7 +10,7 @@ function Settings(){
 			// height: window.innerHeight/2,
 		},
 		shadows: {
-			shadowMapEnabled: true,
+			shadowMapEnabled: false,
 			shadowMapSoft: true,
 			shadowMapWidth: 512,
 			shadowMapHeight: 512,

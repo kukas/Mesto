@@ -29,7 +29,7 @@ Level.prototype = new Loader();
 
 Level.prototype.afterLoad = function (){
 	var monster = new Thing(this.models.monster, {
-		position: new THREE.Vector3(0,0, 0),
+		position: new THREE.Vector3(100,100, 0),
 		// position: new THREE.Vector3(1000*Math.random()-500, 1000*Math.random()-500, 0),
 		scale: new THREE.Vector3(0.1,0.1,0.1),
 		animation: {
@@ -46,7 +46,7 @@ Level.prototype.afterLoad = function (){
 	this.add( monster );
 
 	var player = new Character(this.models.panacek, {
-		position: new THREE.Vector3(0, -100,0),
+		position: new THREE.Vector3(0, 0, 0),
 		scale: new THREE.Vector3(50,50,50),
 		rotation: new THREE.Vector3(0,0,0),
 		speed: 2,
