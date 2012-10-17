@@ -8,6 +8,8 @@ Jukebox.prototype.loadSounds = function(soundsSrc, callback) {
 	this.soundsSrc = soundsSrc;
 
 	this.soundsToLoad = Object.keys(this.soundsSrc).length;
+	if(this.soundsToLoad<=0)
+		callback();
 	for(var i in this.soundsSrc){
 		(function(name, callback){
 			var audio = new Audio();

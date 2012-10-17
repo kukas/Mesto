@@ -1,327 +1,471 @@
 function GUI( canvas ){
 	var _this = this;
+
 	this.canvas = canvas;
 	this.ctx = this.canvas.getContext("2d");
+
 	this.width = this.canvas.width;
 	this.height = this.canvas.height;
 	
 	this.children = [];
-	
-	function Note(text,bg,object){
-		this.ctx = _this.ctx;
-		this.children = [];
-		var noteObj = this;
-		this.display = false;
-		this.text = text.value;
-		
-		this.x = text.x !== undefined ? text.x : 0;
-		this.y = text.y !== undefined ? text.y : 0;
-		
-		this.size = text.size !== undefined ? text.size : "10pt";
-		this.font = text.font !== undefined ? text.font : "VT220";
-		this.color = text.color !== undefined ? text.color : "#000000";
-		this.width = text.width !== undefined ? text.width : 100;
-		this.height = function (){
-			var pole = new Array();
-			var ctx = noteObj.ctx;
-			ctx.save();
-			ctx.font = noteObj.size + " " + noteObj.font;
-			var radkovani = parseInt(noteObj.size)/4;
-			pole[0] = noteObj.text;
-			while(ctx.measureText(pole[pole.length-1]).width >= noteObj.width){
-				var poleSlov = pole[pole.length-1].split(" ");
-				var radek = "";
-				var i = 0;
-				while(ctx.measureText(radek).width < noteObj.width){
-					var lastIndex = radek.length;
-					if(i != 0) {
-						radek = [radek,poleSlov[i]].join(" ");
+
+	function Rectangle(options){
+		GUIObject.call(this, options);
+		this.color = options.color === undefined ? "rgba(0,0,0,0.5)" : options.color;
+	}
+	Rectangle.prototype = new GUIObject();
+	Rectangle.prototype.render = function(ctx) {
+		ctx.fillStyle = this.color;
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+	};
+
+	function Texture(options){
+		GUIObject.call(this, options);
+
+		var _this = this;
+
+		this.image = options.image.image;
+		if(options.width === undefined)
+			this.width = this.image.width;
+		if(options.height === undefined)
+			this.height = this.image.height;
+
+		this.clip = options.clip === undefined ? {x: 0, y: 0, width: _this.image.width, height: _this.image.height} : options.clip;
+	}
+	Texture.prototype = new GUIObject();
+	Texture.prototype.render = function(ctx) {
+		ctx.drawImage(this.image, this.clip.x, this.clip.y, this.clip.width, this.clip.height, this.x, this.y, this.width, this.height);
+	};
+
+
+	function Text(options){
+		GUIObject.call(this, options);
+		var _this = this;
+
+		this.wrap = options.wrap === undefined ? true : options.wrap;
+		this.align = options.align === undefined ? "left" : options.align;
+
+		this.defaultStyle = {
+			size: 12,
+			lineHeight: 12,
+			font: "VT220",
+			weight: 400,
+			italic: "normal",
+			color: "#AAAAAA"
+		};
+
+		if(options.styles !== undefined){
+			this.styles = options.styles;
+			for(var style in this.styles){
+				if(this.styles[style].lineHeight === undefined && this.styles[style].size !== undefined)
+					this.styles[style].lineHeight = this.styles[style].size;
+				for(var property in this.defaultStyle){
+					if(this.styles[style][property] === undefined){
+						this.styles[style][property] = this.defaultStyle[property];
 					}
-					else{
-						radek = poleSlov[i];
-					}
-					if(ctx.measureText(radek).width >= noteObj.width){
-						var novy = radek.split(" ");
-						novy.splice(novy.length-1,1);
-						if(novy[0] == "") novy.splice(0,1);
-						radek = novy.join(" ");
-						break;
-					}
-					i++;
-				};
-				pole[pole.length-1] = pole[pole.length-1].substring(radek.length,pole[pole.length-1].length);
-				pole.splice(pole.length-1,0,radek);
+				}
+			}
+		}
+		else {
+			this.styles = {
+				default: _this.defaultStyle
 			};
-			noteObj.text = pole;
-			var h = pole.length*(parseInt(noteObj.size)+radkovani);
-			ctx.restore();
-			return h;
-		}();
-		
-		if(bg !== undefined){
-			this.bgColor = bg.bgColor !== undefined ? bg.bgColor : false;
-			this.bgImg = bg.bgImg !== undefined ? bg.bgImg : false;
 		}
-		else{
-			this.bgColor = false;
-			this.bgImg = false;
-		}
-		
-		this.render = function (){
-			var ctx = noteObj.ctx;
-			
-			if(this.display){
-				ctx.save();
-				if(this.bgColor){
-					ctx.fillStyle = this.bgColor;
-					ctx.fillRect(this.parent.width,this.parent.height-parseInt(this.size),this.width,this.height);
-					/*ctx.beginPath();
-					ctx.translate(this.parent.width-20,game.eventhandler.mouse.y-this.parent.y);
-					ctx.moveTo(0,0);
-					ctx.lineTo(11,-5);
-					ctx.lineTo(11,5);
-					ctx.lineTo(0,0);
-					ctx.fill();
-					ctx.closePath();*/
+
+		this.changeText(options.value);
+
+		// možná, do budoucnosti:
+		// this.textCache = createCanvas(options.width, options.height);
+	}
+	Text.prototype = new GUIObject();
+
+	Text.prototype.changeText = function(text) {
+		// zalamování textu
+		this.value = text;
+		var textStyles = this.value.split("\\");
+		if(this.wrap){
+			this.text = [];
+			var currentStyle = "default";
+			var style = this.styles[currentStyle];
+			var ctx = document.createElement("canvas").getContext("2d");
+			ctx.font = makeFont(style.italic, style.weight, style.font, style.size);
+
+			for(var s=0;s<textStyles.length;s++){
+				if( this.styles[textStyles[s]] !== undefined ){
+					currentStyle = textStyles[s];
+					var style = this.styles[currentStyle];
+					ctx.font = makeFont(style.italic, style.weight, style.font, style.size);
+					this.text.push( textStyles[s] );
+					continue;
 				}
-				ctx.restore();
-				ctx.save();
-				if(this.bgImg){
-					console.log("hura");
+				var pole_slov = textStyles[s].split(" ");
+				var last_slovo = 0;
+				while(last_slovo < pole_slov.length){
+					var pokus_radek = pole_slov[last_slovo];
+					novy_radek = pokus_radek;
+					for(var i = last_slovo+1; i < pole_slov.length; i++){
+						pokus_radek += " " + pole_slov[i];
+						if(ctx.measureText(pokus_radek).width > this.width){
+							break;
+						}
+						novy_radek = pokus_radek;
+					}
+					last_slovo = i;
+					this.text.push(novy_radek);
 				}
-				ctx.restore();
-				ctx.save();
-				ctx.fillStyle = this.color;
-				ctx.font = this.size + " " + this.font;
-				for(var i = 0;i<this.text.length;i++){
-					ctx.fillText(this.text[i],this.parent.width+this.x,i*5/4*(parseInt(this.size))+this.y);
-				};
-				ctx.restore();
-			}	
-		};
-		return this;
-	};
-	Note.prototype = new GUIObject();
-	
-	function Button(x,y,options){
-		this.ctx = _this.ctx;
-		this.children = [];
-		this.x = x;
-		this.y = y;
-		this.relative = options.relative === undefined ? true : options.relative;
-		
-		this.text = options.text.value;
-		if(options.img !== undefined){
-			this.img = new Image();
-			this.img.src = "assets/textures/" + options.img;
-			this.imgSize = options.imgSize !== undefined ? options.imgSize : false;
-			this.imgCoor = options.imgCoor !== undefined ? options.imgCoor : false;
-		}
-		this.textColor = options.text.color === undefined ? "#ffffff" : options.text.color;
-		this.size = options.text.size === undefined ? "20pt" : options.text.size;
-		this.font = options.text.font === undefined ? "VT220" : options.text.font;
-		if(this.text !== undefined){
-			_this.ctx.font = this.size + " " + this.font;
-			this.width = _this.ctx.measureText(this.text).width;
-			this.height = -parseInt(this.size);
-		}
-		
-		this.tick = options.tick !== undefined ? options.tick : function (){};
-		this.onmouseover = options.onmouseover !== undefined ? options.onmouseover : function (){};
-		this.onmouseout = options.onmouseout !== undefined ? options.onmouseout : function (){};
-		this.onclick = options.onclick !== undefined ? options.onclick : function (){};
-		if(options.poznamka !== undefined){
-			this.add(new Note(options.poznamka,options.poznamka.bg));
-		}
-		
-		this.render = function (){
-			if(this.img !== undefined){
-				_this.ctx.drawImage(this.img,this.x+this.imgCoor.x,this.y+this.imgCoor.y,this.width,this.height);
 			}
-			_this.ctx.font = this.size + " " + this.font;
-			_this.ctx.fillStyle = this.textColor;
-			_this.ctx.fillText(this.text,this.x,this.y);
-		};
-		
-		this.inButton = function (x,y){
-			if(this.y > y && this.y+this.height <= y){
-				_this.ctx.font = this.size + " " + this.font;
-				if(this.x < x && this.x+this.width > x){
-					return true;
-				}
-				else{return false;}
-			}
-			else{return false;}
-		};
+		}
+		else {
+			this.text = textStyles;
+		}
 	};
+
+	Text.prototype.render = function(ctx) {
+		var currentStyle = "default";
+		var currentRow = 0;
+		var currentX = 0;
+		var preserveX = false;
+		for(var line in this.text){
+			if( this.styles[this.text[line]] !== undefined ){
+				currentStyle = this.text[line];
+				currentRow--;
+				preserveX = true;
+			}
+			else {
+
+				if(preserveX){
+					preserveX = false;
+				}
+				else {
+					currentX = 0;
+				}
+				currentRow++;
+
+				var style = this.styles[currentStyle];
+
+				var x = this.x + currentX;
+				var y = this.y + currentRow*style.lineHeight;
+
+				ctx.fillStyle = style.color;
+				ctx.font = makeFont(style.italic, style.weight, style.font, style.size);
+
+				if(this.align == "center")
+					x += (this.width - ctx.measureText(this.text[line]).width)/2;
+				if(this.align == "right")
+					x += this.width - ctx.measureText(this.text[line]).width;
+
+				ctx.fillText( this.text[line], x,y );
+				currentX = ctx.measureText( this.text[line] ).width;
+			}
+		}
+	};
+
+	function Button(options){
+		GUIObject.call(this, options);
+
+		this.width = this.width === 0 ? 100 : this.width;
+		this.height = this.height === 0 ? 50 : this.height;
+		this.color = options.color === undefined ? "#888888" : options.color;
+
+		if(options.text !== undefined){
+			options.text.width = this.width;
+			options.text.height = this.height;
+			this.add( new Text(options.text), "text" )
+		}
+
+		if(options.texture !== undefined){
+			options.text.width = this.width;
+			options.text.height = this.height;
+			this.add( new Texture(options.texture), "texture" )
+		}
+
+	}
 	Button.prototype = new GUIObject();
-	
-	function Background( img ){
-		this.ctx = _this.ctx;
-		this.children = [];
-		this.img = new Image();
-		this.img.src = "assets/textures/" + img;
-		this.render = function (){
-			this.ctx.drawImage(this.img,0,0,game.gui.canvas.width,game.gui.canvas.height);
-		};
+
+	Button.prototype.render = function(ctx) {
+		ctx.fillStyle = this.color;
+		ctx.fillRect(this.x, this.y, this.width, this.height);
 	};
-	Background.prototype = new GUIObject();
+
+	// function Note(){
+
+	// }
 	
-	function Menu( options ){
-		this.objects = options.objects;
-		this.bg = options.bg !== undefined ? options.bg : false;
-		this.load = function (){
-			_this.children = [];
-			options.preload();
-			this.controls = options.controls;
-			this.controls();
-			this.bg ? _this.add(this.bg) : false;
-			for(var i in this.objects){
-				_this.add(this.objects[i]);
-			};
-			_this.resize(_this.canvas.width,_this.canvas.height);
-			return this;
-		};
-	};
+	// function Note(text,bg,object){
+	// 	this.ctx = _this.ctx;
+
+	// 	this.children = [];
+	// 	var noteObj = this;
+	// 	this.display = false;
+	// 	this.text = text.value;
+		
+	// 	this.x = text.x !== undefined ? text.x : 0;
+	// 	this.y = text.y !== undefined ? text.y : 0;
+		
+	// 	this.size = text.size !== undefined ? text.size : "10pt";
+	// 	this.font = text.font !== undefined ? text.font : "VT220";
+	// 	this.color = text.color !== undefined ? text.color : "#000000";
+	// 	this.width = text.width !== undefined ? text.width : 100;
+		
+	// 	if(bg !== undefined){
+	// 		this.bgColor = bg.bgColor !== undefined ? bg.bgColor : false;
+	// 		this.bgImg = bg.bgImg !== undefined ? bg.bgImg : false;
+	// 	}
+	// 	else{
+	// 		this.bgColor = false;
+	// 		this.bgImg = false;
+	// 	}
+		
+	// 	this.render = function (){
+	// 		var ctx = noteObj.ctx;
+			
+	// 		if(this.display){
+	// 			ctx.save();
+	// 			if(this.bgColor){
+	// 				ctx.fillStyle = this.bgColor;
+	// 				ctx.fillRect(this.parent.width,this.parent.height-parseInt(this.size),this.width,this.height);
+	// 				/*ctx.beginPath();
+	// 				ctx.translate(this.parent.width-20,game.eventhandler.mouse.y-this.parent.y);
+	// 				ctx.moveTo(0,0);
+	// 				ctx.lineTo(11,-5);
+	// 				ctx.lineTo(11,5);
+	// 				ctx.lineTo(0,0);
+	// 				ctx.fill();
+	// 				ctx.closePath();*/
+	// 			}
+	// 			ctx.restore();
+	// 			ctx.save();
+	// 			if(this.bgImg){
+	// 				console.log("hura");
+	// 			}
+	// 			ctx.restore();
+	// 			ctx.save();
+	// 			ctx.fillStyle = this.color;
+	// 			ctx.font = this.size + " " + this.font;
+	// 			for(var i = 0;i<this.text.length;i++){
+	// 				ctx.fillText(this.text[i],this.parent.width+this.x,i*5/4*(parseInt(this.size))+this.y);
+	// 			};
+	// 			ctx.restore();
+	// 		}	
+	// 	};
+	// 	return this;
+	// };
+	// Note.prototype = new GUIObject();
 	
 	this.guis = {
 		mainM : {
-			objects : [
-				new Button(450,100,{
+			objects : function(){
+				// background obrázek
+				_this.add( new Texture({
+					image: game.textures.textures.rust,
+					x: 0,y: 0,
+					width: _this.width, height: _this.height
+				}) )
+				// modrý obdélník
+				_this.add( new Rectangle({
+					x: _this.width/2 - 150, y: 50,
+					width: 300, height: 500,
+					color: "#4b5c9a"
+				}), "menuRectangle" );
+				// nápis město
+				_this.get("menuRectangle").add( new Text({
+					value: "Mesto",
+					align: "center",
+					width: _this.get("menuRectangle").width,
+					styles: {
+						default: {
+							color: "#DAE5F0",
+							size: 60,
+						}
+					}
+				}) );
+				// buttony
+				_this.get("menuRectangle").add( new Button({
+					x: 0, y: 100,
+					width: _this.get("menuRectangle").width, height: 50,
+					color: "#4b5c9a",
 					text:{
-						value:"Play",
-						color:"#aaaaff",
-						size:"25pt",
-						font:"sans-serif",
+						y: 12,
+						value:"Start Game",
+						align: "center",
+						styles: {
+							default: {
+								color: "#DAE5F0",
+								font: "Arial",
+								size: 20,
+							}
+						}
 					},
-					onmouseover:function (){
-						this.textColor = "#ff0000";
+					mouseover:function (){
+						this.color = "#5C6894";
+						this.get("text").styles.default.color = "#E6ECF2";
 					},
-					onmouseout:function (){
-						this.textColor = "#aaaaff";
+					mouseout:function (){
+						this.color = "#4b5c9a";
+						this.get("text").styles.default.color = "#DAE5F0";
 					},
-					onclick:function (){
+					mousedown:function (){
 						game.mode = 1;
 						game.load("test");
 					},
-				}),
-				
-				new Button(450,145,{
+				}) );
+				_this.get("menuRectangle").add( new Button({
+					x: 0, y: 150,
+					width: _this.get("menuRectangle").width, height: 50,
+					color: "#4b5c9a",
 					text:{
+						y: 12,
 						value:"Load",
-						color:"#aaaaff",
-						size:"25pt",
-						font:"sans-serif",
+						align: "center",
+						styles: {
+							default: {
+								color: "#DAE5F0",
+								font: "Arial",
+								size: 20,
+							}
+						}
 					},
-					onmouseover:function (){
-						this.textColor = "#ff0000";
+					mouseover:function (){
+						this.color = "#5C6894";
+						this.get("text").styles.default.color = "#E6ECF2";
 					},
-					onmouseout:function (){
-						this.textColor = "#aaaaff";
+					mouseout:function (){
+						this.color = "#4b5c9a";
+						this.get("text").styles.default.color = "#DAE5F0";
 					},
-					onclick:function (){
-						alert("In development");
+					mousedown:function (){
+						alert("nope")
 					},
-				}),
-				
-				new Button(450,190,{
+				}) );
+				_this.get("menuRectangle").add( new Button({
+					x: 0, y: 200,
+					width: _this.get("menuRectangle").width, height: 50,
+					color: "#4b5c9a",
 					text:{
+						y: 12,
 						value:"Options",
-						color:"#aaaaff",
-						size:"25pt",
-						font:"sans-serif",
+						align: "center",
+						styles: {
+							default: {
+								color: "#DAE5F0",
+								font: "Arial",
+								size: 20,
+							}
+						}
 					},
-					onmouseover:function (){
-						this.textColor = "#ff0000";
+					mouseover:function (){
+						this.color = "#5C6894";
+						this.get("text").styles.default.color = "#E6ECF2";
 					},
-					onmouseout:function (){
-						this.textColor = "#aaaaff";
+					mouseout:function (){
+						this.color = "#4b5c9a";
+						this.get("text").styles.default.color = "#DAE5F0";
 					},
-					onclick:function (){
-						alert("In develoment");
+					mousedown:function (){
+						alert("nope")
 					},
-				}),
-				
-				new Button(450,235,{
+				}) );
+				_this.get("menuRectangle").add( new Button({
+					x: 0, y: 250,
+					width: _this.get("menuRectangle").width, height: 50,
+					color: "#4b5c9a",
 					text:{
+						y: 12,
 						value:"Website",
-						color:"#aaaaff",
-						size:"25pt",
-						font:"sans-serif",
+						align: "center",
+						styles: {
+							default: {
+								color: "#DAE5F0",
+								font: "Arial",
+								size: 20,
+							}
+						}
 					},
-					onmouseover:function (){
-						this.textColor = "#ff0000";
+					mouseover:function (){
+						this.color = "#5C6894";
+						this.get("text").styles.default.color = "#E6ECF2";
 					},
-					onmouseout:function (){
-						this.textColor = "#aaaaff";
+					mouseout:function (){
+						this.color = "#4b5c9a";
+						this.get("text").styles.default.color = "#DAE5F0";
 					},
-					onclick:function (){
-						alert("In development");
+					mousedown:function (){
+						window.location.href = "http://kuka.zby.cz/mesto/page"
 					},
-				}),
-			],
-			bg : new Background ("bg.png"),
-			preload : function (){game.scene = new THREE.Scene();},
-			controls : function (){_this.menuControls(true);},
+				}) );
+			},
+			preload : function (){
+				game.scene = new THREE.Scene();
+			},
+			controls : function (){
+				_this.addControls();
+			},
 		},
 		inGame : {
-			objects : [
-				new Button(10,970,{
+			objects : function(){
+				_this.add( new Button({
+					x: 20, y: _this.height-60,
+					visible: false,
 					text:{
 						value:"100",
-						color:"#ffb400",
-						size:"40pt",
+						styles: {
+							default: {
+								color:"#ffb400",
+								size:48,
+							}
+						}
 					},
-					onmouseover : function (){
-						this.children[0].display = true;
-					},
-					onmouseout : function (){
-						this.children[0].display = false;
-					},
-					poznamka : {
-						value : "This is your health. If it goes to zero, you die. But be aware of losing it anyway. Several harms and wounds may cause permanent disabilities, unless you have an admirable medicae skill or a lot of luck.",
-						size : "10pt",
-						font : "sans-sarif",
-						color : "#0000ff",
-						y : -40,
-						width : 250,
-						bg : {
-							bgColor : "#ffffff",
-						},
-					},
-				}),],
+					// mouseover : function (){
+					// 	this.children[0].display = true;
+					// },
+					// mouseout : function (){
+					// 	this.children[0].display = false;
+					// },
+					// poznamka : {
+					// 	value : "This is your health. If it goes to zero, you die. But be aware of losing it anyway. Several harms and wounds may cause permanent disabilities, unless you have an admirable medicae skill or a lot of luck.",
+					// 	size : "10pt",
+					// 	font : "sans-sarif",
+					// 	color : "#0000ff",
+					// 	y : -40,
+					// 	width : 250,
+					// 	bg : {
+					// 		bgColor : "#ffffff",
+					// 	},
+					// },
+				}) )
+			},
 			preload : function (){},
 			controls : function (){
+							_this.addControls();
+
 							game.eventhandler.addMouseControl(0,function(){
-								_this.menuControls(false)[0]();
 								// game.camera.position.x = game.eventhandler.mouse.projected.x/10;
 								// game.camera.position.y = game.eventhandler.mouse.projected.y/10;
 								game.cursor.style.left = game.eventhandler.mouse.x + "px";
 								game.cursor.style.top = game.eventhandler.mouse.y + "px";
 							});
-							game.eventhandler.addMouseControl(1,_this.menuControls()[1],false,false);
 
-							game.eventhandler.addKeyboardControl(82, false, false, function(){ // R
+							game.eventhandler.addKeyboardControl(82, undefined, undefined, function(){ // R
 								game.camera.position.z += 10;
 							} );
-							game.eventhandler.addKeyboardControl(70, false, false, function(){ // F
+							game.eventhandler.addKeyboardControl(70, undefined, undefined, function(){ // F
 								game.camera.position.z -= 10;
 							} );
-							game.eventhandler.addKeyboardControl(84, false, false, function(){ // T
+							game.eventhandler.addKeyboardControl(84, undefined, undefined, function(){ // T
 								game.scene.fog.density += 0.001
 								console.log(game.scene.fog.density)
 							} );
-							game.eventhandler.addKeyboardControl(71, false, false, function(){ // G
+							game.eventhandler.addKeyboardControl(71, undefined, undefined, function(){ // G
 								game.scene.fog.density -= game.scene.fog.density > 0 ? 0.001 : 0;
 								console.log(game.scene.fog.density)
 							} );
-							game.eventhandler.addKeyboardControl(27, false, function(){ // escape
+							game.eventhandler.addKeyboardControl(27, undefined, function(){ // escape
 								game.pause();
 								game.scene.fog.density = 0.0025;
-								_this.menu("pause").load();
-							},false,false );
+								_this.switchGUI("pause");
+							} );
 							// ovládání panáčka
-							game.eventhandler.addKeyboardControl(87, false, function(){
+							game.eventhandler.addKeyboardControl(87, undefined, function(){
 								game.objects.monster.toggleAnim("standing");
 							}, function(){ // W
 								game.objects.monster.toggleAnim("walking");
@@ -329,7 +473,7 @@ function GUI( canvas ){
 								if(game.settings.graphics.camera == "topdown")
 									game.camera.follow(game.objects.monster.mesh);
 							} );
-							game.eventhandler.addKeyboardControl(83, false, function(){
+							game.eventhandler.addKeyboardControl(83, undefined, function(){
 								game.objects.monster.toggleAnim("standing");
 							}, function(){ // S
 								game.objects.monster.toggleAnim("walking");
@@ -337,7 +481,7 @@ function GUI( canvas ){
 								if(game.settings.graphics.camera == "topdown")
 									game.camera.follow(game.objects.monster.mesh);
 							} );
-							game.eventhandler.addKeyboardControl(65, false, function(){
+							game.eventhandler.addKeyboardControl(65, undefined, function(){
 								game.objects.monster.toggleAnim("standing");
 							}, function(){ // A
 								game.objects.monster.toggleAnim("walking");
@@ -346,7 +490,7 @@ function GUI( canvas ){
 								if(game.settings.graphics.camera == "topdown")
 									game.camera.follow(game.objects.monster.mesh);
 							} );
-							game.eventhandler.addKeyboardControl(68, false, function(){
+							game.eventhandler.addKeyboardControl(68, undefined, function(){
 								game.objects.monster.toggleAnim("standing");
 							}, function(){ // D
 								game.objects.monster.toggleAnim("walking");
@@ -359,104 +503,140 @@ function GUI( canvas ){
 							},
 		},
 		pause : {
-			objects : [
-				new Button(500,100,{
+			objects: function(){
+				_this.add( new Button({
+					x: _this.width/2-150, y: 100,
+					width: 300, height: 60,
+					visible: false,
 					text : {
-						value : "Resume",
-						color : "#aaaaff",
-						size : "55pt",
+						value: "Resume",
+						align: "center",
+						styles: {
+							default: {
+								color: "#aaaaff",
+								size: 60,
+							}
+						}
 					},
-					onmouseover : function (){
-						this.textColor = "#000000";
+					mouseover: function (){
+						this.get("text").styles.default.color = "#000000";
 					},
-					onmouseout : function (){
-						this.textColor = "#aaaaff";
+					mouseout: function (){
+						this.get("text").styles.default.color = "#aaaaff";
 					},
-					onclick : function (){
+					mousedown: function (){
 						game.pause();
 						game.scene.fog.density = 0;
-						_this.menu("inGame").load();
+						_this.switchGUI("inGame");
 					},
-				}),
-				new Button(500,170,{
+				}) );
+				_this.add( new Button({
+					x: _this.width/2-150, y: 170,
+					width: 300, height: 60,
+					visible: false,
 					text : {
-						value : "Save",
-						color : "#aaaaff",
-						size : "55pt",
+						value: "Save",
+						align: "center",
+						styles: {
+							default: {
+								color: "#aaaaff",
+								size: 60,
+							}
+						}
 					},
-					onmouseover : function (){
-						this.textColor = "#000000";
+					mouseover: function (){
+						this.get("text").styles.default.color = "#000000";
 					},
-					onmouseout : function (){
-						this.textColor = "#aaaaff";
+					mouseout: function (){
+						this.get("text").styles.default.color = "#aaaaff";
 					},
-					onclick : function (){
+					mousedown: function (){
 						alert("In development");
 					},
-				}),
-				new Button(500,240,{
+				}) );
+				_this.add( new Button({
+					x: _this.width/2-150, y: 240,
+					width: 300, height: 60,
+					visible: false,
 					text : {
-						value : "Load",
-						color : "#aaaaff",
-						size : "55pt",
+						value: "Load",
+						align: "center",
+						styles: {
+							default: {
+								color: "#aaaaff",
+								size: 60,
+							}
+						}
 					},
-					onmouseover : function (){
-						this.textColor = "#000000";
+					mouseover: function (){
+						this.get("text").styles.default.color = "#000000";
 					},
-					onmouseout : function (){
-						this.textColor = "#aaaaff";
+					mouseout: function (){
+						this.get("text").styles.default.color = "#aaaaff";
 					},
-					onclick : function (){
+					mousedown: function (){
 						alert("In development");
 					},
-				}),
-				new Button(500,310,{
+				}) );
+				_this.add( new Button({
+					x: _this.width/2-150, y: 310,
+					width: 300, height: 60,
+					visible: false,
 					text : {
-						value : "Achievements",
-						color : "#aaaaff",
-						size : "55pt",
+						value: "Achievements",
+						align: "center",
+						styles: {
+							default: {
+								color: "#aaaaff",
+								size: 60,
+							}
+						}
 					},
-					onmouseover : function (){
-						this.textColor = "#000000";
+					mouseover: function (){
+						this.get("text").styles.default.color = "#000000";
 					},
-					onmouseout : function (){
-						this.textColor = "#aaaaff";
+					mouseout: function (){
+						this.get("text").styles.default.color = "#aaaaff";
 					},
-					onclick : function (){
+					mousedown: function (){
 						alert("In development");
 					},
-				}),
-				new Button(500,380,{
+				}) );
+				_this.add( new Button({
+					x: _this.width/2-150, y: 380,
+					width: 300, height: 60,
+					visible: false,
 					text : {
-						value : "Exit",
-						color : "#aaaaff",
-						size : "55pt",
+						value: "Exit",
+						align: "center",
+						styles: {
+							default: {
+								color: "#aaaaff",
+								size: 60,
+							}
+						}
 					},
-					onmouseover : function (){
-						this.textColor = "#000000";
+					mouseover: function (){
+						this.get("text").styles.default.color = "#000000";
 					},
-					onmouseout : function (){
-						this.textColor = "#aaaaff";
+					mouseout: function (){
+						this.get("text").styles.default.color = "#aaaaff";
 					},
-					onclick : function (){
-						_this.menu("mainM").load();
+					mousedown: function (){
+						_this.switchGUI("mainM");
 					},
-				}),
-			],
+				}) );
+			},
 			preload : function (){},
-			controls : function (){_this.menuControls(true);
+			controls : function (){
+				_this.addControls();
 				game.eventhandler.addKeyboardControl(27, false, function(){
-								game.pause();
-								game.scene.fog.density = 0;
-								_this.menu("inGame").load();
-							},false,false );
+						game.pause();
+						game.scene.fog.density = 0;
+						_this.switchGUI("inGame");
+					},false,false );
 				},
 		},
-	};
-	
-	this.menu = function ( which ){
-		//game.progress.mode = which;
-		return new Menu(this.guis[which]);
 	};
 };
 
@@ -469,9 +649,25 @@ GUI.prototype.tick = function (){
 GUI.prototype.render = function (){
 	this.ctx.clearRect(0,0,this.width,this.height);
 	
-	this.renderChildren();
-	// this.ctx.fillStyle = "#ffffff";
-	// this.ctx.fillRect(game.eventhandler.mouse.x,game.eventhandler.mouse.y,10,10);
+	this.renderChildren(this.ctx);
+};
+
+GUI.prototype.switchGUI = function( name ) {
+	this.currentGUI = name;
+	console.log("GUI: switching gui to "+name)
+	var gui = this.guis[name];
+
+	this.children = [];
+	
+	gui.preload();
+	gui.controls();
+	gui.objects();
+
+	// for(var i in gui.objects){
+	// 	this.add( gui.objects[i] );
+	// };
+
+	// this.resize(this.canvas.width,this.canvas.height);
 };
 
 GUI.prototype.resize = function ( w, h ){
@@ -513,32 +709,17 @@ GUI.prototype.resize = function ( w, h ){
 	this.height = this.canvas.height;
 };
 
-GUI.prototype.menuControls = function ( Initiate ){
+GUI.prototype.addControls = function() {
 	var _this = this;
-	if(Initiate){
-		game.eventhandler.keyboardControls = [];
-		game.eventhandler.mouseControls = [];
-		game.eventhandler.addMouseControl(0,function (){
-			game.cursor.style.left = game.eventhandler.mouse.x + "px";
-			game.cursor.style.top = game.eventhandler.mouse.y + "px";
-			_this.eventHand("onmouseover",0,0);
-			_this.eventHand("onmouseout",0,0);
-			},false,false);
-	game.eventhandler.addMouseControl(1,function (){
-			_this.eventHand("onclick",0,0);
-		},false,false);
-	}
-	else{
-		var pole = new Array();
-		pole[0] = function (){
-			game.cursor.style.left = game.eventhandler.mouse.x + "px";
-			game.cursor.style.top = game.eventhandler.mouse.y + "px";
-			_this.eventHand("onmouseover",0,0);
-			_this.eventHand("onmouseout",0,0);
-		};
-		pole[1] =function (){
-			_this.eventHand("onclick",0,0);
-		};
-		return pole;
-	};
+	game.eventhandler.addMouseControl(1, function(x,y){
+		_this.mousehandler(x,y,"mousedown");
+	}, function(x,y){
+		_this.mousehandler(x,y,"mouseup");
+	});
+	game.eventhandler.addMouseControl(0, function(x,y){
+		_this.mousehandler(x,y,"mousemove");
+		// pohyb kurzoru
+		game.cursor.style.left = x + "px";
+		game.cursor.style.top = y + "px";
+	});
 };

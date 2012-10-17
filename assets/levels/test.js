@@ -12,6 +12,7 @@ function Level(){
 	this.textures = {
 		steel: this.texturepath+"Steel_Texture2.jpg",
 		blue: this.texturepath+"blue.jpg",
+		rust: this.texturepath+"rust.jpg",
 
 		cs_test_bg: this.texturepath+"cutscenes/test/bg.jpg",
 		cs_test_fg: this.texturepath+"cutscenes/test/fg.png",
@@ -84,7 +85,7 @@ Level.prototype.afterLoad = function (){
 	rotating_topdown_camera.rotation.x = Math.PI/2;
 
 	var topdown_camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-	game.scene.add( topdown_camera );
+	// game.scene.add( topdown_camera );
 	topdown_camera.position.set(0,0,500);
 
 	var vyber = {
@@ -132,6 +133,8 @@ Level.prototype.afterLoad = function (){
 	
 	// spustí hudbu
 	// this.sounds.solarFields.play();
+	// nahraje srávné gui
+	game.gui.switchGUI("inGame");
 };
 // umožní nám důležité objekty pojmenovávat (ty, se kterými budeme chtít dále pracovat i po pouhém přidání do scene - třeba player)
 Level.prototype.add = function(obj, name) {

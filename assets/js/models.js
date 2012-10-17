@@ -11,6 +11,8 @@ Models.prototype.loadModels = function(modelsSrc, callback) {
 	this.modelsSrc = modelsSrc;
 
 	this.modelsToLoad = Object.keys(this.modelsSrc).length;
+	if(this.modelsToLoad<=0)
+		callback();
 	for(var i in this.modelsSrc){
 		(function(name, callback){
 			_this.loader.load(_this.modelsSrc[i], function(geometry){

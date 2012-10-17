@@ -8,6 +8,8 @@ Textures.prototype.loadTextures = function(texturesSrc, callback) {
 	this.texturesSrc = texturesSrc;
 
 	this.texturesToLoad = Object.keys(this.texturesSrc).length;
+	if(this.texturesToLoad<=0)
+		callback();
 	for(var i in this.texturesSrc){
 		(function(name, callback){
 			_this.textures[name] = THREE.ImageUtils.loadTexture(_this.texturesSrc[i], undefined, function(){

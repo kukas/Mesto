@@ -45,6 +45,7 @@ function Game(){
 Game.prototype.load = function(levelName) {
 	var _this = this;
 
+	console.log("Game: loading level "+levelName)
 	var levelScript = document.createElement("script");
 	levelScript.src = this.levelspath + levelName + ".js";
 	levelScript.addEventListener( "load", function(){
@@ -59,10 +60,11 @@ Game.prototype.levelLoad = function(level) {
 	this.level = level;
 	this.scene = new THREE.Scene();
 	this.scene.fog = new THREE.FogExp2(0x5D739C,0);
+
 	
  	// jen takový malý návrh:
  	// this.gui.activate("loader")
-	this.gui.menu("inGame").load();
+	// this.gui.switchGUI("inGame");
 	
 	this.models.loadModels( level.models, function(){
 		_this.level.models = _this.models.models;
@@ -79,7 +81,11 @@ Game.prototype.levelLoad = function(level) {
 				_this.level.afterLoad();
 
 				_this.objectsAdd();
-				_this.camera = _this.level.camera;
+				if(_this.level.camera)
+					_this.camera = _this.level.camera;
+				else
+					_this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000)
+				_this.scene.add(_this.camera);
 
 				// změní velikost canvasů
 				_this.resizeCanvas();
@@ -241,8 +247,8 @@ Game.prototype.init = function() {
 	document.body.appendChild( this.gui.canvas );
 	this.resizeCanvas();
 	// abychom pořád neklikali mezerník :)
-	//this.load("test");
-	this.gui.menu("mainM").load();
+	this.load("menu");
+	// this.gui.switchGUI("mainM");
 	// spustí render smyčku
 	this.render();
 };
