@@ -49,7 +49,7 @@ Level.prototype.afterLoad = function (){
 	var player = new Character(this.models.panacek, {
 		position: new THREE.Vector3(0, 0, 0),
 		scale: new THREE.Vector3(50,50,50),
-		rotation: new THREE.Vector3(0,0,0),
+		rotation: new THREE.Vector3(0,Math.PI,0),
 		speed: 2,
 		animation: {
 			boundingFrame: 1,
@@ -64,7 +64,7 @@ Level.prototype.afterLoad = function (){
 			},
 		}
 	})
-	this.add( player, "monster" );
+	this.add( player, "player" );
 
 	// jen takové blbinky:
 	var third_person_camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );

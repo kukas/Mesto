@@ -466,38 +466,38 @@ function GUI( canvas ){
 							} );
 							// ovládání panáčka
 							game.eventhandler.addKeyboardControl(87, undefined, function(){
-								game.objects.monster.toggleAnim("standing");
+								game.objects.player.toggleAnim("standing");
 							}, function(){ // W
-								game.objects.monster.toggleAnim("walking");
-								game.objects.monster.move(Math.PI);
+								game.objects.player.toggleAnim("walking");
+								game.objects.player.move(Math.PI);
 								if(game.settings.graphics.camera == "topdown")
-									game.camera.follow(game.objects.monster.mesh);
+									game.camera.follow(game.objects.player.mesh);
 							} );
 							game.eventhandler.addKeyboardControl(83, undefined, function(){
-								game.objects.monster.toggleAnim("standing");
+								game.objects.player.toggleAnim("standing");
 							}, function(){ // S
-								game.objects.monster.toggleAnim("walking");
-								game.objects.monster.move(0);
+								game.objects.player.toggleAnim("walking");
+								game.objects.player.move(0);
 								if(game.settings.graphics.camera == "topdown")
-									game.camera.follow(game.objects.monster.mesh);
+									game.camera.follow(game.objects.player.mesh);
 							} );
 							game.eventhandler.addKeyboardControl(65, undefined, function(){
-								game.objects.monster.toggleAnim("standing");
+								game.objects.player.toggleAnim("standing");
 							}, function(){ // A
-								game.objects.monster.toggleAnim("walking");
-								game.objects.monster.move(Math.PI/2);
+								game.objects.player.toggleAnim("walking");
+								game.objects.player.move(Math.PI/2);
 								// game.objects.monster.rotate(0.1);
 								if(game.settings.graphics.camera == "topdown")
-									game.camera.follow(game.objects.monster.mesh);
+									game.camera.follow(game.objects.player.mesh);
 							} );
 							game.eventhandler.addKeyboardControl(68, undefined, function(){
-								game.objects.monster.toggleAnim("standing");
+								game.objects.player.toggleAnim("standing");
 							}, function(){ // D
-								game.objects.monster.toggleAnim("walking");
-								game.objects.monster.move(-Math.PI/2);
+								game.objects.player.toggleAnim("walking");
+								game.objects.player.move(-Math.PI/2);
 								// game.objects.monster.rotate(-0.1);
 								if(game.settings.graphics.camera == "topdown")
-									game.camera.follow(game.objects.monster.mesh);
+									game.camera.follow(game.objects.player.mesh);
 							} );
 
 							},
