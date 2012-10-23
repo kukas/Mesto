@@ -22,8 +22,9 @@ function GUI( canvas ){
 	function Minimap(objects,options){
 		this.objects = objects;
 		Rectangle.call(this, options);
-		this.zoomX = this.width/window.innerWidth;
-		this.zoomY = this.height/window.innerHeight;
+		this.zoomX = 0.2;
+		this.zoomY = 0.2;
+		this.maxVzdalenost = (this.width/this.zoomX)*(this.width/this.zoomX) + (this.height/this.zoomY)*(this.height/this.zoomY);
 	};
 	
 	Minimap.prototype = new GUIObject();
@@ -33,19 +34,48 @@ function GUI( canvas ){
 		this.children = [];
 		for(var i in this.objects){
 			if(this.objects[i].bounding_mesh === undefined) continue;
+			
+			if(this.objects.player.mesh.position.distanceToSquared(this.objects[i].mesh.position) > this.maxVzdalenost){
+				continue;
+			}
+			
+			var poloha = new THREE.Vector3();
+			poloha.sub(this.objects[i].mesh.position,this.objects.player.mesh.position);
+			poloha.x*=this.zoomX;
+			poloha.y*=this.zoomY;
+			
+			var rozmery = new THREE.Vector3();
+			rozmery.x = _this.zoomX*(_this.objects[i].geometry.boundingBox.max.x-_this.objects[i].geometry.boundingBox.min.x);
+			rozmery.y = _this.zoomY*(_this.objects[i].geometry.boundingBox.max.y-_this.objects[i].geometry.boundingBox.min.y);
+			
 			this.add(new Rectangle({
 				color:"#ff0000",
-				x:_this.zoomX*(_this.objects[i].mesh.position.x+_this.objects[i].bounding_mesh.position.x),
-				y:_this.zoomY*(_this.objects[i].mesh.position.y+_this.objects[i].bounding_mesh.position.y),
-				width:_this.zoomX*(_this.objects[i].geometry.boundingBox.max.x-_this.objects[i].geometry.boundingBox.min.x),
-				height:_this.zoomY*(_this.objects[i].geometry.boundingBox.max.y-_this.objects[i].geometry.boundingBox.min.y),
+				x:poloha.x,
+				y:poloha.y,
+				width:rozmery.x,
+				height:rozmery.y,
 				}));
+				
+			//Poslání prvních obdélníkù
+			if(this.sent) continue;
+			console.log(new Rectangle({
+				color:"#ff0000",
+				x:poloha.x,
+				y:poloha.y,
+				width:rozmery.x,
+				height:rozmery.y,
+				}));
+				
+			console.log(_this.objects[i].mesh.position,_this.objects[i].geometry.boundingBox);
+			console.log(poloha,rozmery);
 		};
+		this.sent = true;
 	};
 	
 	Minimap.prototype.render = function(ctx){
 		ctx.fillStyle = this.color;
 		ctx.fillRect(this.x, this.y, this.width, this.height);
+		ctx.translate(this.width/2,this.height/2);
 		this.renderChildren(ctx);
 	};
 
@@ -490,7 +520,7 @@ function GUI( canvas ){
 								console.log(game.scene.fog.density)
 							} );
 							game.eventhandler.addKeyboardControl(77, undefined, undefined, function(){ // M - minimapa
-								_this.add(new Minimap(game.objects,{x:100,y:100,width:100,height:100,color:"#ffffff"}));
+								_this.add(new Minimap(game.objects,{x:50,y:500,width:100,height:100,color:"#ffffff"}));
 							} );
 							game.eventhandler.addKeyboardControl(27, undefined, function(){ // escape
 								game.pause();
