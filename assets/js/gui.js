@@ -45,8 +45,8 @@ function GUI( canvas ){
 			poloha.y*=this.zoomY;
 			
 			var rozmery = new THREE.Vector3();
-			rozmery.x = _this.zoomX*(_this.objects[i].geometry.boundingBox.max.x-_this.objects[i].geometry.boundingBox.min.x);
-			rozmery.y = _this.zoomY*(_this.objects[i].geometry.boundingBox.max.y-_this.objects[i].geometry.boundingBox.min.y);
+			rozmery.x = _this.zoomX*_this.objects[i].mesh.scale.x*(_this.objects[i].geometry.boundingBox.max.x-_this.objects[i].geometry.boundingBox.min.x);
+			rozmery.y = _this.zoomY*_this.objects[i].mesh.scale.y*(_this.objects[i].geometry.boundingBox.max.y-_this.objects[i].geometry.boundingBox.min.y);
 			
 			this.add(new Rectangle({
 				color:"#ff0000",
