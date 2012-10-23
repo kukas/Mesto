@@ -22,8 +22,8 @@ function GUI( canvas ){
 	function Minimap(objects,options){
 		this.objects = objects;
 		Rectangle.call(this, options);
-		this.zoomX = 0.4;
-		this.zoomY = 0.4;
+		this.zoomX = 1;
+		this.zoomY = 1;
 		this.maxVzdalenost = (this.width/this.zoomX)*(this.width/this.zoomX) + (this.height/this.zoomY)*(this.height/this.zoomY);
 	};
 	
@@ -523,7 +523,7 @@ function GUI( canvas ){
 								console.log(game.scene.fog.density)
 							} );
 							game.eventhandler.addKeyboardControl(77, undefined, undefined, function(){ // M - minimapa
-								_this.add(new Minimap(game.objects,{x:50,y:500,width:100,height:100,color:"#ffffff"}));
+								_this.add(new Minimap(game.objects,{x:0,y:0,width:300,height:300,color:"#ffffff"}));
 							} );
 							game.eventhandler.addKeyboardControl(27, undefined, function(){ // escape
 								game.pause();

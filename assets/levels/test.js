@@ -4,7 +4,7 @@ function Level(){
 	
 	this.models = {
 		lamp: this.modelpath+"lamp/untitled.js",
-		kostka: this.modelpath+"anim.js",
+		kostka: this.modelpath+"debugkostka.js",
 		monster: this.modelpath+"monster.js",
 		panacek: this.modelpath+"panacek.js",
 	};
@@ -45,6 +45,14 @@ Level.prototype.afterLoad = function (){
 		}
 	})
 	this.add( monster );
+	
+	var debugkostka = new Thing(this.models.kostka, {
+		position: new THREE.Vector3(-200,100, 0),
+		// position: new THREE.Vector3(1000*Math.random()-500, 1000*Math.random()-500, 0),
+		scale: new THREE.Vector3(50,50,50),
+		}
+	);
+	this.add( debugkostka );
 
 	var player = new Character(this.models.panacek, {
 		position: new THREE.Vector3(0, 0, 0),
