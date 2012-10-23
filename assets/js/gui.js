@@ -22,8 +22,8 @@ function GUI( canvas ){
 	function Minimap(objects,options){
 		this.objects = objects;
 		Rectangle.call(this, options);
-		this.zoomX = 0.2;
-		this.zoomY = 0.2;
+		this.zoomX = 0.4;
+		this.zoomY = 0.4;
 		this.maxVzdalenost = (this.width/this.zoomX)*(this.width/this.zoomX) + (this.height/this.zoomY)*(this.height/this.zoomY);
 	};
 	
@@ -40,13 +40,16 @@ function GUI( canvas ){
 			}
 			
 			var poloha = new THREE.Vector3();
-			poloha.sub(this.objects[i].mesh.position,this.objects.player.mesh.position);
+			// poloha.sub(this.objects[i].mesh.position,this.objects.player.mesh.position);
+			poloha.x = this.objects[i].mesh.position.x+(this.objects[i].geometry.boundingBox.max.x + this.objects[i].geometry.boundingBox.min.x)*this.objects[i].mesh.scale.x/2;
+			poloha.y = this.objects[i].mesh.position.y+(this.objects[i].geometry.boundingBox.max.z + this.objects[i].geometry.boundingBox.min.z)*this.objects[i].mesh.scale.y/2;
+
 			poloha.x*=this.zoomX;
-			poloha.y*=this.zoomY;
-			
+			poloha.y*=-this.zoomY;
+
 			var rozmery = new THREE.Vector3();
 			rozmery.x = _this.zoomX*_this.objects[i].mesh.scale.x*(_this.objects[i].geometry.boundingBox.max.x-_this.objects[i].geometry.boundingBox.min.x);
-			rozmery.y = _this.zoomY*_this.objects[i].mesh.scale.y*(_this.objects[i].geometry.boundingBox.max.y-_this.objects[i].geometry.boundingBox.min.y);
+			rozmery.y = _this.zoomY*_this.objects[i].mesh.scale.z*(_this.objects[i].geometry.boundingBox.max.z-_this.objects[i].geometry.boundingBox.min.z);
 			
 			this.add(new Rectangle({
 				color:"#ff0000",
