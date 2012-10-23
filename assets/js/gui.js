@@ -18,6 +18,36 @@ function GUI( canvas ){
 		ctx.fillStyle = this.color;
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	};
+	
+	function Minimap(objects,options){
+		this.objects = objects;
+		Rectangle.call(this, options);
+		this.zoomX = this.width/window.innerWidth;
+		this.zoomY = this.height/window.innerHeight;
+	};
+	
+	Minimap.prototype = new GUIObject();
+	
+	Minimap.prototype.tick = function (){
+		_this = this;
+		this.children = [];
+		for(var i in this.objects){
+			if(this.objects[i].bounding_mesh === undefined) continue;
+			this.add(new Rectangle({
+				color:"#ff0000",
+				x:_this.zoomX*(_this.objects[i].mesh.position.x+_this.objects[i].bounding_mesh.position.x),
+				y:_this.zoomY*(_this.objects[i].mesh.position.y+_this.objects[i].bounding_mesh.position.y),
+				width:_this.zoomX*(_this.objects[i].geometry.boundingBox.max.x-_this.objects[i].geometry.boundingBox.min.x),
+				height:_this.zoomY*(_this.objects[i].geometry.boundingBox.max.y-_this.objects[i].geometry.boundingBox.min.y),
+				}));
+		};
+	};
+	
+	Minimap.prototype.render = function(ctx){
+		ctx.fillStyle = this.color;
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+		this.renderChildren(ctx);
+	};
 
 	function Texture(options){
 		GUIObject.call(this, options);
@@ -432,7 +462,7 @@ function GUI( canvas ){
 					// 		bgColor : "#ffffff",
 					// 	},
 					// },
-				}) )
+				}) );
 			},
 			preload : function (){},
 			controls : function (){
@@ -458,6 +488,9 @@ function GUI( canvas ){
 							game.eventhandler.addKeyboardControl(71, undefined, undefined, function(){ // G
 								game.scene.fog.density -= game.scene.fog.density > 0 ? 0.001 : 0;
 								console.log(game.scene.fog.density)
+							} );
+							game.eventhandler.addKeyboardControl(77, undefined, undefined, function(){ // M - minimapa
+								_this.add(new Minimap(game.objects,{x:100,y:100,width:100,height:100,color:"#ffffff"}));
 							} );
 							game.eventhandler.addKeyboardControl(27, undefined, function(){ // escape
 								game.pause();

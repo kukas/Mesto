@@ -98,7 +98,7 @@ SolidObject.prototype.generateBoundingBox = function() {
 	this.bounding_mesh.position.x = (this.geometry.boundingBox.max.x+this.geometry.boundingBox.min.x)/2
 	this.bounding_mesh.position.y = (this.geometry.boundingBox.max.y-this.geometry.boundingBox.min.y)/2
 	this.bounding_mesh.position.z = (this.geometry.boundingBox.max.z+this.geometry.boundingBox.min.z)/2
-
+	
 	// takhle se dají přidávat child objekty v three.js
 	if(game.settings.debug)
 		this.mesh.add( this.bounding_mesh );
