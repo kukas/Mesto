@@ -53,8 +53,8 @@ function GUI( canvas ){
 			
 			this.add(new Rectangle({
 				color:"#ff0000",
-				x:poloha.x,
-				y:poloha.y,
+				x:poloha.x-rozmery.x/2,
+				y:poloha.y-rozmery.y/2,
 				width:rozmery.x,
 				height:rozmery.y,
 				}));
