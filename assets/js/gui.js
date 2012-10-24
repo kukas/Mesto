@@ -59,7 +59,7 @@ function GUI( canvas ){
 				height:rozmery.y,
 				}));
 				
-			//Poslání prvních obdélníkù
+			//PoslÃ¡nÃ­ kontrolnÃ­ch obdÃ©nÃ­kÅ¯ do konzole
 			if(this.sent) continue;
 			console.log(new Rectangle({
 				color:"#ff0000",
@@ -523,7 +523,7 @@ function GUI( canvas ){
 								console.log(game.scene.fog.density)
 							} );
 							game.eventhandler.addKeyboardControl(77, undefined, undefined, function(){ // M - minimapa
-								_this.add(new Minimap(game.objects,{x:0,y:0,width:300,height:300,color:"#ffffff"}));
+								_this.add(new Minimap(game.objects,{x:150,y:500,width:150,height:150,color:"#ffffff"}));
 							} );
 							game.eventhandler.addKeyboardControl(27, undefined, function(){ // escape
 								game.pause();
