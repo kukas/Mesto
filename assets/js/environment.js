@@ -11,9 +11,8 @@ function Environment(texture, x, y, z, width, height, stretch){
 
 	this.material = new THREE.MeshPhongMaterial( { map: texture } );
 
-    this.mesh = new THREE.Mesh( this.geometry, this.material );
-    this.mesh.position.set(x, y, z);
-    this.mesh.rotation.x = Math.PI/2;
+	this.mesh = new THREE.Mesh( this.geometry, this.material );
+	this.mesh.position.set(x, y, z);
 
 	this.mesh.receiveShadow = true;
 

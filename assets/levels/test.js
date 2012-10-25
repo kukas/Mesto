@@ -4,7 +4,7 @@ function Level(){
 	
 	this.models = {
 		lamp: this.modelpath+"lamp/untitled.js",
-		kostka: this.modelpath+"debugkostka.js",
+		kostka: this.modelpath+"kostka.js",
 		monster: this.modelpath+"monster.js",
 		panacek: this.modelpath+"panacek.js",
 	};
