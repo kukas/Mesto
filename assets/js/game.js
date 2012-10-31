@@ -133,11 +133,18 @@ Game.prototype.checkCollision = function(obj1, obj2) {
 		}
 		else {
 			var b = point;
+			//var vectorToPoint = new THREE.Vector2().sub(point,rectangle.position);
 		}
-
-		var min = new THREE.Vector2(rectangle.position.x-rectangle.dimensions.width/2, rectangle.position.y-rectangle.dimensions.height/2);
-		var max = new THREE.Vector2(rectangle.position.x+rectangle.dimensions.width/2, rectangle.position.y+rectangle.dimensions.height/2);
-		if( b.x >= min.x && b.x <= max.x && b.y >= min.y && b.y <= max.y ){
+			
+		var vectorToPoint = new THREE.Vector2().sub(point,rectangle.position);
+		console.log(vectorToPoint);
+		//var min = new THREE.Vector2(rectangle.position.x-rectangle.dimensions.width/2, rectangle.position.y-rectangle.dimensions.height/2);
+		//var max = new THREE.Vector2(rectangle.position.x+rectangle.dimensions.width/2, rectangle.position.y+rectangle.dimensions.height/2);
+		
+		var inIntervalX = vectorToPoint.x >= -rectangle.dimensions.width/2 && vectorToPoint.x <= rectangle.dimensions.width/2;
+		var inIntervalY = vectorToPoint.y >= -rectangle.dimensions.height/2 && vectorToPoint.y <= rectangle.dimensions.height/2;
+		
+		if( inIntervalX && inIntervalY ){
 			return true;
 		}
 
