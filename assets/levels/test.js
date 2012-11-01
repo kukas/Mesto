@@ -7,6 +7,7 @@ function Level(){
 		kostka: this.modelpath+"kostka.js",
 		monster: this.modelpath+"monster.js",
 		panacek: this.modelpath+"panacek.js",
+		spalovna: this.modelpath+"spalovna/spalovna.js",
 	};
 	// důležité: pro některé funkce musí mít textury rozměry power of two, tedy 2,4,8,16,32,64, ...
 	this.textures = {
@@ -48,6 +49,14 @@ Level.prototype.afterLoad = function (){
 	
 	var debugkostka = new Thing(this.models.kostka, {
 		position: new THREE.Vector3(-200,100, 0),
+		// position: new THREE.Vector3(1000*Math.random()-500, 1000*Math.random()-500, 0),
+		scale: new THREE.Vector3(50,50,50),
+		}
+	);
+	this.add( debugkostka );
+		
+	var debugkostka = new Thing(this.models.spalovna, {
+		position: new THREE.Vector3(-500,300, 0),
 		// position: new THREE.Vector3(1000*Math.random()-500, 1000*Math.random()-500, 0),
 		scale: new THREE.Vector3(50,50,50),
 		}
