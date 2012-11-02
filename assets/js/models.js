@@ -1,5 +1,5 @@
 function Models(){
-	this.texturepath = "assets/textures";
+	this.texturepath = "assets/textures/";
 
 	this.modelsSrc = {};
 	this.models = {};
@@ -20,7 +20,7 @@ Models.prototype.loadModels = function(modelsSrc, callback) {
 				if( --_this.modelsToLoad <= 0 ){
 					callback();
 				}
-			}, _this.texturepath);
+			}, _this.texturepath+name);
 		})(i, callback)
 	}
 };

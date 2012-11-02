@@ -55,13 +55,12 @@ Level.prototype.afterLoad = function (){
 	);
 	this.add( debugkostka );
 		
-	var debugkostka = new Thing(this.models.spalovna, {
+	var spalovna = new Thing(this.models.spalovna, {
 		position: new THREE.Vector3(-500,300, 0),
-		// position: new THREE.Vector3(1000*Math.random()-500, 1000*Math.random()-500, 0),
 		scale: new THREE.Vector3(50,50,50),
 		}
 	);
-	this.add( debugkostka );
+	this.add( spalovna );
 
 	var player = new Character(this.models.panacek, {
 		position: new THREE.Vector3(0, 0, 0),
