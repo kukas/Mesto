@@ -45,8 +45,6 @@ function Game(){
 Game.prototype.load = function(levelName) {
 	var _this = this;
 
-	console.log("Game: loading level "+levelName)
-	var levelScript = document.createElement("script");
 	levelScript.src = this.levelspath + levelName + ".js";
 	levelScript.addEventListener( "load", function(){
 		_this.levelLoad(level);
@@ -54,44 +52,45 @@ Game.prototype.load = function(levelName) {
 	document.body.appendChild(levelScript);
 };
 
-Game.prototype.levelLoad = function(level) {
+Game.prototype.load = function(levelName) {
 	var _this = this;
+	console.log("Game: loading level "+levelName)
 
-	this.level = level;
-	this.scene = new THREE.Scene();
-	this.scene.fog = new THREE.FogExp2(0x5D739C,0);
+	$.getScript(this.levelspath + levelName + ".js", function(){
+		_this.level = level;
 
-	
- 	// jen takový malý návrh:
- 	// this.gui.activate("loader")
-	// this.gui.switchGUI("inGame");
-	
-	this.models.loadModels( level.models, function(){
-		_this.level.models = _this.models.models;
-		// this.gui.loader.setProgress(33) // procenta
+		if(_this.level.scene){
+			_this.scene = _this.level.scene;
+		}
+		else {
+			_this.scene = new THREE.Scene();
+			_this.scene.fog = new THREE.FogExp2(0x5D739C,0);
+		}
 
-		_this.textures.loadTextures( level.textures, function(){
-			_this.level.textures = _this.textures.textures;
-			// this.gui.loader.setProgress(66)
+		_this.models.loadModels( _this.level.models, function(){
+			_this.level.models = _this.models.models;
 
-			_this.jukebox.loadSounds( level.sounds, function(){
-				_this.level.sounds = _this.jukebox.sounds;
-				// this.gui.loader.setProgress(100)
+			_this.textures.loadTextures( _this.level.textures, function(){
+				_this.level.textures = _this.textures.textures;
 
-				_this.level.afterLoad();
+				_this.jukebox.loadSounds( _this.level.sounds, function(){
+					_this.level.sounds = _this.jukebox.sounds;
 
-				_this.objectsAdd();
-				if(_this.level.camera)
-					_this.camera = _this.level.camera;
-				else
-					_this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000)
-				_this.scene.add(_this.camera);
+					_this.level.afterLoad();
 
-				// změní velikost canvasů
-				_this.resizeCanvas();
+					_this.objectsAdd();
+					if(_this.level.camera)
+						_this.camera = _this.level.camera;
+					else
+						_this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000)
+					_this.scene.add(_this.camera);
+
+					// změní velikost canvasů
+					_this.resizeCanvas();
+				} )
 			} )
-		} )
-	} );
+		} );
+	});
 };
 
 Game.prototype.findCollisions = function(obj) {
