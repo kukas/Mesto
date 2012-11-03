@@ -9,6 +9,7 @@ function Character( model, options ){
 	this.initAnimation();
 
 	this.speed = options.speed || 5;
+	this.turningSpeed = 0.05; // radiánů
 }
 
 Character.prototype = new SolidObject();
@@ -26,7 +27,11 @@ Character.prototype.move = function(direction) {
 		this.handleCollision(collisions, this);
 	}
 };
-Character.prototype.rotate = function(angle) {
+Character.prototype.rotate = function(direction) {
+	if(direction < 0)
+		angle = -this.turningSpeed;
+	else
+		angle = this.turningSpeed;
 	this.mesh.rotation.y += angle;
 	var collisions = game.findCollisions( this );
 	if( collisions.length !== 0 ){

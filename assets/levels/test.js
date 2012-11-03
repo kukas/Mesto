@@ -3,17 +3,14 @@ function Level(){
 	this.objects = {};
 	
 	this.models = {
-		lamp: this.modelpath+"lamp/untitled.js",
-		kostka: this.modelpath+"kostka.js",
+		lamp: this.modelpath+"lamp/lamp.js",
 		monster: this.modelpath+"monster.js",
 		panacek: this.modelpath+"panacek.js",
 		spalovna: this.modelpath+"spalovna/spalovna.js",
 	};
 	// důležité: pro některé funkce musí mít textury rozměry power of two, tedy 2,4,8,16,32,64, ...
 	this.textures = {
-		steel: this.texturepath+"Steel_Texture2.jpg",
-		blue: this.texturepath+"blue.jpg",
-		rust: this.texturepath+"rust.jpg",
+		steel: this.texturepath+"steel_floor.jpg",
 
 		cs_test_bg: this.texturepath+"cutscenes/test/bg.jpg",
 		cs_test_fg: this.texturepath+"cutscenes/test/fg.png",
@@ -31,14 +28,13 @@ Level.prototype = new Loader();
 
 Level.prototype.afterLoad = function (){
 	var monster = new Thing(this.models.monster, {
-		position: new THREE.Vector3(100,100, 0),
-		// position: new THREE.Vector3(1000*Math.random()-500, 1000*Math.random()-500, 0),
+		position: new THREE.Vector3(200,100, 0),
 		scale: new THREE.Vector3(0.1,0.1,0.1),
 		animation: {
 			boundingFrame: 1,
 
 			interpolation: 50,
-			startingAnimation: "standing",
+			startingAnimation: "walking",
 			modelAnimations: {
 				standing: [1,1],
 				walking: [1,23]
@@ -47,17 +43,11 @@ Level.prototype.afterLoad = function (){
 	})
 	this.add( monster );
 	
-	var debugkostka = new Thing(this.models.kostka, {
-		position: new THREE.Vector3(-200,100, 0),
-		// position: new THREE.Vector3(1000*Math.random()-500, 1000*Math.random()-500, 0),
-		scale: new THREE.Vector3(50,50,50),
-		}
-	);
-	this.add( debugkostka );
-		
 	var spalovna = new Thing(this.models.spalovna, {
-		position: new THREE.Vector3(-500,300, 0),
-		scale: new THREE.Vector3(50,50,50),
+		position: new THREE.Vector3(-250,400, 0),
+		// rotation: new THREE.Vector3(0, 1, 0), // oops, kolize mad?
+		rotation: new THREE.Vector3(0, Math.PI, 0),
+		scale: new THREE.Vector3(100,100,100),
 		}
 	);
 	this.add( spalovna );
@@ -114,15 +104,11 @@ Level.prototype.afterLoad = function (){
 	
 	this.add( new Environment(this.textures.steel, 0, 0, 0, 2400, 1200, false) );
 
-	// debug věc
-	// this.add( new Environment(this.textures.blue, 0, 0, 1, 5, 5, false), "test" );
-
 	this.add( new Environment(this.textures.cs_test_bg, 0, 0, -100, 5800, 3200, true) );
 	
-	// todo: udělat to obecný a hezký -> světlo = lampa
 	this.add( new Lamp(this.models.lamp, {
 			scale: new THREE.Vector3(100,100,100),
-			position: new THREE.Vector3(-300,0,0),
+			position: new THREE.Vector3(325,-31,0),
 			light:{
 				color: 0xd5def4, // zářivka
 				// color: 0xffc560, // žárovka
@@ -136,7 +122,7 @@ Level.prototype.afterLoad = function (){
 
 	this.add( new Lamp(this.models.lamp, {
 			scale: new THREE.Vector3(100,100,100),
-			position: new THREE.Vector3(400,400,0),
+			position: new THREE.Vector3(-454,188,0),
 			light:{
 				color: 0xffc560, // žárovka
 				position: new THREE.Vector3(0.65,2,0),

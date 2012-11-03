@@ -507,6 +507,9 @@ function GUI( canvas ){
 								game.cursor.style.left = game.eventhandler.mouse.x + "px";
 								game.cursor.style.top = game.eventhandler.mouse.y + "px";
 							});
+							game.eventhandler.addMouseControl(1, undefined, function(){
+								console.log(Math.round(game.eventhandler.mouse.projected.x)+","+Math.round(game.eventhandler.mouse.projected.y)+","+game.eventhandler.mouse.projected.z)
+							});
 
 							game.eventhandler.addKeyboardControl(82, undefined, undefined, function(){ // R
 								game.camera.position.z += 10;
@@ -552,7 +555,7 @@ function GUI( canvas ){
 							}, function(){ // A
 								game.objects.player.toggleAnim("walking");
 								//game.objects.player.move(Math.PI/2);
-								game.objects.player.rotate(0.1);
+								game.objects.player.rotate(0.05);
 								if(game.settings.graphics.camera == "topdown")
 									game.camera.follow(game.objects.player.mesh);
 							} );
@@ -561,7 +564,7 @@ function GUI( canvas ){
 							}, function(){ // D
 								game.objects.player.toggleAnim("walking");
 								//game.objects.player.move(-Math.PI/2);
-								game.objects.player.rotate(-0.1);
+								game.objects.player.rotate(-0.05);
 								if(game.settings.graphics.camera == "topdown")
 									game.camera.follow(game.objects.player.mesh);
 							} );

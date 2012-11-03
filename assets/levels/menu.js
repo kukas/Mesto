@@ -1,7 +1,7 @@
 function Level(){
 	this.objects = {};
 	this.textures = {
-		rust: this.texturepath+"rust.jpg",
+		rust: this.texturepath+"GUI/rust.jpg",
 	};
 }
 Level.prototype = new Loader();

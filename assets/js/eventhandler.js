@@ -133,11 +133,24 @@ Eventhandler.prototype.updateMouseXY = function(x,y) {
 	this.mouse.x = this.game.settings.graphics.resolution.width != "auto" ? x*this.game.settings.graphics.resolution.width/window.innerWidth : x;
 	this.mouse.y = this.game.settings.graphics.resolution.height != "auto" ? y*this.game.settings.graphics.resolution.height/window.innerHeight : y;
 
-	var vector = this.projector.unprojectVector(new THREE.Vector3( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.998199832195 ),this.game.camera);
+	var vector = new THREE.Vector3(
+		( x / window.innerWidth ) * 2 - 1,
+		- ( y / window.innerHeight ) * 2 + 1,
+		0.5 );
 
-	this.mouse.projected.x = vector.x;
-	this.mouse.projected.y = vector.y;
-	this.mouse.projected.z = vector.z;
+	this.projector.unprojectVector(vector,this.game.camera);
+
+	var dir = vector.subSelf( this.game.camera.position ).normalize();
+
+	var ray = new THREE.Ray( this.game.camera.position, dir );
+
+	var distance = - this.game.camera.position.z / dir.z;
+
+	var pos = this.game.camera.position.clone().addSelf( dir.multiplyScalar( distance ) );
+
+	this.mouse.projected.x = pos.x;
+	this.mouse.projected.y = pos.y;
+	this.mouse.projected.z = pos.z;
 };
 Eventhandler.prototype.loop = function() {
 	for(var k in this.keyboardControls){

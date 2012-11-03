@@ -137,7 +137,6 @@ Game.prototype.checkCollision = function(obj1, obj2) {
 		}
 			
 		var vectorToPoint = new THREE.Vector2().sub(point,rectangle.position);
-		console.log(vectorToPoint);
 		var dimensionVector = new THREE.Vector2(rectangle.dimensions.width/2,rectangle.dimensions.height/2);
 		//var min = new THREE.Vector2(rectangle.position.x-rectangle.dimensions.width/2, rectangle.position.y-rectangle.dimensions.height/2);
 		//var max = new THREE.Vector2(rectangle.position.x+rectangle.dimensions.width/2, rectangle.position.y+rectangle.dimensions.height/2);
