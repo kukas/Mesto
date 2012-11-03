@@ -27,7 +27,8 @@ function Level(){
 Level.prototype = new Loader();
 
 Level.prototype.afterLoad = function (){
-	var monster = new Thing(this.models.monster, {
+	var monster = new SolidObject({
+		model: this.models.monster,
 		position: new THREE.Vector3(200,100, 0),
 		scale: new THREE.Vector3(0.1,0.1,0.1),
 		animation: {
@@ -43,7 +44,8 @@ Level.prototype.afterLoad = function (){
 	})
 	this.add( monster );
 	
-	var spalovna = new Thing(this.models.spalovna, {
+	var spalovna = new SolidObject({
+		model: this.models.spalovna,
 		position: new THREE.Vector3(-250,400, 0),
 		// rotation: new THREE.Vector3(0, 1, 0), // oops, kolize mad?
 		rotation: new THREE.Vector3(0, Math.PI, 0),
@@ -52,7 +54,8 @@ Level.prototype.afterLoad = function (){
 	);
 	this.add( spalovna );
 
-	var player = new Character(this.models.panacek, {
+	var player = new Character({
+		model: this.models.panacek,
 		position: new THREE.Vector3(0, 0, 0),
 		scale: new THREE.Vector3(50,50,50),
 		rotation: new THREE.Vector3(0,Math.PI,0),
@@ -106,7 +109,8 @@ Level.prototype.afterLoad = function (){
 
 	this.add( new Environment(this.textures.cs_test_bg, 0, 0, -100, 5800, 3200, true) );
 	
-	this.add( new Lamp(this.models.lamp, {
+	this.add( new Lamp({
+			model: this.models.lamp,
 			scale: new THREE.Vector3(100,100,100),
 			position: new THREE.Vector3(325,-31,0),
 			light:{
@@ -120,7 +124,8 @@ Level.prototype.afterLoad = function (){
 		}
 		));
 
-	this.add( new Lamp(this.models.lamp, {
+	this.add( new Lamp({
+			model: this.models.lamp,
 			scale: new THREE.Vector3(100,100,100),
 			position: new THREE.Vector3(-454,188,0),
 			light:{

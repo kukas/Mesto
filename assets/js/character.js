@@ -1,18 +1,10 @@
-function Character( model, options ){
-	this.options = options === undefined ? {} : options;
-
-	this.geometry = model;
-	this.geometry.morphTargetsNeedUpdate = true
-
-	this.initMesh();
-	// this.generateBoundingBox();
-	this.initAnimation();
+function Character( options ){
+	SolidObject.call(this, options);
 
 	this.speed = options.speed || 5;
-	this.turningSpeed = 0.05; // radiánů
+	this.turningSpeed = options.turningSpeed || 0.05; // radiánů
 }
-
-Character.prototype = new SolidObject();
+Character.prototype = Object.create( SolidObject.prototype );
 
 Character.prototype.move = function(direction) {
 	var posun_x = Math.sin(direction-this.mesh.rotation.y)*this.speed;
@@ -37,8 +29,4 @@ Character.prototype.rotate = function(direction) {
 	if( collisions.length !== 0 ){
 		this.mesh.rotation.y -= angle;
 	}
-};
-
-Character.prototype.tick = function() {
-	this.animate();
 };
