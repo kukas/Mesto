@@ -75,6 +75,8 @@ Level.prototype.afterLoad = function (){
 	})
 	this.add( player, "player" );
 
+	vzkaz = {};
+		
 	// jen takové blbinky:
 	var third_person_camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
 	player.mesh.add( third_person_camera );
