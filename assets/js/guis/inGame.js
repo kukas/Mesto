@@ -67,6 +67,11 @@
 						game.scene.fog.density = 0.0025;
 						_this.switchGUI("pause");
 					} );
+					game.eventhandler.addKeyboardControl(79, undefined, function (){ // Poznámky, cíle - deník  O
+						game.pause();
+						game.scene.fog.density = 0.0025;
+						_this.switchGUI("notesObjectives");
+					});
 					// ovládání panáčka
 					game.eventhandler.addKeyboardControl(87, undefined, function(){
 						game.objects.player.toggleAnim("standing");

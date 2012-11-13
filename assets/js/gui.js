@@ -13,6 +13,7 @@ function GUI( canvas ){
 	$.get("assets/js/guis/mainMenu.js",function(data){_this.loadGUI(data, "mainM");})
 	$.get("assets/js/guis/inGame.js",function(data){_this.loadGUI(data, "inGame");})
 	$.get("assets/js/guis/pause.js",function(data){_this.loadGUI(data, "pause");})
+	$.get("assets/js/guis/notesObjectives.js",function(data){_this.loadGUI(data, "notesObjectives");})
 	
 	this.loadGUI = function(objectStr, name){
 		this.guis[name] = eval("(function(){return "+objectStr+";})()");
@@ -344,6 +345,7 @@ GUI.prototype.switchGUI = function( name ) {
 	var gui = this.guis[name];
 
 	this.children = [];
+	game.eventhandler.resetControls();
 	
 	gui.preload();
 	gui.controls();
