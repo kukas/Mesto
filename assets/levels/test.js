@@ -13,11 +13,15 @@ function Level(){
 		steel: this.texturepath+"steel_floor.jpg",
 
 		cs_test_bg: this.texturepath+"cutscenes/test/bg.jpg",
-		cs_test_fg: this.texturepath+"cutscenes/test/fg.png",
+		jirka: this.texturepath+"cutscenes/test/jirka.png",
+		jirka_smile: this.texturepath+"cutscenes/test/jirka_smile.png",
+		ruka: this.texturepath+"cutscenes/test/ruka.png",
+		city: this.texturepath+"cutscenes/test/city.png",
 	};
 
 	this.sounds = {
 		solarFields: this.musicpath+"Circles_Of_Motion.mp3",
+		dub1: this.soundpath+"dub1.mp3",
 	};
 
 	this.cutscenes = {

@@ -20,3 +20,7 @@ Textures.prototype.loadTextures = function(texturesSrc, callback) {
 		})(i, callback)
 	}
 };
+
+Textures.prototype.get = function(name) {
+	return this.textures[name];
+};

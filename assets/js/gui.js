@@ -1,6 +1,8 @@
 function GUI( canvas ){
 	var _this = this;
 
+	GUIObject.call(this);
+
 	this.canvas = canvas;
 	this.ctx = this.canvas.getContext("2d");
 
@@ -13,7 +15,7 @@ function GUI( canvas ){
 		GUIObject.call(this, options);
 		this.color = options.color === undefined ? "rgba(0,0,0,0.5)" : options.color;
 	}
-	Rectangle.prototype = new GUIObject();
+	Rectangle.prototype = Object.create( GUIObject.prototype );
 	Rectangle.prototype.render = function(ctx) {
 		ctx.fillStyle = this.color;
 		ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -27,7 +29,7 @@ function GUI( canvas ){
 		this.maxVzdalenost = (this.width/this.zoomX)*(this.width/this.zoomX) + (this.height/this.zoomY)*(this.height/this.zoomY);
 	};
 	
-	Minimap.prototype = new GUIObject();
+	Minimap.prototype = Object.create( GUIObject.prototype );
 	
 	Minimap.prototype.tick = function (){
 		_this = this;
@@ -95,7 +97,7 @@ function GUI( canvas ){
 
 		this.clip = options.clip === undefined ? {x: 0, y: 0, width: _this.image.width, height: _this.image.height} : options.clip;
 	}
-	Texture.prototype = new GUIObject();
+	Texture.prototype = Object.create( GUIObject.prototype );
 	Texture.prototype.render = function(ctx) {
 		ctx.drawImage(this.image, this.clip.x, this.clip.y, this.clip.width, this.clip.height, this.x, this.y, this.width, this.height);
 	};
@@ -140,7 +142,7 @@ function GUI( canvas ){
 		// možná, do budoucnosti:
 		// this.textCache = createCanvas(options.width, options.height);
 	}
-	Text.prototype = new GUIObject();
+	Text.prototype = Object.create( GUIObject.prototype );
 
 	Text.prototype.changeText = function(text) {
 		// zalamování textu
@@ -243,7 +245,7 @@ function GUI( canvas ){
 		}
 
 	}
-	Button.prototype = new GUIObject();
+	Button.prototype = Object.create( GUIObject.prototype );
 
 	Button.prototype.render = function(ctx) {
 		ctx.fillStyle = this.color;
@@ -254,68 +256,96 @@ function GUI( canvas ){
 
 	// }
 	
-	// function Note(text,bg,object){
-	// 	this.ctx = _this.ctx;
+	function Layer(options){
+		Texture.call(this, options);
 
-	// 	this.children = [];
-	// 	var noteObj = this;
-	// 	this.display = false;
-	// 	this.text = text.value;
-		
-	// 	this.x = text.x !== undefined ? text.x : 0;
-	// 	this.y = text.y !== undefined ? text.y : 0;
-		
-	// 	this.size = text.size !== undefined ? text.size : "10pt";
-	// 	this.font = text.font !== undefined ? text.font : "VT220";
-	// 	this.color = text.color !== undefined ? text.color : "#000000";
-	// 	this.width = text.width !== undefined ? text.width : 100;
-		
-	// 	if(bg !== undefined){
-	// 		this.bgColor = bg.bgColor !== undefined ? bg.bgColor : false;
-	// 		this.bgImg = bg.bgImg !== undefined ? bg.bgImg : false;
-	// 	}
-	// 	else{
-	// 		this.bgColor = false;
-	// 		this.bgImg = false;
-	// 	}
-		
-	// 	this.render = function (){
-	// 		var ctx = noteObj.ctx;
-			
-	// 		if(this.display){
-	// 			ctx.save();
-	// 			if(this.bgColor){
-	// 				ctx.fillStyle = this.bgColor;
-	// 				ctx.fillRect(this.parent.width,this.parent.height-parseInt(this.size),this.width,this.height);
-	// 				/*ctx.beginPath();
-	// 				ctx.translate(this.parent.width-20,game.eventhandler.mouse.y-this.parent.y);
-	// 				ctx.moveTo(0,0);
-	// 				ctx.lineTo(11,-5);
-	// 				ctx.lineTo(11,5);
-	// 				ctx.lineTo(0,0);
-	// 				ctx.fill();
-	// 				ctx.closePath();*/
-	// 			}
-	// 			ctx.restore();
-	// 			ctx.save();
-	// 			if(this.bgImg){
-	// 				console.log("hura");
-	// 			}
-	// 			ctx.restore();
-	// 			ctx.save();
-	// 			ctx.fillStyle = this.color;
-	// 			ctx.font = this.size + " " + this.font;
-	// 			for(var i = 0;i<this.text.length;i++){
-	// 				ctx.fillText(this.text[i],this.parent.width+this.x,i*5/4*(parseInt(this.size))+this.y);
-	// 			};
-	// 			ctx.restore();
-	// 		}	
-	// 	};
-	// 	return this;
-	// };
-	// Note.prototype = new GUIObject();
-	
+		this.velocity = options.velocity === undefined ? new THREE.Vector2() : options.velocity;
+		this.acceleration = options.acceleration === undefined ? new THREE.Vector2() : options.acceleration;
+	}
+	Layer.prototype = Object.create( Texture.prototype );
+	Layer.prototype.tick = function(){
+		console.log(this.x, this.y)
+		this.velocity.addSelf( this.acceleration );
+
+		this.x += this.velocity.x;
+		this.y += this.velocity.y;
+	}
+
 	this.guis = {
+		cutscene: {
+			objects: function(){
+				_this.add( new Rectangle({
+					x:0, y:0,
+					width: _this.width, height: _this.height,
+					color: "#000000"
+				}), "background" );
+				_this.add( new Text({
+					value: " ",
+					x: 0, y: _this.height - 110,
+					width: _this.width, height: 50,
+					align: "center",
+					styles: {
+						default: {
+							color: "#FFFFFF",
+							size: 50
+						}
+					}
+				}), "subtitles" )
+			},
+			startTime: 0,
+			tick: function(){
+				var time = new Date().getTime() - this.startTime;
+				for(var script in this.scene){
+					if(this.scene[script].current === undefined)
+						this.scene[script].current = -1;
+					for(var stime in this.scene[script]){
+						if(stime == "current")
+							continue;
+						if(stime > this.scene[script].current && stime <= time){
+							this.scene[script].current = stime;
+							if(script == "scenes"){
+								// zachová pozadí a titulky ale vymaže vše ostatní
+								var background = _this.get("background");
+								var sub = _this.get("subtitles");
+								_this.add( background );
+								_this.children = [];
+								// přidá vrstvy z cutscény
+								for(var l in this.scene.scenes[this.scene[script].current]){
+									var layer = new Layer(this.scene.scenes[this.scene[script].current][l]);
+									_this.add( layer );
+									console.log(layer)
+								};
+								_this.add( sub );
+							}
+							else if(script == "subtitles"){
+								_this.get("subtitles").changeText(this.scene.subtitles[this.scene[script].current]);
+							}
+							else if(script == "dubbing"){
+								this.scene.dubbing[this.scene[script].current].replay();
+							}
+							else if(script == "script"){
+								this.scene.script[this.scene[script].current]();
+							}
+						}
+					}
+				}
+			},
+			controls: function(){
+				game.eventhandler.addKeyboardControl(" ", undefined, function(){
+					console.log("exitting")
+				} );
+			},
+			// speciální pro cutscene
+			switchCutscene: function(cutscene){
+				var _this = this;
+				$.get("./assets/cutscenes/"+cutscene+".js", function(data) {
+					_this.scene = eval("(function(){return " + data + ";})()");
+					_this.startTime = new Date().getTime();
+					game.gui.switchGUI("cutscene");
+				});
+			}
+		},
+
 		mainM : {
 			objects : function(){
 				// background obrázek
@@ -323,7 +353,7 @@ function GUI( canvas ){
 					image: game.textures.textures.rust,
 					x: 0,y: 0,
 					width: _this.width, height: _this.height
-				}) )
+				}) );
 				// modrý obdélník
 				_this.add( new Rectangle({
 					x: _this.width/2 - 150, y: 50,
@@ -510,6 +540,10 @@ function GUI( canvas ){
 							game.eventhandler.addMouseControl(1, undefined, function(){
 								console.log(Math.round(game.eventhandler.mouse.projected.x)+","+Math.round(game.eventhandler.mouse.projected.y)+","+game.eventhandler.mouse.projected.z)
 							});
+
+							game.eventhandler.addKeyboardControl("O", undefined, function(){
+								game.gui.guis.cutscene.switchCutscene("test");
+							}, undefined );
 
 							game.eventhandler.addKeyboardControl(82, undefined, undefined, function(){ // R
 								game.camera.position.z += 10;
@@ -709,10 +743,14 @@ function GUI( canvas ){
 	};
 };
 
-GUI.prototype = new GUIObject();
+GUI.prototype = Object.create( GUIObject.prototype );
 
 GUI.prototype.tick = function (){
 	this.tickChildren();
+
+	// tickuje gui
+	if(this.guis[this.currentGUI] !== undefined && this.guis[this.currentGUI].tick !== undefined)
+		this.guis[this.currentGUI].tick();
 };
 
 GUI.prototype.render = function (){
@@ -728,9 +766,12 @@ GUI.prototype.switchGUI = function( name ) {
 
 	this.children = [];
 	
-	gui.preload();
-	gui.controls();
-	gui.objects();
+	if(gui.preload !== undefined)
+		gui.preload();
+	if(gui.controls !== undefined)
+		gui.controls();
+	if(gui.objects !== undefined)
+		gui.objects();
 
 	// for(var i in gui.objects){
 	// 	this.add( gui.objects[i] );
@@ -766,8 +807,8 @@ GUI.prototype.resize = function ( w, h ){
 			obj.size = cislo+pripona;
 		}
 		if(obj.text !== undefined){
-			obj.ctx.font = obj.size + " " + obj.font;
-			obj.width = obj.ctx.measureText(obj.text).width;
+			// obj.ctx.font = obj.size + " " + obj.font;
+			// obj.width = obj.\ctx.measureText(obj.text).width;
 			obj.height = -parseInt(obj.size);
 		}
 		if(obj.children.length > 0) obj.resize(X,Y,true);

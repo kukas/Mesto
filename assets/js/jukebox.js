@@ -26,6 +26,16 @@ Jukebox.prototype.loadSounds = function(soundsSrc, callback) {
 	}
 };
 
+Jukebox.prototype.get = function(name) {
+	return this.sounds[name];
+};
+
+Jukebox.prototype.stopAll = function() {
+	for(var i in this.sounds){
+		this.sounds[i].stop();
+	}
+};
+
 Audio.prototype.replay = function() {
 	this.pause();
 	this.currentTime = 0;
