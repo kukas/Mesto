@@ -16,7 +16,7 @@ function Level(){
 		jirka: this.texturepath+"cutscenes/test/jirka.png",
 		jirka_smile: this.texturepath+"cutscenes/test/jirka_smile.png",
 		ruka: this.texturepath+"cutscenes/test/ruka.png",
-		city: this.texturepath+"cutscenes/test/city.png",
+		city: this.texturepath+"cutscenes/test/intro.jpg",
 	};
 
 	this.sounds = {
