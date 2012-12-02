@@ -1,9 +1,11 @@
 {
 	objects : function (){
-		_this.add( new Texture ({
-				image : game.textures.textures.rust,
-				x:(_this.width - _this.width*0.75)/2,y:(_this.height - _this.height*0.5)/2,
-				width: _this.width*0.75,height: _this.height*0.5
+		_this.add( new Rectangle ({
+				x:(_this.width - _this.width*0.4)/2,
+				y:(_this.height - _this.height*0.75)/2,
+				width: _this.width*0.4,
+				height: _this.height*0.75,
+				color:"#ffffff"
 			} )
 		);
 	},

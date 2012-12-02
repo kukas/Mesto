@@ -144,5 +144,10 @@
 	},
 	controls : function (){
 		_this.addControls();
+		
+		game.eventhandler.addKeyboardControl(32,undefined,function(){
+			game.mode = 1;
+			game.load("test");
+		});
 	}
 }
