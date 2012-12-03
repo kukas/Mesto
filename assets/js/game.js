@@ -11,7 +11,7 @@ function Game(){
 	this.jukebox = new Jukebox();
 	this.models = new Models();
 	this.gui = new GUI( document.createElement("canvas") );
-	// this.progress = new Progress();
+	this.progress = new Progress();
 	// this.statistics = new Statistics();
 	this.settings = new Settings();
 

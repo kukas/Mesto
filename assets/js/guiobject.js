@@ -42,6 +42,10 @@ GUIObject.prototype.remove = function(obj){
 			delete this.links[i];
 	};
 };
+GUIObject.prototype.removeAll = function (){
+	this.children.splice(0,this.children.length);
+	this.links = {};
+};
 // returne požadované dítě
 GUIObject.prototype.get = function( name, recursive ) {
 	// ***** TODO: Rekurzivní hledání linku *****
