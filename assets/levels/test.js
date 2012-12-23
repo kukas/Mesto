@@ -46,6 +46,9 @@ Level.prototype.afterLoad = function (){
 			},
 		}
 	})
+	
+	monster.addAction("onCollision",true,function (){game.gui.guis.cutscene.switchCutscene("test")})
+	
 	this.add( monster );
 	
 	var spalovna = new SolidObject({

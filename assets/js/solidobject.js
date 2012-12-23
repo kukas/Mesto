@@ -39,6 +39,17 @@ function SolidObject(options){
 	if( options.light !== undefined ){
 		this.initLight(options.light);
 	}
+	
+	// Prozatimní přidání actions, asi bych je dal do čehosi jako GameObject, který by byla nadtřída SolidObjectu, pro případ, že chceme, aby akční mohlo být i enviroment
+	this.actions = {
+		onCollision : [
+			
+		],
+		onActionKeyDown : [
+			
+		],
+	};
+	
 };
 
 SolidObject.prototype.tick = function() {
@@ -49,12 +60,20 @@ SolidObject.prototype.tick = function() {
 
 SolidObject.prototype.onCollide = function() {
 	// args: object (ten, co narazil)
+	for(var i in this.actions.onCollision){
+		if(this.actions.onCollision[i][0])
+			this.actions.onCollision[i][1](this);
+	};
 };
 
 SolidObject.prototype.handleCollision = function(collisions, object) {
 	for(var i in collisions){
 		collisions[i].onCollide(object);
 	}
+};
+
+SolidObject.prototype.addAction = function (type,condition,reaction){
+	this.actions[type].push([condition,reaction]);
 };
 
 // ohraničí objekt krásným, modrým kvádrem
