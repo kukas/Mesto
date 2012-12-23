@@ -48,6 +48,9 @@ function SolidObject(options){
 		onActionKeyDown : [
 			
 		],
+		onAreaEnter : [
+		
+		],
 	};
 	
 };
@@ -56,13 +59,20 @@ SolidObject.prototype.tick = function() {
 	if(this.animation){
 		this.animate();
 	}
+	if(this.actions.onAreaEnter.length > 0){
+		for(var i in this.actions.onAreaEnter){
+			if(this.actions.onAreaEnter[i][0]()){
+				this.actions.onAreaEnter[i][1]();
+			}
+		}
+	}
 };
 
-SolidObject.prototype.onCollide = function() {
+SolidObject.prototype.onCollide = function(obj) {
 	// args: object (ten, co narazil)
 	for(var i in this.actions.onCollision){
-		if(this.actions.onCollision[i][0])
-			this.actions.onCollision[i][1](this);
+		if(this.actions.onCollision[i][0]())
+			this.actions.onCollision[i][1](this, obj);
 	};
 };
 

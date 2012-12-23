@@ -47,9 +47,10 @@ Level.prototype.afterLoad = function (){
 		}
 	})
 	
-	monster.addAction("onCollision",true,function (){game.gui.guis.cutscene.switchCutscene("test")})
-	
 	this.add( monster );
+	
+	monster.addAction("onCollision",function (){return true;},function (){game.gui.guis.cutscene.switchCutscene("test")})
+	// atributy předávané reakční funkci jsou [mateřský objekt(v tomto případě monster), druhý kolizní objekt (zpravidla hýbající se postava)]
 	
 	var spalovna = new SolidObject({
 		model: this.models.spalovna,
@@ -60,6 +61,8 @@ Level.prototype.afterLoad = function (){
 		}
 	);
 	this.add( spalovna );
+		
+	
 
 	var player = new Character({
 		model: this.models.panacek,
@@ -81,7 +84,21 @@ Level.prototype.afterLoad = function (){
 		}
 	})
 	this.add( player, "player" );
-
+	
+	spalovna.addAction("onAreaEnter",
+		function (){
+			var x = player.mesh.position.x-spalovna.mesh.position.x;
+			var y = player.mesh.position.y-spalovna.mesh.position.y;
+			var distanceSquared = x*x + y*y;
+			var distance = Math.sqrt(distanceSquared);
+			if(distance <= 300) return true;
+			else return false;
+		},
+		function (){
+			console.log("Jsi blízko spalovny")
+		}
+		);
+			
 	vzkaz = {};
 		
 	// jen takové blbinky:
