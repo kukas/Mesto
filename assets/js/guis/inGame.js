@@ -72,6 +72,18 @@
 						game.scene.fog.density = 0.0025;
 						_this.switchGUI("notesObjectives");
 					});
+					game.eventhandler.addKeyboardControl("E",undefined,function (){
+						for(i in game.objects){
+							if(game.objects[i].actions === undefined) return false;
+							if(game.objects[i].actions.onActionKeyDown.length != 0){
+								for(var j in game.objects[i].actions.onActionKeyDown){
+									if(game.objects[i].actions.onActionKeyDown[j][0]()){
+										game.objects[i].actions.onActionKeyDown[j][1]();
+									}
+								};
+							}
+						};
+					});
 					game.eventhandler.addKeyboardControl("I", undefined, function (){ // Spuštění cutscény - být líný přepsat poznámku je fakt trolský
 						game.gui.guis.cutscene.switchCutscene("test")
 					});

@@ -16,7 +16,7 @@ function Level(){
 		jirka: this.texturepath+"cutscenes/test/jirka.png",
 		jirka_smile: this.texturepath+"cutscenes/test/jirka_smile.png",
 		ruka: this.texturepath+"cutscenes/test/ruka.png",
-		city: this.texturepath+"cutscenes/test/intro.jpg",
+		city: this.texturepath+"cutscenes/test/city.png",
 	};
 
 	this.sounds = {
@@ -49,7 +49,13 @@ Level.prototype.afterLoad = function (){
 	
 	this.add( monster );
 	
-	monster.addAction("onCollision",function (){return true;},function (){game.gui.guis.cutscene.switchCutscene("test")})
+	monster.addAction("onCollision",1,function (){return true;},function (monst_obj){
+		monst_obj.removeAction(1);
+		monst_obj.addAction("onActionKeyDown",function(){return true;},function (){
+			game.gui.guis.cutscene.switchCutscene("test");
+			monst_obj.actions.onActionKeyDown = [];
+			})
+		})
 	// atributy předávané reakční funkci jsou [mateřský objekt(v tomto případě monster), druhý kolizní objekt (zpravidla hýbající se postava)]
 	
 	var spalovna = new SolidObject({
@@ -85,17 +91,42 @@ Level.prototype.afterLoad = function (){
 	})
 	this.add( player, "player" );
 	
-	spalovna.addAction("onAreaEnter",
+	spalovna.addAction("onAreaEnter",2,
 		function (){
-			var x = player.mesh.position.x-spalovna.mesh.position.x;
+			var x = player.mesh.position.x-spalovna.mesh.position.x+120;
 			var y = player.mesh.position.y-spalovna.mesh.position.y;
 			var distanceSquared = x*x + y*y;
 			var distance = Math.sqrt(distanceSquared);
-			if(distance <= 300) return true;
+			if(distance <= 200){
+				console.log("Lze spustit akci");
+				return true;
+			}
 			else return false;
 		},
+		function (spal_obj){
+			if(spal_obj.actionExists(1)) return true;
+			spal_obj.addAction("onActionKeyDown",1,function(){return true;},
+			function (){
+				console.log("Vstupuji do spalovny");
+				game.load("vnitrek_spalovny");
+			});
+		}
+		);
+	
+	spalovna.addAction("onAreaEnter",0,
 		function (){
-			console.log("Jsi blízko spalovny")
+			var x = player.mesh.position.x-spalovna.mesh.position.x+120;
+			var y = player.mesh.position.y-spalovna.mesh.position.y;
+			var distanceSquared = x*x + y*y;
+			var distance = Math.sqrt(distanceSquared);
+			if(distance > 200){
+				console.log("Nelze spustit akci");
+				return true;
+			}
+			else return false;
+		},
+		function (spal_obj){
+			spal_obj.removeAction(1);
 		}
 		);
 			

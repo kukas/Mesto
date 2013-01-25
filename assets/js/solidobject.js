@@ -62,7 +62,7 @@ SolidObject.prototype.tick = function() {
 	if(this.actions.onAreaEnter.length > 0){
 		for(var i in this.actions.onAreaEnter){
 			if(this.actions.onAreaEnter[i][0]()){
-				this.actions.onAreaEnter[i][1]();
+				this.actions.onAreaEnter[i][1](this);
 			}
 		}
 	}
@@ -82,8 +82,35 @@ SolidObject.prototype.handleCollision = function(collisions, object) {
 	}
 };
 
-SolidObject.prototype.addAction = function (type,condition,reaction){
-	this.actions[type].push([condition,reaction]);
+SolidObject.prototype.addAction = function (type,id,condition,reaction){
+	this.actions[type].push([condition,reaction,id]);
+};
+
+SolidObject.prototype.removeAction = function (id){
+	for(var i in this.actions){
+		if(this.actions[i].length != 0){
+			for(var j in this.actions[i]){
+				if(this.actions[i][j][2] == id){
+					this.actions[i].splice(j,1);
+					return true;
+				}
+			};
+		}
+	};
+	return false;
+};
+
+SolidObject.prototype.actionExists = function (id){
+	for(var i in this.actions){
+		if(this.actions[i].length != 0){
+			for(var j in this.actions[i]){
+				if(this.actions[i][j][2] == id){
+					return true;
+				}
+			};
+		}
+	};
+	return false;
 };
 
 // ohraničí objekt krásným, modrým kvádrem
