@@ -274,6 +274,7 @@ Game.prototype.render = function() {
 
 Game.prototype.tick = function() {
 	this.eventhandler.loop();
+	this.progress.checkAchievements();
 	this.gui.tick();
 	if(game.mode == 1){
 		for(var i in this.objects){

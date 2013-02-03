@@ -32,6 +32,44 @@ function GUI( canvas ){
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	};
 	
+	function Popout(text_options,rec_options,cas){
+		Rectangle.call(this, rec_options);
+		this.children.push(new Text(text_options));
+		var vytvoreni = new Date().getTime();
+		this.vytvoreni = vytvoreni;
+		this.timedEvents.push([vytvoreni+cas,function (obj){
+			for(var i in obj.parent.children){
+				if(obj.parent.children[i].vytvoreni !== undefined && obj.parent.children[i].vytvoreni == vytvoreni){
+					obj.parent.children.splice(i,1);
+					delete obj;
+				}
+			};
+		}]);
+	};
+	Popout.prototype = Object.create(Rectangle.prototype);
+	this.makePopout = function (text){
+		this.add(new Popout(
+			{
+				x:10,
+				y:10,
+				value:text,
+				width:180,
+				styles:{
+					default:{
+						size:20,
+					}
+				}
+			},
+			{
+				x:game.gui.width-300,
+				y:100,
+				width:200,
+				height:100,
+				color:"black"
+			},
+			4000));
+	};
+	
 	function Minimap(objects,options){
 		this.objects = objects;
 		Rectangle.call(this, options);
@@ -287,7 +325,7 @@ GUI.prototype = Object.create( GUIObject.prototype );
 
 GUI.prototype.tick = function (){
 	this.tickChildren();
-
+	this.checkTimeout();
 	// tickuje gui
 	if(this.guis[this.currentGUI] !== undefined && this.guis[this.currentGUI].tick !== undefined)
 		this.guis[this.currentGUI].tick();

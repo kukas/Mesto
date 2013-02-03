@@ -20,6 +20,8 @@ function GUIObject(options){
 	this.parent = false;
 	this.children = options.children === undefined ? [] : options.children;
 	this.links = {};
+	
+	this.timedEvents = [];
 }
 
 GUIObject.prototype.add = function( obj, name ) {
@@ -66,6 +68,9 @@ GUIObject.prototype.tickChildren = function (){
 
 	for (var i = 0; i < this.children.length; i++){
 		this.children[i].tick();
+		if(this.children[i] === undefined) continue;
+		this.children[i].checkTimeout();
+		if(this.children[i] === undefined) continue;
 		if(this.children[i].tickChildren)
 			this.children[i].tickChildren();
 	};
@@ -81,6 +86,24 @@ GUIObject.prototype.renderChildren = function (ctx){
 			this.children[i].renderChildren(ctx);
 	};
 	ctx.restore();
+};
+
+GUIObject.prototype.setTimeout = function (howLong,what){
+	var creationTime = new Date().getTime();
+	this.timedEvents.push([howLong+creationTime,what]);
+};
+
+GUIObject.prototype.checkTimeout = function (){
+	var dl = this.timedEvents.length;
+	if(dl > 0){
+		var cas = new Date().getTime();
+		for(var i = 0;i < dl;i++){
+			if(this.timedEvents[i][0] < cas){
+				this.timedEvents[i][1](this);
+				this.timedEvents.splice(i,1);
+			}
+		}
+	}
 };
 
 GUIObject.prototype.tick = function (){

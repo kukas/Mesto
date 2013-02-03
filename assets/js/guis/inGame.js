@@ -93,7 +93,7 @@
 					}, function(){ // W
 						game.objects.player.toggleAnim("walking");
 						game.objects.player.move(Math.PI);
-						game.progress.playerDistanceWalked+=0.01;
+						game.progress.achievements.walking.value+=0.01;
 						if(game.settings.graphics.camera == "topdown")
 							game.camera.follow(game.objects.player.mesh);
 					} );

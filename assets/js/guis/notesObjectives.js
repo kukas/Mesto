@@ -27,7 +27,7 @@
 		});
 		hlavni.add( screen , "screen");
 		
-		var l = game.progress.missions.length
+		var l = game.progress.missions.length;
 		for(var j = 0;j < l;j++){
 			var text = new Text({
 					x:5,
@@ -40,34 +40,31 @@
 						}
 					},
 				});
-			var description = game.progress.missions[j].description;
-			console.log(description);
-			var text2 = new Text({
-				x:5,
-				y:5,
-				value:description,
-				width:screen.width-10,
-				styles:{
-					default : {
-						size:20
-					}
-				}
-			});
-			text2.visible = false;
-			screen.add(text2);
 			var button = new Button({
 				x:5,
 				y:5+25*j,
 				width:menu.width-10,
 				height:25,
-				mousedown:function (){console.log(description);
-						for(var i in screen.children){
-							screen.children[i].visible = false;
+				mousedown:function (){
+						for(var i in game.progress.missions){console.log(this.links.title);
+							if(game.progress.missions[i].title == this.links.title.value){
+								screen.children = [];
+								screen.add(new Text({
+									x:0,
+									y:0,
+									value: game.progress.missions[i].description,
+									width: screen.width,
+									styles:{
+										default : {
+											size:20
+										}
+									}
+								}));
+							}
 						};
-						text2.visible = true;
 					},
 			});
-			button.add(text);
+			button.add(text,"title");
 			
 			menu.add(button);
 		};
