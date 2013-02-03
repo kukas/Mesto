@@ -7,9 +7,12 @@ function Level(){
 	this.models = {
 		linka: this.modelpath+"bar_z/bar.js",
 		panacek: this.modelpath+"panacek.js",
+		lamp:this.modelpath+"lamp/lamp.js",
 	};
 	
-	this.texures = {};
+	this.textures = {
+		steel: this.texturepath+"steel_floor.jpg",
+	};
 	
 	this.sounds = {};
 	
@@ -21,10 +24,47 @@ Level.prototype = new Loader();
 Level.prototype.afterLoad = function (){
 	var linka = new SolidObject({
 		model:this.models.linka,
-		position:new THREE.Vector3(200,0,0),
-		scale:new THREE.Vector3(100,100,100),
+		position:new THREE.Vector3(200,0,10),
+		scale:new THREE.Vector3(30,30,30),
 	});
 	this.add(linka);
+	
+	var player = new Character({
+		model: this.models.panacek,
+		position: new THREE.Vector3(0, 0, 0),
+		scale: new THREE.Vector3(50,50,50),
+		rotation: new THREE.Vector3(0,Math.PI,0),
+		speed: 2,
+		animation: {
+			boundingFrame: 1,
+
+			interpolation: 20,
+			startingAnimation: "standing",
+			modelAnimations: {
+				standing: [1,1],
+				walking: [5,75],
+				nodding: [80,110],
+				falling: [110,190],
+			},
+		}
+	});
+	this.add( player, "player" );
+	
+	this.add( new Lamp({
+			model: this.models.lamp,
+			scale: new THREE.Vector3(100,100,100),
+			position: new THREE.Vector3(-454,188,0),
+			light:{
+				color: 0xffc560, // žárovka
+				position: new THREE.Vector3(0.65,2,0),
+				intensity: 3, // intenzita světla
+				distance: 0, // něco jako intenzita/10000, ale více to ovlivňuje odrazy na povrchu (prostě dafuq)
+				exponent: 1 // jak moc se světlo rozšiřuje
+			}
+		}
+	));
+	
+	this.add( new Environment(this.textures.steel, 0, 0, 0, 2400, 1200, false) );
 	
 	// jen takové blbinky:
 	var third_person_camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
@@ -53,8 +93,9 @@ Level.prototype.afterLoad = function (){
 		"first_person": first_person_camera,
 		"rotating_topdown": rotating_topdown_camera,
 		"topdown": topdown_camera
-	}
+	};
 	this.camera = vyber[ game.settings.graphics.camera ];
 	
 	game.gui.switchGUI("inGame");
 };
+var level = new Level();

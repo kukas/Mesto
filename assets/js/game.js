@@ -54,8 +54,8 @@ Game.prototype.load = function(levelName) {
 
 Game.prototype.load = function(levelName) {
 	var _this = this;
-	console.log("Game: loading level "+levelName)
-
+	console.log("Game: loading level "+levelName);
+	
 	$.getScript(this.levelspath + levelName + ".js", function(){
 		_this.level = level;
 
@@ -90,7 +90,7 @@ Game.prototype.load = function(levelName) {
 				} )
 			} )
 		} );
-	});
+	}).fail(function(){console.log(arguments);});
 };
 
 Game.prototype.findCollisions = function(obj) {

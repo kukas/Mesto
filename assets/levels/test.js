@@ -91,44 +91,26 @@ Level.prototype.afterLoad = function (){
 	})
 	this.add( player, "player" );
 	
-	spalovna.addAction("onAreaEnter",2,
-		function (){
-			var x = player.mesh.position.x-spalovna.mesh.position.x+120;
-			var y = player.mesh.position.y-spalovna.mesh.position.y;
+	spalovna.addAction("onActionKeyDown",0,
+		function(spal_obj){
+			var x = player.mesh.position.x-spal_obj.mesh.position.x+120;
+			var y = player.mesh.position.y-spal_obj.mesh.position.y;
 			var distanceSquared = x*x + y*y;
 			var distance = Math.sqrt(distanceSquared);
 			if(distance <= 200){
 				console.log("Lze spustit akci");
 				return true;
 			}
-			else return false;
-		},
-		function (spal_obj){
-			if(spal_obj.actionExists(1)) return true;
-			spal_obj.addAction("onActionKeyDown",1,function(){return true;},
-			function (){
-				console.log("Vstupuji do spalovny");
-				game.load("vnitrek_spalovny");
-			});
-		}
-		);
-	
-	spalovna.addAction("onAreaEnter",0,
-		function (){
-			var x = player.mesh.position.x-spalovna.mesh.position.x+120;
-			var y = player.mesh.position.y-spalovna.mesh.position.y;
-			var distanceSquared = x*x + y*y;
-			var distance = Math.sqrt(distanceSquared);
-			if(distance > 200){
-				console.log("Nelze spustit akci");
-				return true;
+			else {
+				console.log("Akci nelze spustit, říká podmínka");
+				return false;
 			}
-			else return false;
 		},
-		function (spal_obj){
-			spal_obj.removeAction(1);
-		}
-		);
+		function(){
+			game.scene = new THREE.Scene();
+			console.log("Vstupuji do spalovny");
+			game.load("vnitrek");
+		});
 			
 	vzkaz = {};
 		

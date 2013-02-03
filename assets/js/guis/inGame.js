@@ -77,8 +77,8 @@
 							if(game.objects[i].actions === undefined) return false;
 							if(game.objects[i].actions.onActionKeyDown.length != 0){
 								for(var j in game.objects[i].actions.onActionKeyDown){
-									if(game.objects[i].actions.onActionKeyDown[j][0]()){
-										game.objects[i].actions.onActionKeyDown[j][1]();
+									if(game.objects[i].actions.onActionKeyDown[j][0](game.objects[i])){ // Vracení mateřského objektu podmínce a 
+										game.objects[i].actions.onActionKeyDown[j][1](game.objects[i]); // akci
 									}
 								};
 							}
