@@ -84,7 +84,7 @@
 							}
 						};
 					});
-					game.eventhandler.addKeyboardControl("I", undefined, function (){ // Spuštění cutscény - být líný přepsat poznámku je fakt trolský
+					game.eventhandler.addKeyboardControl("I", undefined, function (){ // Spuštění cutscény
 						game.gui.guis.cutscene.switchCutscene("test")
 					});
 					// ovládání panáčka
@@ -93,7 +93,8 @@
 					}, function(){ // W
 						game.objects.player.toggleAnim("walking");
 						game.objects.player.move(Math.PI);
-						game.progress.achievements.walking.value+=0.01;
+						if(!game.progress.achievements.walking.done) game.progress.achievements.walking.value+=0.03;
+						else game.progress.achievements.traveler.value+=0.03;
 						if(game.settings.graphics.camera == "topdown")
 							game.camera.follow(game.objects.player.mesh);
 					} );

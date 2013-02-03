@@ -12,6 +12,7 @@ function GUI( canvas ){
 	this.children = [];
 	
 	this.guis = {};
+	$.get("assets/js/guis/achievements.js",function(data){_this.loadGUI(data, "achievements");})
 	$.get("assets/js/guis/cutscene.js",function(data){_this.loadGUI(data, "cutscene");})
 	$.get("assets/js/guis/mainMenu.js",function(data){_this.loadGUI(data, "mainM");})
 	$.get("assets/js/guis/inGame.js",function(data){_this.loadGUI(data, "inGame");})

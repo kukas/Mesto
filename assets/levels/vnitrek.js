@@ -22,6 +22,7 @@ function Level(){
 Level.prototype = new Loader();
 
 Level.prototype.afterLoad = function (){
+	game.gui.guis.cutscene.switchCutscene("test");
 	var linka = new SolidObject({
 		model:this.models.linka,
 		position:new THREE.Vector3(200,0,10),

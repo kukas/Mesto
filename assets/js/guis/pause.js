@@ -95,7 +95,7 @@
 				this.get("text").styles.default.color = "#aaaaff";
 			},
 			mousedown: function (){
-				alert("In development");
+				_this.switchGUI("achievements");
 			},
 		}) );
 		_this.add( new Button({
