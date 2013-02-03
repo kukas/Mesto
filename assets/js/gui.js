@@ -319,6 +319,15 @@ function GUI( canvas ){
 		this.x += this.velocity.x;
 		this.y += this.velocity.y;
 	}
+	this.constructors = {
+		rectangle:Rectangle,
+		popout:Popout,
+		minimap:Minimap,
+		texture:Texture,
+		text:Text,
+		button:Button,
+		layer:Layer,
+	};
 };
 
 GUI.prototype = Object.create( GUIObject.prototype );
