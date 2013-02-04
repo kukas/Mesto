@@ -222,6 +222,19 @@ Game.prototype.checkCollision = function(obj1, obj2) {
 	return false;
 };
 
+Game.prototype.checkFloor = function (character){
+	if(game.objects.floor === undefined) return true;
+	console.log(game.objects.floor.yBoundaries, game.objects.floor.xBoundaries, character.mesh.position.x-character.mesh.geometry.boundingBox.max.x*character.mesh.scale.x/2);
+	var x_zleva = game.objects.floor.xBoundaries.min < character.mesh.position.x+character.mesh.geometry.boundingBox.min.x*character.mesh.scale.x/2;
+	var x_zprava = game.objects.floor.xBoundaries.max > character.mesh.position.x+character.mesh.geometry.boundingBox.max.x*character.mesh.scale.x/2;
+	var y_shora = game.objects.floor.yBoundaries.max > character.mesh.position.y-character.mesh.geometry.boundingBox.max.y*character.mesh.scale.y*0; // WHUT?
+	var y_zdola = game.objects.floor.yBoundaries.min < character.mesh.position.y+character.mesh.geometry.boundingBox.min.y*character.mesh.scale.y/2;
+	if(x_zleva && x_zprava && y_shora && y_zdola){
+		return true;
+	}
+	else{return false;}
+};
+
 Game.prototype.objectsAdd = function() {
 	this.objects = this.level.objects;
 	for(var i in this.objects){

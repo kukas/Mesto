@@ -12,7 +12,12 @@ Character.prototype.move = function(direction) {
 	this.mesh.position.x += posun_x;
 	this.mesh.position.y += posun_y;
 	var collisions = game.findCollisions( this );
-	if( collisions.length !== 0 ){
+	var onFloor = game.checkFloor( this );
+	if(!onFloor){
+		this.mesh.position.x -= posun_x;
+		this.mesh.position.y -= posun_y;
+	}
+	if( collisions.length !== 0){
 		this.mesh.position.x -= posun_x;
 		this.mesh.position.y -= posun_y;
 

@@ -22,7 +22,7 @@ function Level(){
 Level.prototype = new Loader();
 
 Level.prototype.afterLoad = function (){
-	game.gui.guis.cutscene.switchCutscene("test");
+	//game.gui.guis.cutscene.switchCutscene("test");
 	var linka = new SolidObject({
 		model:this.models.linka,
 		position:new THREE.Vector3(200,0,10),
@@ -32,7 +32,7 @@ Level.prototype.afterLoad = function (){
 	
 	var player = new Character({
 		model: this.models.panacek,
-		position: new THREE.Vector3(0, 0, 0),
+		position: new THREE.Vector3(0, -360, 0),
 		scale: new THREE.Vector3(50,50,50),
 		rotation: new THREE.Vector3(0,Math.PI,0),
 		speed: 2,
@@ -65,7 +65,7 @@ Level.prototype.afterLoad = function (){
 		}
 	));
 	
-	this.add( new Environment(this.textures.steel, 0, 0, 0, 2400, 1200, false) );
+	this.add( new Floor(this.textures.steel,1000, 800, false), "floor" );
 	
 	// jen takové blbinky:
 	var third_person_camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
@@ -87,8 +87,8 @@ Level.prototype.afterLoad = function (){
 
 	var topdown_camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
 	// game.scene.add( topdown_camera );
-	topdown_camera.position.set(0,0,500);
-
+	topdown_camera.position.set(player.mesh.position.x,player.mesh.position.y,500);
+	
 	var vyber = {
 		"third_person": third_person_camera,
 		"first_person": first_person_camera,
