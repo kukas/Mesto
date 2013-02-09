@@ -27,7 +27,7 @@
 		});
 		hlavni.add( screen , "screen");
 		var j = 0;
-		for(var k in game.progress.missions){
+		for(var k in game.progress.missions){ // Zde jsou uloženy aktivní mise
 			var text = new Text({
 					x:5,
 					y:0,

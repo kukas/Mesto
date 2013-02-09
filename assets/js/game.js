@@ -53,7 +53,7 @@ Game.prototype.load = function(levelName) {
 	document.body.appendChild(levelScript);
 };
 
-Game.prototype.load = function(levelName,poziceHrace) {
+Game.prototype.load = function(levelName,poziceHrace) { // Argument poziceHrace jde z door - destination
 	var _this = this;
 	console.log("Game: loading level "+levelName);
 	
@@ -77,7 +77,7 @@ Game.prototype.load = function(levelName,poziceHrace) {
 				_this.jukebox.loadSounds( _this.level.sounds, function(){
 					_this.level.sounds = _this.jukebox.sounds;
 
-					_this.level.afterLoad(poziceHrace);
+					_this.level.afterLoad(poziceHrace); // Aby bylo kam umístit hráče
 
 					_this.objectsAdd();
 					if(_this.level.camera)
@@ -89,7 +89,7 @@ Game.prototype.load = function(levelName,poziceHrace) {
 					// změní velikost canvasů
 					_this.resizeCanvas();
 					
-					_this.questManager.eventHandle(new QuestEvent("levelEnter",_this.level));
+					_this.questManager.eventHandle(new QuestEvent("levelEnter",_this.level)); // Questová událost
 				} )
 			} )
 		} );
@@ -226,7 +226,10 @@ Game.prototype.checkCollision = function(obj1, obj2) {
 };
 
 Game.prototype.checkFloor = function (character){
-	if(game.objects.floor === undefined) return true;
+	/*
+	Kontroluje, jestli je hráč nad podlahou, jinak znemožňuje pohyb
+	*/
+	if(game.objects.floor === undefined) return true; // Může se hýbat jakkoli v testovacích levelech
 	var x_zleva = game.objects.floor.xBoundaries.min < character.mesh.position.x+character.mesh.geometry.boundingBox.min.x*character.mesh.scale.x/2;
 	var x_zprava = game.objects.floor.xBoundaries.max > character.mesh.position.x+character.mesh.geometry.boundingBox.max.x*character.mesh.scale.x/2;
 	var y_shora = game.objects.floor.yBoundaries.max > character.mesh.position.y-character.mesh.geometry.boundingBox.max.y*character.mesh.scale.y*0; // WHUT?
@@ -289,7 +292,7 @@ Game.prototype.render = function() {
 
 Game.prototype.tick = function() {
 	this.eventhandler.loop();
-	this.progress.checkAchievements();
+	this.progress.checkAchievements(); // Achievementy můžou být úplně všechno
 	this.gui.tick();
 	if(game.mode == 1){
 		for(var i in this.objects){

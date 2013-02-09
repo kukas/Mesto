@@ -33,7 +33,7 @@ function GUI( canvas ){
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	};
 	
-	function Popout(text_options,rec_options,cas){
+	function Popout(text_options,rec_options,cas){ // Upozornění, po určité době zmizí
 		Rectangle.call(this, rec_options);
 		this.children.push(new Text(text_options));
 		var vytvoreni = new Date().getTime();
@@ -48,7 +48,7 @@ function GUI( canvas ){
 		}]);
 	};
 	Popout.prototype = Object.create(Rectangle.prototype);
-	this.makePopout = function (text){
+	this.makePopout = function (text){ // Základní formát popoutu, jednoduše přístupný z game
 		this.add(new Popout(
 			{
 				x:10,
@@ -320,7 +320,7 @@ function GUI( canvas ){
 		this.x += this.velocity.x;
 		this.y += this.velocity.y;
 	}
-	this.constructors = {
+	this.constructors = { // Seznam konstruktorů, tak aby byly přístupné odkudkoli
 		rectangle:Rectangle,
 		popout:Popout,
 		minimap:Minimap,

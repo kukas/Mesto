@@ -1,6 +1,20 @@
-function Step(options){ //jmeno,start,end,popis,steps,first
+function Step(options){
+	/*
+	options:
+		String title,
+		String description,
+		Object steps,
+		String first,
+		function startCondition, startAction, endCondition, endAction
+	
+	Celá konstrukce questů je založena na dvoupodmínkových krocích, které na sebe
+	navazují a zároveň jsou příbuzné. Velké celky tedy lze zpracovávat po různě
+	dělených menších krocích, což by mělo být jednodušší.
+	Zatím se celý strom questů naloaduje při spuštění, ale asi nebude problém to
+	také rozdělit.
+	*/
 	if(options.steps === undefined){
-		this.steps = {};
+		this.steps = {}; // Asociované pole vnitřních kroků
 		var first = undefined;
 	}
 	else{
@@ -9,21 +23,22 @@ function Step(options){ //jmeno,start,end,popis,steps,first
 			this.steps[i].parent = this;
 		}
 	}
-	this.startCondition = options.startCondition;
-	this.startAction = options.startAction;
+	this.startCondition = options.startCondition; // Argument QuestEvent
+	this.startAction = options.startAction; // Argument QuestEvent
 	this.active = false;
-	this.endCondition = options.endCondition;
-	this.endAction = options.endAction;
+	this.endCondition = options.endCondition; // Argument QuestEvent
+	this.endAction = options.endAction; // Argument QuestEvent
 	this.ended = false;
 	if(first !== undefined) {this.current = options.steps[first];}
+	// Začínající krok !! povinný argument pro dělené kroky
 	this.description = options.description;
 	this.title = options.title;
 };
-Step.prototype.add = function (step,name){
+Step.prototype.add = function (step,name){ // Neargumentové přidávání
 	this.steps[name] = step;
 	step.parent = this;
 };
-Step.prototype.event = function (e){
+Step.prototype.event = function (e){ // Eventové vyhodnocování
 	if(this.current === undefined){
 		if(this.active){
 			if(this.endCondition(e)){
@@ -31,7 +46,7 @@ Step.prototype.event = function (e){
 				return true;
 			}
 		}
-		if(!this.active && !this.ended){
+		if(!this.active && !this.ended){ // Asi funguje
 			if(this.startCondition(e)){
 				this.startAction(e);
 				return true;
@@ -43,7 +58,8 @@ Step.prototype.event = function (e){
 		return true;
 	}
 };
-Step.prototype.start = function (e){
+Step.prototype.start = function (e){ // Ještě ne zcela dodělané, problémy s
+	// oddálením začátku mise po menu
 	if(Object.keys( this.steps ) < 1){
 		// if(this.startCondition(e)){
 			this.startAction();

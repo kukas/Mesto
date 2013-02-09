@@ -1,6 +1,6 @@
 function Progress(){
 	this.achievements = {
-		walking : {
+		walking : { // Formát achievementů zatím bez konstruktoru, možná ale i může zůstat
 			title:"First steps",
 			description:"Walk at least 5 metres over the rusty floor of the City",
 			onUnlock:"You've walked 5 metres here, in the City! Great!",
@@ -25,7 +25,7 @@ function Progress(){
 	};
 	this.missions = {};
 };
-Progress.prototype.log = function (what){
+Progress.prototype.log = function (what){// Jenom vypisuje, možná při nějaké optimalizaci odstraním
 	if(what !== undefined){
 		if(this[what] !== undefined){
 			return this[what];
@@ -35,7 +35,7 @@ Progress.prototype.log = function (what){
 		}
 	}
 };
-Progress.prototype.checkAchievements = function (){
+Progress.prototype.checkAchievements = function (){ // Kontrola splění ach.
 	for(var i in this.achievements){
 		if(!this.achievements[i].done){
 			if(this.achievements[i].condition(this.achievements[i].value)){

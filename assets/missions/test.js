@@ -4,7 +4,7 @@ var hlavni = new Step({
 	startCondition : function (){return this.steps.treti.ended;},
 	startAction : function (){console.log("startuji hlavní celek");game.gui.makePopout("New mission: "+this.title);},
 	endCondition : function (){return false;},
-	endAction : function (){console.log("whut?")},
+	endAction : function (){},
 });
 var prvni = new Step({
 	title : "First step",
@@ -61,3 +61,7 @@ hlavni.add(druhy, "druhy");
 hlavni.add(treti, "treti");
 hlavni.current = hlavni.steps.prvni;
 return hlavni;
+/*
+Propracovanější konstrukce, vyhazuje popouty při novém kroku a také je složitější - jít do budovy, dojít a dotknou se baru, jít pryč z budovy.
+Je vidět, že náročnost kódu stoupá velmi rychle a bude potřeba mnoho zjednodušujících funkcí, které budou zastupovat základní operace.
+*/

@@ -29,7 +29,7 @@
 		
 		var pocet = 0;
 		for(var i in game.progress.achievements){
-			if(game.progress.achievements[i].done) continue;
+			if(game.progress.achievements[i].done) continue; // Pak můžeme vymyslet nějaké místo pro hotové, design jsem neřešil
 			if(pocet++ > 10) break;
 			
 			var text = new Text({

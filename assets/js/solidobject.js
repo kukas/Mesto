@@ -59,7 +59,7 @@ SolidObject.prototype.tick = function() {
 	if(this.animation){
 		this.animate();
 	}
-	if(this.actions.onAreaEnter.length > 0){
+	if(this.actions.onAreaEnter.length > 0){ // Kontrola akcí onAreaEnter probýhá každý tick - nemělo by jich být moc
 		for(var i in this.actions.onAreaEnter){
 			if(this.actions.onAreaEnter[i][0]()){
 				this.actions.onAreaEnter[i][1](this);
@@ -83,6 +83,7 @@ SolidObject.prototype.handleCollision = function(collisions, object) {
 };
 
 SolidObject.prototype.addAction = function (type,id,condition,reaction){
+	// String type, whatever id, functon condition, function reaction
 	this.actions[type].push([condition,reaction,id]);
 };
 

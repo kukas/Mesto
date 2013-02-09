@@ -13,7 +13,7 @@ Character.prototype.move = function(direction) {
 	this.mesh.position.y += posun_y;
 	var collisions = game.findCollisions( this );
 	var onFloor = game.checkFloor( this );
-	if(!onFloor){
+	if(!onFloor){ // Kontrola hráče a podlahy
 		this.mesh.position.x -= posun_x;
 		this.mesh.position.y -= posun_y;
 	}

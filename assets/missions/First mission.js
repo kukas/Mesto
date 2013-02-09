@@ -24,3 +24,4 @@ var druhy = new Step({
 prvni.add(druhy,druhy.title);
 prvni.current = druhy;
 return prvni;
+/*Jednoduchá mise, bez hlášení, úplně první pokus - jít do budovy a přiřadí se jiná mise*/

@@ -69,7 +69,7 @@ GUIObject.prototype.tickChildren = function (){
 	for (var i = 0; i < this.children.length; i++){
 		this.children[i].tick();
 		if(this.children[i] === undefined) continue;
-		this.children[i].checkTimeout();
+		this.children[i].checkTimeout(); // Kontrola časovaných událostí
 		if(this.children[i] === undefined) continue;
 		if(this.children[i].tickChildren)
 			this.children[i].tickChildren();
@@ -88,7 +88,7 @@ GUIObject.prototype.renderChildren = function (ctx){
 	ctx.restore();
 };
 
-GUIObject.prototype.setTimeout = function (howLong,what){
+GUIObject.prototype.setTimeout = function (howLong,what){ // number howLong, function what
 	var creationTime = new Date().getTime();
 	this.timedEvents.push([howLong+creationTime,what]);
 };
