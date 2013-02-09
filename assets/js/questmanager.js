@@ -34,9 +34,9 @@ QuestManager.prototype.eventHandle = function (e){console.log(e);
 	};
 };
 QuestManager.prototype.giveEventTo = function (name,type,id){
-	if(game.links[name] === undefined) return false;
+	if(game.objects[name] === undefined) return false;
 	_this = this;
-	game.links[name].actions[type] = function (){
+	game.objects[name].actions[type] = function (){
 		__this = this;
 		_this.eventHandle(new QuestEvent(
 			type,__this,id

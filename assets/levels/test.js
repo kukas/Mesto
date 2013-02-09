@@ -31,7 +31,12 @@ function Level(){
 }
 Level.prototype = new Loader();
 
-Level.prototype.afterLoad = function (){
+Level.prototype.afterLoad = function (poziceHrace){
+	if(poziceHrace === undefined) var poziceHrace = new THREE.Vector3(0,0,0);
+	
+	var dvere = new Door(new THREE.Vector3(-300,200,2),{type:"rect",width:100,height:100},"vnitrek",true,new THREE.Vector3(0,-360,0));
+	this.add(dvere);
+	
 	var monster = new SolidObject({
 		model: this.models.monster,
 		position: new THREE.Vector3(200,100, 0),
@@ -73,7 +78,7 @@ Level.prototype.afterLoad = function (){
 
 	var player = new Character({
 		model: this.models.panacek,
-		position: new THREE.Vector3(0, 0, 0),
+		position: poziceHrace,
 		scale: new THREE.Vector3(50,50,50),
 		rotation: new THREE.Vector3(0,Math.PI,0),
 		speed: 2,
@@ -91,27 +96,6 @@ Level.prototype.afterLoad = function (){
 		}
 	})
 	this.add( player, "player" );
-	
-	spalovna.addAction("onActionKeyDown",0,
-		function(spal_obj){
-			var x = player.mesh.position.x-spal_obj.mesh.position.x+120;
-			var y = player.mesh.position.y-spal_obj.mesh.position.y;
-			var distanceSquared = x*x + y*y;
-			var distance = Math.sqrt(distanceSquared);
-			if(distance <= 200){
-				console.log("Lze spustit akci");
-				return true;
-			}
-			else {
-				console.log("Akci nelze spustit, říká podmínka");
-				return false;
-			}
-		},
-		function(){
-			game.scene = new THREE.Scene();
-			console.log("Vstupuji do spalovny");
-			game.load("vnitrek");
-		});
 			
 	vzkaz = {};
 		
@@ -135,7 +119,7 @@ Level.prototype.afterLoad = function (){
 
 	var topdown_camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
 	// game.scene.add( topdown_camera );
-	topdown_camera.position.set(0,0,500);
+	topdown_camera.position.set(poziceHrace.x,poziceHrace.y,500);
 
 	var vyber = {
 		"third_person": third_person_camera,

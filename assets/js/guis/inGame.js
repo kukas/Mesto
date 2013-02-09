@@ -72,13 +72,13 @@
 						game.scene.fog.density = 0.0025;
 						_this.switchGUI("notesObjectives");
 					});
-					game.eventhandler.addKeyboardControl("E",undefined,function (){
+					game.eventhandler.addKeyboardControl("E",undefined,function (){ // E - akční tlačítko
 						for(i in game.objects){
 							if(game.objects[i].actions === undefined) return false;
 							if(game.objects[i].actions.onActionKeyDown.length != 0){
 								for(var j in game.objects[i].actions.onActionKeyDown){
-									if(game.objects[i].actions.onActionKeyDown[j][0](game.objects[i])){ // Vracení mateřského objektu podmínce a 
-										game.objects[i].actions.onActionKeyDown[j][1](game.objects[i]); // akci
+									if(game.objects[i].actions.onActionKeyDown[j][0](game.objects[i],game.objects.player)){ // Vracení mateřského objektu a hráče podmínce a 
+										game.objects[i].actions.onActionKeyDown[j][1](game.objects[i],game.objects.player); // akci
 									}
 								};
 							}

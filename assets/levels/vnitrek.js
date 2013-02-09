@@ -22,8 +22,18 @@ function Level(){
 };
 Level.prototype = new Loader();
 
-Level.prototype.afterLoad = function (){
+Level.prototype.afterLoad = function (poziceHrace){
 	//game.gui.guis.cutscene.switchCutscene("test");
+	
+	var dvere = new Door(
+		new THREE.Vector3(0,-360,2),
+		{type:"rect",width:100,height:100},
+		"test",
+		true,
+		new THREE.Vector3(-300,200,0)
+	);
+	this.add(dvere);
+	
 	var linka = new SolidObject({
 		model:this.models.linka,
 		position:new THREE.Vector3(200,0,10),
@@ -33,7 +43,7 @@ Level.prototype.afterLoad = function (){
 	
 	var player = new Character({
 		model: this.models.panacek,
-		position: new THREE.Vector3(0, -360, 0),
+		position: poziceHrace,
 		scale: new THREE.Vector3(50,50,50),
 		rotation: new THREE.Vector3(0,Math.PI,0),
 		speed: 2,

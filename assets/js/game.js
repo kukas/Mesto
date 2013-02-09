@@ -54,7 +54,7 @@ Game.prototype.load = function(levelName) {
 	document.body.appendChild(levelScript);
 };
 
-Game.prototype.load = function(levelName) {
+Game.prototype.load = function(levelName,poziceHrace) {
 	var _this = this;
 	console.log("Game: loading level "+levelName);
 	
@@ -78,7 +78,7 @@ Game.prototype.load = function(levelName) {
 				_this.jukebox.loadSounds( _this.level.sounds, function(){
 					_this.level.sounds = _this.jukebox.sounds;
 
-					_this.level.afterLoad();
+					_this.level.afterLoad(poziceHrace);
 
 					_this.objectsAdd();
 					if(_this.level.camera)
@@ -294,7 +294,7 @@ Game.prototype.tick = function() {
 	this.gui.tick();
 	if(game.mode == 1){
 		for(var i in this.objects){
-			this.objects[i].tick();
+			if(this.objects[i].tick) this.objects[i].tick();
 		}
 	}
 };
