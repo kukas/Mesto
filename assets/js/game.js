@@ -19,7 +19,6 @@ function Game(){
 	// this.quests = new Quests();
 	// this.dialogs = new Dialogs();
 	this.questManager = new QuestManager();
-	this.questManager.init(this);
 	
 	this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
 

@@ -39,7 +39,7 @@ Level.prototype.afterLoad = function (poziceHrace){
 		position:new THREE.Vector3(200,0,10),
 		scale:new THREE.Vector3(30,30,30),
 	});
-	this.add(linka);
+	this.add(linka, "linka");
 	
 	var player = new Character({
 		model: this.models.panacek,
