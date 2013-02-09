@@ -3,6 +3,7 @@ function Level(){
 	this.textures = {
 		rust: this.texturepath+"GUI/rust.jpg",
 	};
+	this.name = "mainM";
 }
 Level.prototype = new Loader();
 

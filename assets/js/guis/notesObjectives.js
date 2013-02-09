@@ -26,13 +26,12 @@
 			color:"#1F0600"
 		});
 		hlavni.add( screen , "screen");
-		
-		var l = game.progress.missions.length;
-		for(var j = 0;j < l;j++){
+		var j = 0;
+		for(var k in game.progress.missions){
 			var text = new Text({
 					x:5,
 					y:0,
-					value:game.progress.missions[j].title,
+					value:game.progress.missions[k].title,
 					width:menu.width-10,
 					styles:{
 						default : {
@@ -67,6 +66,7 @@
 			button.add(text,"title");
 			
 			menu.add(button);
+			j++;
 		};
 		
 		_this.add( hlavni , "diary");

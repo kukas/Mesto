@@ -23,11 +23,7 @@ function Progress(){
 			done: false
 		}
 	};
-	this.missions = [{
-		title:"Assassination",
-		description:"Kill the guy who is hiding in here.",
-		side:"slavers"
-		}];
+	this.missions = {};
 };
 Progress.prototype.log = function (what){
 	if(what !== undefined){

@@ -18,6 +18,8 @@ function Game(){
 	// WUT objekty, které nevím jestli loadnu tady nebo jinde
 	// this.quests = new Quests();
 	// this.dialogs = new Dialogs();
+	this.questManager = new QuestManager();
+	this.questManager.init(this);
 	
 	this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
 
@@ -87,6 +89,8 @@ Game.prototype.load = function(levelName) {
 
 					// změní velikost canvasů
 					_this.resizeCanvas();
+					
+					_this.questManager.eventHandle(new QuestEvent("levelEnter",_this.level));
 				} )
 			} )
 		} );
@@ -224,7 +228,6 @@ Game.prototype.checkCollision = function(obj1, obj2) {
 
 Game.prototype.checkFloor = function (character){
 	if(game.objects.floor === undefined) return true;
-	console.log(game.objects.floor.yBoundaries, game.objects.floor.xBoundaries, character.mesh.position.x-character.mesh.geometry.boundingBox.max.x*character.mesh.scale.x/2);
 	var x_zleva = game.objects.floor.xBoundaries.min < character.mesh.position.x+character.mesh.geometry.boundingBox.min.x*character.mesh.scale.x/2;
 	var x_zprava = game.objects.floor.xBoundaries.max > character.mesh.position.x+character.mesh.geometry.boundingBox.max.x*character.mesh.scale.x/2;
 	var y_shora = game.objects.floor.yBoundaries.max > character.mesh.position.y-character.mesh.geometry.boundingBox.max.y*character.mesh.scale.y*0; // WHUT?

@@ -18,6 +18,7 @@ function Level(){
 	
 	this.cutscenes = {};
 	
+	this.name = "vnitrek";
 };
 Level.prototype = new Loader();
 

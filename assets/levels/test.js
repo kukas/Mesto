@@ -27,6 +27,7 @@ function Level(){
 	this.cutscenes = {
 		test: this.cutscenepath+"test.js"
 	}
+	this.name = "test";
 }
 Level.prototype = new Loader();
 
