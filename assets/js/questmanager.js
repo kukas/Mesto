@@ -56,3 +56,8 @@ QuestManager.prototype.end = function (name){
 QuestManager.prototype.start = function (obj,e){ // Dědičné spouštění
 	obj.start(e);
 };
+QuestManager.prototype.goToQuest = function (whereString,descOptions,questOptions){ 
+	// String whereString as "level/predmetID - v game objects"
+	// descOptions.title; descOptions.description
+	// questOptions.after; questOptions.before
+};
