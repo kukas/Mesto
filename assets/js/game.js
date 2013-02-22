@@ -225,6 +225,137 @@ Game.prototype.checkCollision = function(obj1, obj2) {
 	return false;
 };
 
+Game.prototype.checkCollision2 = function (prvniObj,druhyObj){
+	/*
+	Můj pokus ohledně kolizí - vnímá obdélník jako funkci v radiální soustavě souřadnic,
+	poté určuje, zda je vektor, který ukazuje na bod v obdélníku kratší než vektor ukazující na
+	daný bod ze středu obdélníku
+	*/
+	function inInterval(max,min,n,uzavreny){ // Pomocná funkce
+		if(uzavreny){
+			if(max <= n && min >= n){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+		else{
+			if(max < n && min > n){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+	};
+	
+	function getVectorAngle(vec){ // Úhel, který svírá vektor a osa x
+		if(vec.y >= 0 && vec.x >= 0){
+			return Math.atan(vec.y/vec.x);
+		}
+		if(vec.y <= 0 && vec.x <= 0){
+			return Math.atan(vec.y/vec.x)+Math.PI;
+		}
+		if(vec.x <= 0 && vec.y >= 0){
+			return Math.atan(vec.y/vec.x);
+		}
+		else{
+			return Math.atan(vec.y/vec.x)+Math.PI;
+		}
+	};
+	
+	function Obdelnik(position,dimension,rotation){
+		this.position = position;
+		this.width = dimension.width;
+		this.constantX = dimension.width/2;
+		this.height = dimension.height;
+		this.constantY = dimension.height/2;
+		this.gama = Math.atan(this.height/this.width);
+		this.rotation = rotation;
+		this.points = [];
+		var uhelObdelniku = Math.atan(this.constantY/this.constantX);
+		this.points.push( new THREE.Vector2(
+			Math.cos(this.rotation+uhelObdelniku)*(this.constantX+this.constantY),
+			Math.sin(this.rotation+uhelObdelniku)*(this.constantX+this.constantY)
+		) );
+		this.points.push( new THREE.Vector2(
+			Math.cos(this.rotation+Math.PI-uhelObdelniku)*(this.constantY-this.constantX),
+			Math.sin(this.rotation+Math.PI-uhelObdelniku)*(this.constantY-this.constantX)
+		) );
+		this.points.push( new THREE.Vector2(
+			Math.cos(this.rotation+uhelObdelniku+Math.PI)*(-this.constantX-this.constantY),
+			Math.sin(this.rotation+uhelObdelniku+Math.PI)*(-this.constantX-this.constantY)
+		) );
+		this.points.push( new THREE.Vector2(
+			Math.cos(this.rotation+Math.PI*2-uhelObdelniku)*(this.constantX-this.constantY),
+			Math.sin(this.rotation+Math.PI*2-uhelObdelniku)*(this.constantX-this.constantY)
+		) );
+	};
+	Obdelnik.prototype.getNormalVector = function (pozicniUhel){ // Úhel bodu vzhledem k obdélníku
+		var uhel = pozicniUhel%(Math.PI*2);
+		console.log(Math.PI-this.gama,this.gama,uhel,false);
+		console.log(inInterval(Math.PI-this.gama,this.gama,uhel,false));
+		if(inInterval(this.gama,0,uhel,true) || inInterval(2*Math.PI-this.gama,2*Math.PI,uhel,true)){ // Levá vertikální hrana
+			var vector = new THREE.Vector2(this.constantX,Math.tan(uhel)*this.constantX); // Odpovídající funkce
+			return vector
+		}
+		if(inInterval(Math.PI-this.gama,this.gama,uhel,false)){
+			var vector = new THREE.Vector2(this.constantY/Math.tan(uhel),this.constantY);
+			return vector;
+		}
+		if(inInterval(Math.PI+this.gama,Math.PI-this.gama,uhel,true)){
+			var vector = new THREE.Vector2(-this.constantX,-this.constantX*Math.tan(uhel));
+			return vector;
+		}
+		if(inInterval(Math.PI*2-this.gama,Math.PI+this.gama,uhel,false)){
+			var vector = new THREE.Vector2(-this.constantY/Math.tan(uhel),-this.constantY);
+			return vector;
+		}
+		else{
+			console.log("PROBLÉM - vektorové kolize mají zadaný nevyhovující úhel: "+uhel);
+			return new THREE.Vector2(0,0);
+		}
+	};
+	Obdelnik.prototype.checkPoint = function (bod){ // Zjistí, zda je bod v obdélníku
+		var pozVector = new THREE.Vector2().sub(bod,this.position);
+		var uhelKObdelniku = getVectorAngle(pozVector);
+		var uhelSRotaci = uhelKObdelniku+this.rotation;
+		var bodNaObdelniku = this.getNormalVector(uhelSRotaci);
+		if(bodNaObdelniku.lengthSq() <= bod.lengthSq()){
+			return true;
+		}
+		else{
+			return false;
+		}
+	};
+	var objekty = [prvniObj,druhyObj];
+	var obdelniky = [];
+	for(var i = 0;i < 2;i++){ // Velmi podobný zdroják
+		var obj = objekty[i];
+		obdelniky.push( new Obdelnik(
+			new THREE.Vector2(
+				obj.mesh.position.x,//+(obj.geometry.boundingBox.max.x + obj.geometry.boundingBox.min.x)*obj.mesh.scale.x/2,
+				obj.mesh.position.y//+(obj.geometry.boundingBox.max.z + obj.geometry.boundingBox.min.z)*obj.mesh.scale.y/2
+			),
+			{
+				width: (obj.geometry.boundingBox.max.x-obj.geometry.boundingBox.min.x) * obj.mesh.scale.x,
+				height: (obj.geometry.boundingBox.max.z-obj.geometry.boundingBox.min.z) * obj.mesh.scale.y
+			},
+			obj.mesh.rotation.y
+		) );
+	};
+	for(var i = 0;i < 2;i++){
+		var rpo = new THREE.Vector2().sub(obdelniky[1-i].position,obdelniky[i].position); // Relativní pozice obdélníku
+		for(var j = 0;j < 4;j++){console.log(obdelniky[1-i].position);console.log(obdelniky[i].position);
+			if(obdelniky[i].checkPoint(new THREE.Vector2().add(obdelniky[1-i].points[j],rpo))){
+				return true;
+			}
+		};
+	};
+	return false;
+};
+
 Game.prototype.checkFloor = function (character){
 	/*
 	Kontroluje, jestli je hráč nad podlahou, jinak znemožňuje pohyb

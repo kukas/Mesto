@@ -40,6 +40,7 @@ Level.prototype.afterLoad = function (poziceHrace){
 	var monster = new SolidObject({
 		model: this.models.monster,
 		position: new THREE.Vector3(200,100, 0),
+		rotation: new THREE.Vector3(0,1,0),
 		scale: new THREE.Vector3(0.1,0.1,0.1),
 		animation: {
 			boundingFrame: 1,
