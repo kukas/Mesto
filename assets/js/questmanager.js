@@ -11,7 +11,7 @@ function QuestManager (){
 	zde lze provádět normální operace v souboru, protože není uložený ve formátu
 	JSON. Na konci souboru mise je potřeba vrátit hlavní rámec.
 	*/
-	$.get("assets/missions/test.js",function(data){
+	$.get("assets/missions/testQC.js",function(data){
 		var hlavni = eval("(function (){"+data+"})()");
 		_this.first = hlavni;
 		_this.missions.firstMission = hlavni;
@@ -28,30 +28,34 @@ QuestManager.prototype.eventHandle = function (e){//console.log(e);
 		game.progress.missions[i].event(e);
 	};
 };
-QuestManager.prototype.giveEventTo = function (name,type,id){
+QuestManager.prototype.giveEventTo = function (name,type,id,condition){
 	/*
 	String name,
 	String type,
 	whatever id,
+	function condition - očekává různé parametry, podle typu akce
 	
 	Umístění triggeru/akce na určitý objekt, při aktivaci akce dojde k vyvolání 
 	Quest eventu.
 	*/
 	if(game.objects[name] === undefined) return false;
 	_this = this;
-	game.objects[name].actions[type].push([function (){return true;},function (obj){console.log("halo");
+	var podminka = condition === undefined ? function (){return true;} : condition;
+	game.objects[name].actions[type].push([podminka,function (obj){
 		__this = obj;
 		_this.eventHandle(new QuestEvent(
 			type,__this,id
 		) );
-	}]);
+	},id]);
 };
 QuestManager.prototype.init = function (game){ // Hlavní panel
 	var prvni = this.first.start(new QuestEvent("gameStart",game));
-	if(prvni) game.progress.missions[prvni.title] = prvni;
 };
-QuestManager.prototype.end = function (name){
-	delete game.progress.missions[name];
+QuestManager.prototype.end = function (step){
+	delete game.progress.missions[step.id];
+	step.active = false;
+	step.ended = true;
+	return true;
 };
 QuestManager.prototype.start = function (obj,e){ // Dědičné spouštění
 	obj.start(e);

@@ -294,8 +294,6 @@ Game.prototype.checkCollision2 = function (prvniObj,druhyObj){
 	};
 	Obdelnik.prototype.getNormalVector = function (pozicniUhel){ // Úhel bodu vzhledem k obdélníku
 		var uhel = pozicniUhel%(Math.PI*2);
-		console.log(Math.PI-this.gama,this.gama,uhel,false);
-		console.log(inInterval(Math.PI-this.gama,this.gama,uhel,false));
 		if(inInterval(this.gama,0,uhel,true) || inInterval(2*Math.PI-this.gama,2*Math.PI,uhel,true)){ // Levá vertikální hrana
 			var vector = new THREE.Vector2(this.constantX,Math.tan(uhel)*this.constantX); // Odpovídající funkce
 			return vector
@@ -347,7 +345,17 @@ Game.prototype.checkCollision2 = function (prvniObj,druhyObj){
 	};
 	for(var i = 0;i < 2;i++){
 		var rpo = new THREE.Vector2().sub(obdelniky[1-i].position,obdelniky[i].position); // Relativní pozice obdélníku
-		for(var j = 0;j < 4;j++){console.log(obdelniky[1-i].position);console.log(obdelniky[i].position);
+		for(var j = 0;j < 4;j++){console.log("Pozice obdélníků: ");console.log(obdelniky[1-i].position);console.log(obdelniky[i].position);
+			console.log("Relativní pozice: ");
+			console.log(rpo);
+			console.log("Rozměry obdélníku: ");
+			console.log("Width: "+obdelniky[1-i].width+" Height: "+obdelniky[1-i].height);
+			console.log("Rotace obdélníku: ");
+			console.log(obdelniky[1-i].rotation);
+			console.log("Relativní pozice bodu v obdélníku: ");
+			console.log(obdelniky[1-i].points[j]);
+			console.log("Absolutní pozice bodu: ");
+			console.log(new THREE.Vector2().add(obdelniky[1-i].points[j],rpo));
 			if(obdelniky[i].checkPoint(new THREE.Vector2().add(obdelniky[1-i].points[j],rpo))){
 				return true;
 			}

@@ -40,7 +40,7 @@ Level.prototype.afterLoad = function (poziceHrace){
 	var monster = new SolidObject({
 		model: this.models.monster,
 		position: new THREE.Vector3(200,100, 0),
-		rotation: new THREE.Vector3(0,1,0),
+		// rotation: new THREE.Vector3(0,1,0),
 		scale: new THREE.Vector3(0.1,0.1,0.1),
 		animation: {
 			boundingFrame: 1,
@@ -54,15 +54,15 @@ Level.prototype.afterLoad = function (poziceHrace){
 		}
 	})
 	
-	this.add( monster );
+	this.add( monster , "monstrum");
 	
 	monster.addAction("onCollision",1,function (){return true;},function (monst_obj){
 		monst_obj.removeAction(1);
-		monst_obj.addAction("onActionKeyDown",function(){return true;},function (){
+		monst_obj.addAction("onActionKeyDown",2,function(){return true;},function (){
 			game.gui.guis.cutscene.switchCutscene("test");
-			monst_obj.actions.onActionKeyDown = [];
+			monst_obj.removeAction(2);
 			})
-		})
+		});
 	// atributy předávané reakční funkci jsou [mateřský objekt(v tomto případě monster), druhý kolizní objekt (zpravidla hýbající se postava)]
 	
 	var spalovna = new SolidObject({

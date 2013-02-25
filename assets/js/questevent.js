@@ -11,4 +11,7 @@ function QuestEvent(type,object,id){
 	this.object = object;
 	this.id = id;
 	this.time = new Date().getTime();
+	/*console.log("QuestEvent: type: "+type);
+	console.log("QuestEvent: object: "+object);
+	console.log("QuestEvent: id: "+id);*/
 };

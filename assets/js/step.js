@@ -2,6 +2,7 @@ function Step(options){
 	/*
 	options:
 		String title,
+		String id,
 		String description,
 		Object steps,
 		String first,
@@ -23,6 +24,7 @@ function Step(options){
 			this.steps[i].parent = this;
 		}
 	}
+	this.id = options.id;
 	this.startCondition = options.startCondition; // Argument QuestEvent
 	this.startAction = options.startAction; // Argument QuestEvent
 	this.active = false;
@@ -34,8 +36,8 @@ function Step(options){
 	this.description = options.description;
 	this.title = options.title;
 };
-Step.prototype.add = function (step,name){ // Neargumentové přidávání
-	this.steps[name] = step;
+Step.prototype.add = function (step){ // Neargumentové přidávání
+	this.steps[step.id] = step;
 	step.parent = this;
 };
 Step.prototype.event = function (e){ // Eventové vyhodnocování
@@ -63,7 +65,7 @@ Step.prototype.start = function (e){ // Ještě ne zcela dodělané, problémy s
 	if(Object.keys( this.steps ) < 1){
 		// if(this.startCondition(e)){
 			this.startAction();
-			game.progress.missions[this.title]=this;
+			game.progress.missions[this.id]=this;
 			this.active = true;
 			return this;
 		// }
@@ -72,7 +74,7 @@ Step.prototype.start = function (e){ // Ještě ne zcela dodělané, problémy s
 		if(this.current === undefined){
 			// if(this.startCondition(e)){
 				this.startAction();
-				game.progress.missions[this.title]=this;
+				game.progress.missions[this.id]=this;
 				this.active = true;
 				return this;
 			// }
