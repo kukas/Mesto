@@ -10,6 +10,7 @@ var predkrok = new Step({
 	endAction : function (){
 		this.parent.end(this);
 		this.parent.startQuest("first",new QuestEvent("missionEnded",this));
+		this.parent.startQuest("simul",new QuestEvent("missionEnded",this));
 	}
 });
 var first = new Step({
@@ -42,6 +43,10 @@ var simul = new Step({
 	endCondition : function (){return false;},
 	endAction : function (){return false;}
 });
-/**/var cont = new Questcontainer("kont01",[predkrok,first,second,simul],predkrok);
+/*var cont = new Questcontainer("kont01",[predkrok,first,second,simul],predkrok);
 cont.current["simul"] = simul; // Přidání druhého aktivního questu
-return cont;/**/
+return cont;*/
+var cont = new Questcontainer("kont01");
+cont.add(predkrok,first,second,simul);
+cont.current["prestep"]=predkrok;
+return cont;

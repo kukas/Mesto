@@ -11,7 +11,7 @@ function QuestManager (){
 	zde lze provádět normální operace v souboru, protože není uložený ve formátu
 	JSON. Na konci souboru mise je potřeba vrátit hlavní rámec.
 	*/
-	$.get("assets/missions/testQC.js",function(data){
+	$.get("assets/missions/testGoToQuestConst.js",function(data){
 		var hlavni = eval("(function (){"+data+"})()");
 		_this.first = hlavni;
 		_this.missions.firstMission = hlavni;
@@ -62,6 +62,70 @@ QuestManager.prototype.start = function (obj,e){ // Dědičné spouštění
 };
 QuestManager.prototype.goToQuest = function (whereString,descOptions,questOptions){ 
 	// String whereString as "level/predmetID - v game objects"
-	// descOptions.title; descOptions.description
-	// questOptions.after; questOptions.before
+	// String descOptions.titleIn;String descOptions.titleOut; String descOptions.descriptionIn; String descOptions.descriptionOut;
+	// Function questOptions.after; Function questOptions.before;
+	// Whatever questOptions.id
+	//  questOptions.type: String onCollision|onAreaEnter; Function questOptions.typeCondition - pouze pro onAreaEnter
+	var levelName = whereString.split("/")[0];
+	var objectName = whereString.split("/")[1];
+	var condition = questOptions.typeCondition === undefined ? function (){return true;} : questOptions.typeCondition;
+	var kontejner = new Questcontainer(questOptions.id);
+	var finalniKrok = new Step({
+		title : descOptions.titleIn,
+		id : questOptions.id+"02",
+		description : descOptions.descriptionIn,
+		startCondition : function (){return true;},
+		startAction : function (e){
+			if(game.objects[objectName] !== undefined){
+				game.questManager.giveEventTo(objectName,questOptions.type,this.id+".naraz01",condition);
+			}
+			else{console.warn("Problem in item locating in quest "+this.id);}
+			questOptions.onInside(this);
+		},
+		endCondition : function (e){if(e.id == this.id+".naraz01") return true;},
+		endAction : function (e){
+			questOptions.after(e);
+			this.parent.end(this);
+			this.parent.end(this.parent.current[questOptions.id+"00"]);
+		},
+	});
+	var krokPrichodu = new Step({
+		title : descOptions.titleOut,
+		id : questOptions.id+"01",
+		description : descOptions.descriptionOut,
+		startCondition : function (){return true;},
+		startAction : function (){console.log("Start questu, čekání na vstoupení do správného levelu");},
+		endCondition : function (e){console.log(levelName);if(e.type == "levelEnter" && e.object.name == levelName) return true;},
+		endAction : function (){
+			this.parent.end(this);
+			this.parent.startQuest(questOptions.id+"00",new QuestEvent("missionEnded",this));
+			this.parent.startQuest(questOptions.id+"02",new QuestEvent("missionEnded",this));
+		},
+	});
+	var krokOdchodu = new Step({
+		title : "kontrola "+questOptions.id+"00",
+		id : questOptions.id+"00",
+		description : "kontrola opousteni levelu",
+		startCondition : function (){return true;},
+		startAction : function (){console.log("level nalezen, kontrola odchodu");},
+		endCondition : function (e){if(e.type == "levelEnter" && e.object.name != levelName) return true;},
+		endAction : function (){
+			this.parent.end(this);
+			this.parent.end(this.parent.current[questOptions.id+"02"]);
+			this.parent.steps[questOptions.id+"02"].ended = false;
+			this.parent.startQuest(questOptions.id+"01",new QuestEvent("missionEnded",this));
+		},
+		visible : false
+	});
+	kontejner.add(finalniKrok,krokPrichodu,krokOdchodu);
+	if(levelName == game.level.name){
+		kontejner.current[questOptions.id+"02"] = finalniKrok;
+		kontejner.current[questOptions.id+"00"] = krokOdchodu;
+		questOptions.before(finalniKrok);
+	}
+	else{
+		kontejner.current[questOptions.id+"01"] = krokPrichodu;
+		questOptions.before(krokPrichodu);
+	}
+	return kontejner;
 };

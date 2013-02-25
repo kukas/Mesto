@@ -35,6 +35,7 @@ function Step(options){
 	// Začínající krok !! povinný argument pro dělené kroky
 	this.description = options.description;
 	this.title = options.title;
+	this.visible = options.visible === undefined ? true : options.visible;
 };
 Step.prototype.add = function (step){ // Neargumentové přidávání
 	this.steps[step.id] = step;
@@ -67,6 +68,7 @@ Step.prototype.start = function (e){ // Ještě ne zcela dodělané, problémy s
 			this.startAction();
 			game.progress.missions[this.id]=this;
 			this.active = true;
+			this.event(e);
 			return this;
 		// }
 	}
@@ -76,6 +78,7 @@ Step.prototype.start = function (e){ // Ještě ne zcela dodělané, problémy s
 				this.startAction();
 				game.progress.missions[this.id]=this;
 				this.active = true;
+				this.event(e);
 				return this;
 			// }
 		}
