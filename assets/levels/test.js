@@ -17,6 +17,17 @@ function Level(){
 		jirka_smile: this.texturepath+"cutscenes/test/jirka_smile.png",
 		ruka: this.texturepath+"cutscenes/test/ruka.png",
 		city: this.texturepath+"cutscenes/test/city.png",
+		
+		intro1 : this.texturepath+"cutscenes/intro/intro001.jpg",
+		intro2 : this.texturepath+"cutscenes/intro/intro002.jpg",
+		intro3 : this.texturepath+"cutscenes/intro/intro003.jpg",
+		intro4 : this.texturepath+"cutscenes/intro/intro004.jpg",
+		intro5 : this.texturepath+"cutscenes/intro/intro005.jpg",
+		intro6 : this.texturepath+"cutscenes/intro/intro006.jpg",
+		intro7 : this.texturepath+"cutscenes/intro/intro007.jpg",
+		intro8 : this.texturepath+"cutscenes/intro/intro008.jpg",
+		intro9 : this.texturepath+"cutscenes/intro/intro009.jpg",
+		intro10 : this.texturepath+"cutscenes/intro/intro010.jpg",
 	};
 
 	this.sounds = {
