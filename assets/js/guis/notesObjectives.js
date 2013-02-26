@@ -44,7 +44,7 @@
 				x:5,
 				y:5+25*j,
 				width:menu.width-10,
-				height:25,
+				height:20*(text.text.length)+5,
 				mousedown:function (){
 						for(var i in game.progress.missions){console.log(this.links.title);
 							if(game.progress.missions[i].title == this.links.title.value){
