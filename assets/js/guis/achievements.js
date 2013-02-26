@@ -1,9 +1,9 @@
 {
 	objects: function (){
 		var pozadi = new Rectangle({
-			x:game.gui.width/2 - 300,
+			x:game.gui.width/2 - 312.5,
 			y:game.gui.height/2 - 200,
-			width:600,
+			width:625,
 			height:400,
 			color:"black"
 		});
@@ -18,19 +18,37 @@
 		});
 		pozadi.add(nadpisy);
 		
+		var nadpisyDokoncene = new Rectangle({
+			x:470,
+			y:5,
+			width:150,
+			height:390,
+			color:"#C8D3DB"
+		});
+		pozadi.add(nadpisyDokoncene);
+		
 		var screen = new Rectangle({
 			x:160,
 			y:5,
-			width:455,
+			width:305,
 			height:390,
 			color:"grey"
 		});
 		pozadi.add(screen);
 		
-		var pocet = 0;
+		var pocetDokoncenych = 0;
+		var pocetNedokoncenych = 0;
+		var nad = 0;
 		for(var i in game.progress.achievements){
-			if(game.progress.achievements[i].done) continue; // Pak můžeme vymyslet nějaké místo pro hotové, design jsem neřešil
-			if(pocet++ > 10) break;
+			if(pocetDokoncenych > 10 && pocetNedokoncenych > 10) break;
+			if(game.progress.achievements[i].done){
+				if(pocetDokoncenych++ > 10) continue;
+				nad = pocetDokoncenych;
+			}
+			else{
+				if(pocetNedokoncenych++ > 10) continue;
+				nad = pocetNedokoncenych;
+			}
 			
 			var text = new Text({
 					x:5,
@@ -46,11 +64,11 @@
 			
 			var ach = new Button({
 				x:5,
-				y:5+25*(pocet-1),
+				y:5+25*(nad-1),
 				width:140,
 				height:20,
 				mousedown:function (){
-					for(var j in game.progress.achievements){console.log(this.links.title);
+					for(var j in game.progress.achievements){
 						if(game.progress.achievements[j].title == this.links.title.value){
 							screen.children = [];
 							screen.add(new Text({
@@ -69,7 +87,13 @@
 				}
 			});
 			ach.add(text, "title");
-			nadpisy.add(ach);
+			
+			if(game.progress.achievements[i].done){
+				nadpisyDokoncene.add(ach);
+			}
+			else{
+				nadpisy.add(ach);
+			}
 		};
 	},
 	

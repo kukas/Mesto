@@ -23,7 +23,9 @@ function Progress(){
 			done: false
 		}
 	};
-	this.missions = {};
+	this.missions = {}; // Pole aktivních questů - modelů
+	this.ended = {}; // Pole cestových ids dokončených questů
+	this.toLoad = {}; // Pole cestových ids questů k načtení o this.missions
 };
 Progress.prototype.log = function (what){// Jenom vypisuje, možná při nějaké optimalizaci odstraním
 	if(what !== undefined){

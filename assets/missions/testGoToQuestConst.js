@@ -19,7 +19,9 @@ var vlastnosti = {
 	id : "toTheBar1",
 	type : "onCollision"
 };
-var predkrok = new Step({
+var mise = game.questManager.goToQuest(co,popisy,vlastnosti);
+return mise;
+/*var predkrok = new Step({ // Samostatný loading
 	title : "",
 	id : "prestep",
 	description : "",
@@ -37,3 +39,4 @@ var kont = new Questcontainer("hlavni");
 kont.add(predkrok);
 kont.current[predkrok.id] = predkrok;
 return kont;
+*/

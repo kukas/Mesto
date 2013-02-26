@@ -11,7 +11,7 @@ function QuestManager (){
 	zde lze provádět normální operace v souboru, protože není uložený ve formátu
 	JSON. Na konci souboru mise je potřeba vrátit hlavní rámec.
 	*/
-	$.get("assets/missions/testGoToQuestConst.js",function(data){
+	$.get("assets/missions/loading.js",function(data){
 		var hlavni = eval("(function (){"+data+"})()");
 		_this.first = hlavni;
 		_this.missions.firstMission = hlavni;
