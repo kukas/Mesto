@@ -18,6 +18,7 @@ function GUI( canvas ){
 	$.get("assets/js/guis/inGame.js",function(data){_this.loadGUI(data, "inGame");})
 	$.get("assets/js/guis/pause.js",function(data){_this.loadGUI(data, "pause");})
 	$.get("assets/js/guis/notesObjectives.js",function(data){_this.loadGUI(data, "notesObjectives");})
+	$.get("assets/js/guis/dialog.js",function(data){_this.loadGUI(data, "dialog");})
 	
 	this.loadGUI = function(objectStr, name){
 		this.guis[name] = eval("(function(){return "+objectStr+";})()");

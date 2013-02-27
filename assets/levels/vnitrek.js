@@ -12,6 +12,8 @@ function Level(){
 	
 	this.textures = {
 		steel: this.texturepath+"steel_floor.jpg",
+		
+		error: this.texturepath+"GUI/error.png",
 	};
 	
 	this.sounds = {};

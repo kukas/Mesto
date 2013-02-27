@@ -87,6 +87,11 @@
 					game.eventhandler.addKeyboardControl("I", undefined, function (){ // Spuštění cutscény
 						game.gui.guis.cutscene.switchCutscene("test")
 					});
+					game.eventhandler.addKeyboardControl(88,undefined,function (){
+						game.pause();
+						game.scene.fog.density = 0.0025;
+						_this.switchGUI("dialog");
+					});
 					// ovládání panáčka
 					game.eventhandler.addKeyboardControl(87, undefined, function(){
 						game.objects.player.toggleAnim("standing");

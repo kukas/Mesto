@@ -14,7 +14,10 @@ var popisy = {
 };
 var vlastnosti = {
 	after : function (){game.gui.makePopout("No, it was just a rat!");},
-	before : function (q){game.gui.makePopout("New Mission: "+q.title);game.gui.guis.cutscene.switchCutscene("intro");},
+	before : function (q){
+		game.gui.makePopout("New Mission: "+q.title);
+		// game.gui.guis.cutscene.switchCutscene("intro"); -- Hynkovy obrázky
+	},
 	onInside : function (q){game.gui.makePopout("Mission update: "+q.title);},
 	id : "toTheBar1",
 	type : "onCollision"

@@ -11,6 +11,9 @@ function Level(){
 	// důležité: pro některé funkce musí mít textury rozměry power of two, tedy 2,4,8,16,32,64, ...
 	this.textures = {
 		steel: this.texturepath+"steel_floor.jpg",
+		
+		error: this.texturepath+"GUI/error.png",
+		hlavaNPC: this.texturepath+"GUI/testHlava.jpg",
 
 		cs_test_bg: this.texturepath+"cutscenes/test/bg.jpg",
 		jirka: this.texturepath+"cutscenes/test/jirka.png",
@@ -86,7 +89,24 @@ Level.prototype.afterLoad = function (poziceHrace){
 	);
 	this.add( spalovna );
 		
+	var npc = new NPC({
+		model : this.models.panacek,
+		position : new THREE.Vector3(-250,-200,0),
+		rotation : new THREE.Vector3(0,0,0),
+		scale : new THREE.Vector3(50,50,50),
+		profil : this.textures.hlavaNPC,
+	});
+	this.add(npc, "npc");
 	
+	npc.addAction("onCollision",1,function (){return true;},function (npc_obj){
+		if(npc_obj.actionExists(2)) return false;
+		npc_obj.addAction("onActionKeyDown",2,function(){return true;},function (){
+			game.pause();
+			game.scene.fog.density = 0.0025;
+			game.gui.guis.dialog.switchDialog(npc_obj);
+			npc_obj.removeAction(2);
+			})
+		});
 
 	var player = new Character({
 		model: this.models.panacek,

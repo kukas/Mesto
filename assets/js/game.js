@@ -16,7 +16,6 @@ function Game(){
 	this.settings = new Settings();
 
 	// WUT objekty, které nevím jestli loadnu tady nebo jinde
-	// this.quests = new Quests();
 	// this.dialogs = new Dialogs();
 	this.questManager = new QuestManager();
 	
