@@ -16,7 +16,7 @@ function Game(){
 	this.settings = new Settings();
 
 	// WUT objekty, které nevím jestli loadnu tady nebo jinde
-	// this.dialogs = new Dialogs();
+	this.dialogManager = new DialogManager();
 	this.questManager = new QuestManager();
 	
 	this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );

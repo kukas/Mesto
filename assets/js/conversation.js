@@ -81,18 +81,22 @@ Conversation.prototype.render = function (objekty){
 Conversation.prototype.setTo = function (obj){
 	this.npc = obj;
 	this.npc.conversation = this;
-	this.npc.addAction("onCollision",1,function (){return true;},function (npc_obj){
-		if(npc_obj.actionExists(2)) return false;
-		npc_obj.addAction("onActionKeyDown",2,function(){return true;},function (npc_obj){
-			game.pause();
-			game.scene.fog.density = 0.0025;
-			game.gui.guis.dialog.switchDialog(npc_obj);
-			npc_obj.removeAction(2);
-			var ev = new QuestEvent("conversationStart",npc_obj.conversation);
-			npc_obj.conversation.onStart(ev);
-			npc_obj.conversation.update();
-			})
-		});
+	this.npc.addAction("onActionKeyDown",2,
+	function(npc_obj,hrac){
+		var dx = (npc_obj.mesh.position.x - hrac.mesh.position.x)*(npc_obj.mesh.position.x - hrac.mesh.position.x);
+		var dy = (npc_obj.mesh.position.y - hrac.mesh.position.y)*(npc_obj.mesh.position.y - hrac.mesh.position.y);
+		var vzdalenostSq = dx+dy;
+		if(vzdalenostSq < 10000) return true;
+		else return false;
+	},
+	function (npc_obj){
+		game.pause();
+		game.scene.fog.density = 0.0025;
+		game.gui.guis.dialog.switchDialog(npc_obj);
+		var ev = new QuestEvent("conversationStart",npc_obj.conversation);
+		npc_obj.conversation.onStart(ev);
+		npc_obj.conversation.update();
+	});
 };
 Conversation.prototype.end = function (){
 	var qe = new QuestEvent("conversationEnd", this);

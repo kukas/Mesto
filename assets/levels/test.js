@@ -98,30 +98,15 @@ Level.prototype.afterLoad = function (poziceHrace){
 	});
 	this.add(npc, "npc");
 	
-	var veta01 = new Sentence({
-		value : "Hey, what are you looking at?",
-		question : true,
-		id : "veta01",
-		condition : function (){if(!this.spoken) return true; else return false;}
+	var geometrie_npc = new THREE.CircleGeometry(2,32,0,Math.PI*2);
+	var material_npc = new THREE.MeshBasicMaterial({wireframe: true, color: 0xff0000});
+	var npc_rad_mesh = new THREE.Mesh(geometrie_npc,material_npc);
+	npc_rad_mesh.rotation.x = Math.PI/2;
+	npc.mesh.add(npc_rad_mesh);
+	
+	game.dialogManager.loadConversation("test.js",function (c){
+		c.setTo(npc);
 	});
-	var odp01 = new Sentence({
-		value : "Nothing, I am just walking around",
-		answer : true,
-		id : "odp01",
-		condition : function (){if(!this.spoken) return true; else return false;},
-		reaction : function (){console.log("Běží akce věty");console.log(this)}
-	});
-	var veta02 = new Sentence({
-		value : "That's what I like to hear",
-		question : true,
-		id : "veta02",
-		condition : function (){if(this.parent.sentences.veta01.spoken) return true; else return false;}
-	});
-	var konverzace = new Conversation({
-		sentences : [veta01,veta02,odp01],
-		onEnd : function (){this.reset();}
-	});
-	konverzace.setTo(npc);
 
 	var player = new Character({
 		model: this.models.panacek,
