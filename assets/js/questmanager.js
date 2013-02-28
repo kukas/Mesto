@@ -95,7 +95,7 @@ QuestManager.prototype.goToQuest = function (whereString,descOptions,questOption
 		description : descOptions.descriptionOut,
 		startCondition : function (){return true;},
 		startAction : function (){console.log("Start questu, čekání na vstoupení do správného levelu");},
-		endCondition : function (e){console.log(levelName);if(e.type == "levelEnter" && e.object.name == levelName) return true;},
+		endCondition : function (e){if(e.type == "levelEnter" && e.object.name == levelName) return true;},
 		endAction : function (){
 			this.parent.end(this);
 			this.parent.startQuest(questOptions.id+"00",new QuestEvent("missionEnded",this));

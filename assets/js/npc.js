@@ -1,7 +1,7 @@
 function NPC ( options ){
 	Character.call(this, options);
 	
-	this.conversations = {};
+	this.conversation = {};
 	this.profil = options.profil;
 };
 NPC.prototype = Object.create( Character.prototype );

@@ -4,7 +4,7 @@
 			x:(_this.width-_this.width*0.6)/2,
 			y:(_this.height-_this.height*0.75)/2,
 			width:_this.width*0.6,
-			height:_this.height*0.75,
+			height:_this.height*0.8,
 			color : "#000000"
 		});
 		
@@ -74,6 +74,15 @@
 		});
 		hlavni.add(screen, "screen");
 		
+		var odp = new Rectangle({
+			x:5,
+			y:_this.height*9/20+70,
+			width:hlavni.width-10,
+			height:hlavni.height-_this.height*9/20-75,
+			color : "#1F0600"
+		});
+		hlavni.add(odp, "answers");
+		
 		_this.add(hlavni, "dialog");
 	},
 	
@@ -85,14 +94,15 @@
 		_this.addControls();
 		
 		game.eventhandler.addKeyboardControl(27,undefined,function (){
+			_this.guis.dialog.conversation.end();
 			game.pause();
 			game.scene.fog.density = 0;
 			_this.switchGUI("inGame");
 		} );
 	},
 	
-	switchDialog : function (npc,id){
-		var konverzace = npc.conversations[id];
+	switchDialog : function (npc){
+		this.conversation = npc.conversation;
 		game.gui.switchGUI("dialog");
 		var hlavni = game.gui.links.dialog;
 		hlavni.add(new Texture({

@@ -98,15 +98,30 @@ Level.prototype.afterLoad = function (poziceHrace){
 	});
 	this.add(npc, "npc");
 	
-	npc.addAction("onCollision",1,function (){return true;},function (npc_obj){
-		if(npc_obj.actionExists(2)) return false;
-		npc_obj.addAction("onActionKeyDown",2,function(){return true;},function (){
-			game.pause();
-			game.scene.fog.density = 0.0025;
-			game.gui.guis.dialog.switchDialog(npc_obj);
-			npc_obj.removeAction(2);
-			})
-		});
+	var veta01 = new Sentence({
+		value : "Hey, what are you looking at?",
+		question : true,
+		id : "veta01",
+		condition : function (){if(!this.spoken) return true; else return false;}
+	});
+	var odp01 = new Sentence({
+		value : "Nothing, I am just walking around",
+		answer : true,
+		id : "odp01",
+		condition : function (){if(!this.spoken) return true; else return false;},
+		reaction : function (){console.log("Běží akce věty");console.log(this)}
+	});
+	var veta02 = new Sentence({
+		value : "That's what I like to hear",
+		question : true,
+		id : "veta02",
+		condition : function (){if(this.parent.sentences.veta01.spoken) return true; else return false;}
+	});
+	var konverzace = new Conversation({
+		sentences : [veta01,veta02,odp01],
+		onEnd : function (){this.reset();}
+	});
+	konverzace.setTo(npc);
 
 	var player = new Character({
 		model: this.models.panacek,
