@@ -10,6 +10,7 @@ function Sentence(options){
 	this.questAction = function (){};
 	this.condition = options.condition === undefined ? function (){return true;} : options.condition;
 	this.spoken = false;
+	this.seen = false;
 	
 	this.id = options.id;
 };
@@ -30,8 +31,10 @@ Sentence.prototype.text = function (sX,sY,sWidth){
 };
 Sentence.prototype.action = function (){
 	this.spoken = true;
+	this.seen = true;
 	var qE = new QuestEvent("sentenceSpoken",this);
 	this.reaction(qE);
 	this.questAction(qE);
 	game.questManager.eventHandle(qE);
+	return this.id;
 };

@@ -294,7 +294,7 @@ function GUI( canvas ){
 			options.text.height = this.height;
 			this.add( new Texture(options.texture), "texture" )
 		}
-
+		this.convID = options.convID === undefined ? false : options.convID;
 	}
 	Button.prototype = Object.create( GUIObject.prototype );
 

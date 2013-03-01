@@ -46,10 +46,13 @@ Conversation.prototype.update = function (){
 	};
 	for(var i in qs){
 		qs[i].action();
+		qs[i].seen = true;
 		qs[i] = qs[i].text(2.5,2.5,game.gui.width*0.4-20);
 	};
 	var buttons = [];
-	for(var i  in ans){
+	for(var i = 0;i < ans.length;i++){
+		ans[i].seen = true;
+		var ansID = ans[i].id;
 		var txt = ans[i].text(0,0,game.gui.width*0.6-15);
 		var button = new game.gui.constructors.button({
 			x:0,
@@ -57,12 +60,13 @@ Conversation.prototype.update = function (){
 			width:txt.width+5,
 			height:txt.text.length*20+5,
 			mousedown:function (){
-				ans[i].action();
-				ans[i].parent.update();
-			}
+				console.log(game.gui.guis.dialog.conversation.sentences[this.convID].action());
+				game.gui.guis.dialog.conversation.sentences[this.convID].parent.update();
+			},
+			convID : ansID,
 		});
 		
-		vyskaY += txt.height+2.5;
+		vyskaY += txt.text.length*20+10;
 		button.add(txt);
 		buttons.push(button);
 	};
@@ -100,7 +104,7 @@ Conversation.prototype.setTo = function (obj){
 };
 Conversation.prototype.end = function (){
 	var qe = new QuestEvent("conversationEnd", this);
-	this.onEnd(qe);console.log(this.onEnd);
+	this.onEnd(qe);
 	game.questManager.eventHandle(qe);
 };
 Conversation.prototype.add = function (s){

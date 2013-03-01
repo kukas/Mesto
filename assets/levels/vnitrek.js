@@ -14,6 +14,7 @@ function Level(){
 		steel: this.texturepath+"steel_floor.jpg",
 		
 		error: this.texturepath+"GUI/error.png",
+		hlavaNPC: this.texturepath+"GUI/testHlava.jpg",
 	};
 	
 	this.sounds = {};
@@ -42,6 +43,19 @@ Level.prototype.afterLoad = function (poziceHrace){
 		scale:new THREE.Vector3(30,30,30),
 	});
 	this.add(linka, "linka");
+	// Je třeba udělat mluvící oblast, respektive nadefinovat podmínku mluvení parametricky
+	var hospodsky = new NPC({
+		model : this.models.panacek,
+		position : new THREE.Vector3(250,0,0),
+		rotation : new THREE.Vector3(0,Math.PI/2,0),
+		scale : new THREE.Vector3(50,50,50),
+		profil : this.textures.hlavaNPC
+	});
+	this.add(hospodsky, "hospodsky");
+	
+	game.dialogManager.loadConversation("hospodsky.js",function (c){
+		c.setTo(hospodsky);
+	});
 	
 	var player = new Character({
 		model: this.models.panacek,
