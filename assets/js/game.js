@@ -232,7 +232,7 @@ Game.prototype.checkCollision2 = function (prvniObj,druhyObj){
 	*/
 	function inInterval(max,min,n,uzavreny){ // Pomocná funkce
 		if(uzavreny){
-			if(max <= n && min >= n){
+			if(max >= n && min <= n){
 				return true;
 			}
 			else{
@@ -240,7 +240,7 @@ Game.prototype.checkCollision2 = function (prvniObj,druhyObj){
 			}
 		}
 		else{
-			if(max < n && min > n){
+			if(max > n && min < n){
 				return true;
 			}
 			else{
@@ -250,17 +250,16 @@ Game.prototype.checkCollision2 = function (prvniObj,druhyObj){
 	};
 	
 	function getVectorAngle(vec){ // Úhel, který svírá vektor a osa x
-		if(vec.y >= 0 && vec.x >= 0){
-			return Math.atan(vec.y/vec.x);
-		}
-		if(vec.y <= 0 && vec.x <= 0){
+		if(vec.y < 0){
 			return Math.atan(vec.y/vec.x)+Math.PI;
-		}
-		if(vec.x <= 0 && vec.y >= 0){
-			return Math.atan(vec.y/vec.x);
 		}
 		else{
-			return Math.atan(vec.y/vec.x)+Math.PI;
+			if(vec.y = 0 && vec.x < 0){
+				return Math.PI;
+			}
+			else{
+				return Math.atan(vec.y/vec.x);
+			}
 		}
 	};
 	
@@ -271,29 +270,30 @@ Game.prototype.checkCollision2 = function (prvniObj,druhyObj){
 		this.height = dimension.height;
 		this.constantY = dimension.height/2;
 		this.gama = Math.atan(this.height/this.width);
+		this.halfDiagonal = Math.sqrt((this.width*this.width+this.height*this.height)/4);
 		this.rotation = rotation;
 		this.points = [];
 		var uhelObdelniku = Math.atan(this.constantY/this.constantX);
 		this.points.push( new THREE.Vector2(
-			Math.cos(this.rotation+uhelObdelniku)*(this.constantX+this.constantY),
-			Math.sin(this.rotation+uhelObdelniku)*(this.constantX+this.constantY)
+			Math.cos(this.rotation+uhelObdelniku)*this.halfDiagonal,
+			Math.sin(this.rotation+uhelObdelniku)*this.halfDiagonal
 		) );
 		this.points.push( new THREE.Vector2(
-			Math.cos(this.rotation+Math.PI-uhelObdelniku)*(this.constantY-this.constantX),
-			Math.sin(this.rotation+Math.PI-uhelObdelniku)*(this.constantY-this.constantX)
+			Math.cos(this.rotation+Math.PI-uhelObdelniku)*this.halfDiagonal,
+			Math.sin(this.rotation+Math.PI-uhelObdelniku)*this.halfDiagonal
 		) );
 		this.points.push( new THREE.Vector2(
-			Math.cos(this.rotation+uhelObdelniku+Math.PI)*(-this.constantX-this.constantY),
-			Math.sin(this.rotation+uhelObdelniku+Math.PI)*(-this.constantX-this.constantY)
+			Math.cos(this.rotation+uhelObdelniku+Math.PI)*this.halfDiagonal,
+			Math.sin(this.rotation+uhelObdelniku+Math.PI)*this.halfDiagonal
 		) );
 		this.points.push( new THREE.Vector2(
-			Math.cos(this.rotation+Math.PI*2-uhelObdelniku)*(this.constantX-this.constantY),
-			Math.sin(this.rotation+Math.PI*2-uhelObdelniku)*(this.constantX-this.constantY)
+			Math.cos(this.rotation+Math.PI*2-uhelObdelniku)*this.halfDiagonal,
+			Math.sin(this.rotation+Math.PI*2-uhelObdelniku)*this.halfDiagonal
 		) );
 	};
 	Obdelnik.prototype.getNormalVector = function (pozicniUhel){ // Úhel bodu vzhledem k obdélníku
 		var uhel = pozicniUhel%(Math.PI*2);
-		if(inInterval(this.gama,0,uhel,true) || inInterval(2*Math.PI-this.gama,2*Math.PI,uhel,true)){ // Levá vertikální hrana
+		if(inInterval(this.gama,0,uhel,true) || inInterval(2*Math.PI,2*Math.PI-this.gama,uhel,true)){ // Levá vertikální hrana
 			var vector = new THREE.Vector2(this.constantX,Math.tan(uhel)*this.constantX); // Odpovídající funkce
 			return vector
 		}
@@ -332,8 +332,8 @@ Game.prototype.checkCollision2 = function (prvniObj,druhyObj){
 		var obj = objekty[i];
 		obdelniky.push( new Obdelnik(
 			new THREE.Vector2(
-				obj.mesh.position.x,//+(obj.geometry.boundingBox.max.x + obj.geometry.boundingBox.min.x)*obj.mesh.scale.x/2,
-				obj.mesh.position.y//+(obj.geometry.boundingBox.max.z + obj.geometry.boundingBox.min.z)*obj.mesh.scale.y/2
+				obj.mesh.position.x+(obj.geometry.boundingBox.max.x + obj.geometry.boundingBox.min.x)*obj.mesh.scale.x/2,
+				obj.mesh.position.y+(obj.geometry.boundingBox.max.z + obj.geometry.boundingBox.min.z)*obj.mesh.scale.y/2
 			),
 			{
 				width: (obj.geometry.boundingBox.max.x-obj.geometry.boundingBox.min.x) * obj.mesh.scale.x,
@@ -344,18 +344,9 @@ Game.prototype.checkCollision2 = function (prvniObj,druhyObj){
 	};
 	for(var i = 0;i < 2;i++){
 		var rpo = new THREE.Vector2().sub(obdelniky[1-i].position,obdelniky[i].position); // Relativní pozice obdélníku
-		for(var j = 0;j < 4;j++){console.log("Pozice obdélníků: ");console.log(obdelniky[1-i].position);console.log(obdelniky[i].position);
-			console.log("Relativní pozice: ");
-			console.log(rpo);
-			console.log("Rozměry obdélníku: ");
-			console.log("Width: "+obdelniky[1-i].width+" Height: "+obdelniky[1-i].height);
-			console.log("Rotace obdélníku: ");
-			console.log(obdelniky[1-i].rotation);
-			console.log("Relativní pozice bodu v obdélníku: ");
-			console.log(obdelniky[1-i].points[j]);
-			console.log("Absolutní pozice bodu: ");
-			console.log(new THREE.Vector2().add(obdelniky[1-i].points[j],rpo));
+		for(var j = 0;j < 4;j++){
 			if(obdelniky[i].checkPoint(new THREE.Vector2().add(obdelniky[1-i].points[j],rpo))){
+				console.log(obdelniky[i],new THREE.Vector2().add(obdelniky[1-i].points[j],rpo));
 				return true;
 			}
 		};
